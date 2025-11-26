@@ -21,10 +21,19 @@ class UiController extends Controller
     public function boostRequest()      { return view('orders.boost-request'); }
     public function payment(Request $r) { return view('orders.payment'); }
     public function paymentSuccess(Request $r) { return view('orders.payment-success'); }
-    public function myOrders()          { return view('orders.list'); }
+    public function myOrders()          { return view('orders.my-orders'); }
+    public function orderPending()      { return view('orders.order-pending'); }
+    public function orderProgress()     { return view('orders.order-progress'); }
+    public function orderCompleted()    { return view('orders.order-completed'); }
+    public function orderWaitlist()     { return view('orders.order-waitlist'); }
+    public function trackOrderPending() { return view('orders.track-order-pending'); }
+    public function trackOrderProgress(){ return view('orders.track-order-progress'); }
+    public function trackOrderCompleted(){ return view('orders.track-order-completed'); }
 
     // USER
-    public function profile()           { return view('user.profile'); }
+    public function profile()           { return view('profile.my-profile'); }
+    public function editProfile()       { return view('profile.edit-profile'); }
+    public function boosterProfile()    { return view('booster.profile'); }
     public function favoriteBoosters()  { return view('user.favorites-boosters'); }
     public function favoriteBoosts()    { return view('user.favorites-boosts'); }
 }

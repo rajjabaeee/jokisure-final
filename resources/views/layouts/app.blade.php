@@ -1,87 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'JokiSure')</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>@yield('title', 'JokiSure')</title>
 
-    {{-- Bootstrap 5.3 --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    {{-- Optional custom styles --}}
-    <style>
-        body {
-            background-color: #f8f9fa;
-            padding-bottom: 80px; /* Prevent content from hiding behind nav */
-        }
-        .navbar-bottom {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #fff;
-            border-top: 1px solid #ddd;
-            z-index: 1000;
-        }
-        .navbar-bottom a {
-            color: #6c757d;
-            text-decoration: none;
-            font-size: 0.85rem;
-        }
-        .navbar-bottom a.active {
-            color: #dc3545;
-        }
-        .navbar-bottom i {
-            font-size: 1.3rem;
-        }
-        .scroll-x {
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-        .scroll-x::-webkit-scrollbar {
-            display: none;
-        }
-    </style>
-
-    @stack('styles')
+  <!-- Page CSS -->
+  <link href="{{ asset('css/my-profile.css') }}" rel="stylesheet">
 </head>
-<body>
 
-    {{-- Main Content --}}
-    <main class="pb-5">
-        @yield('content')
-    </main>
+<body class="preview-center">
+<main class="device-frame">
 
-    {{-- Bottom Navigation --}}
-    <nav class="navbar-bottom">
-        <div class="container d-flex justify-content-around py-2">
-            <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }} text-center">
-                <i class="bi bi-house-door-fill"></i><br>
-                <small>Home</small>
-            </a>
-            <a href="{{ url('/cart') }}" class="{{ request()->is('cart') ? 'active' : '' }} text-center">
-                <i class="bi bi-cart3"></i><br>
-                <small>Cart</small>
-            </a>
-            <a href="{{ url('/messages') }}" class="{{ request()->is('messages') ? 'active' : '' }} text-center">
-                <i class="bi bi-chat-dots"></i><br>
-                <small>Message</small>
-            </a>
-            <a href="{{ url('/notifications') }}" class="{{ request()->is('notifications') ? 'active' : '' }} text-center">
-                <i class="bi bi-bell"></i><br>
-                <small>Notification</small>
-            </a>
-            <a href="{{ url('/profile') }}" class="{{ request()->is('profile') ? 'active' : '' }} text-center">
-                <i class="bi bi-person"></i><br>
-                <small>Profile</small>
-            </a>
-        </div>
-    </nav>
+  <!-- STATUS BAR -->
+  <div class="status-bar d-flex align-items-center justify-content-between px-3">
+    <div class="time">9:41</div>
+    <div class="status-icons d-flex align-items-center gap-2">
+      <svg width="20" height="12" viewBox="0 0 20 12" fill="none"><rect x="1" y="7" width="2" height="4" rx=".75" fill="#0a0a0a"/><rect x="5" y="5" width="2" height="6" rx=".75" fill="#0a0a0a"/><rect x="9" y="3" width="2" height="8" rx=".75" fill="#0a0a0a"/><rect x="13" y="1" width="2" height="10" rx=".75" fill="#0a0a0a"/></svg>
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><path d="M9 9.5c.7 0 1.25.55 1.25 1.25S9.7 12 9 12 7.75 11.45 7.75 10.75 8.3 9.5 9 9.5Z" fill="#0a0a0a"/><path d="M3 6.5c3.9-3.2 8.1-3.2 12 0" stroke="#0a0a0a" stroke-width="1.6" stroke-linecap="round"/><path d="M5.6 8c2.53-2.05 4.27-2.05 6.8 0" stroke="#0a0a0a" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2" stroke="#0a0a0a" stroke-width="1.5"/><rect x="3" y="3" width="16" height="6" rx="1.5" fill="#0a0a0a"/><rect x="22" y="4" width="3" height="4" rx="1" fill="#0a0a0a"/></svg>
+    </div>
+  </div>
 
-    {{-- Bootstrap JS --}}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- SAFE AREA -->
+  <section class="safe-area">
 
-    @stack('scripts')
+    <!-- APP BAR -->
+    <div class="appbar d-flex align-items-center justify-content-between px-3">
+      @yield('appbar-left')
+      @yield('appbar-center')
+      @yield('appbar-right')
+    </div>
+
+    <!-- BODY -->
+    <div class="container px-3 pb-5">
+      @yield('content')
+    </div>
+
+  </section>
+
+  <!-- TAB BAR -->
+  <nav class="tabbar">
+    <a class="tab{{ Route::currentRouteName() === 'home' ? ' active' : '' }}" href="{{ route('home') }}">
+      <svg viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v8a2 2 0 0 1-2 2h-3v-5H8v5H5a2 2 0 0 1-2-2v-8Z"/></svg>
+      <span>Home</span>
+    </a>
+    <a class="tab" href="#">
+      <svg viewBox="0 0 24 24"><path d="M6 7h12l-1 11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 7Z" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 7V5a3 3 0 0 1 6 0v2" fill="none"/></svg>
+      <span>Explore</span>
+    </a>
+    <a class="tab" href="#">
+      <svg viewBox="0 0 24 24"><path d="M21 12a8.5 8.5 0 1 1-17 0 8.5 8.5 0 0 1 17 0Zm-8.5-5v5l3 2" fill="none"/></svg>
+      <span>Message</span>
+    </a>
+    <a class="tab" href="#">
+      <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v5l1.5 1.5a1 1 0 0 1-.7 1.7H5.2a1 1 0 0 1-.7-1.7L6 14V9Z" fill="none"/><path d="M10 19a2 2 0 1 0 4 0" fill="none"/></svg>
+      <span>Notification</span>
+    </a>
+    <a class="tab{{ Route::currentRouteName() === 'profile.show' ? ' active' : '' }}" href="{{ route('profile.show') }}">
+      <svg viewBox="0 0 24 24" class="profile-icon">
+        <circle cx="12" cy="12" r="9" fill="none"/>
+        <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-6 7a6 6 0 0 1 12 0" fill="none"/>
+      </svg>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <div class="home-indicator"></div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
