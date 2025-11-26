@@ -1,0 +1,69 @@
+/* JokiSure: Splash with centered logo in SAFE AREA */
+:root{
+  --app-bg: #262626;   /* splash background */
+  --desk-bg: #0f0f10;  /* desktop preview bg */
+  --radius: 32px;
+  --status-height: 44px; /* iOS status bar */
+  --home-height: 34px;   /* iOS home indicator "safe" */
+}
+
+/* Desktop preview center */
+html, body{ height: 100%; }
+.preview-center{
+  min-height: 100vh; margin:0;
+  background: var(--desk-bg);
+  display:flex; align-items:center; justify-content:center;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Phone frame (iPhone X-ish) */
+.device-frame{
+  width: 375px; height: 812px;
+  background: var(--app-bg);
+  border-radius: var(--radius);
+  position: relative; overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,.55), 0 2px 8px rgba(0,0,0,.35);
+}
+
+/* Status bar */
+.status-bar{
+  height: var(--status-height);
+  color:#fff; font-weight:600; letter-spacing:.2px; font-size:14px;
+  position:absolute; top:0; left:0; right:0; user-select:none;
+}
+.status-icons .ico{ display:block; }
+
+/* SAFE AREA: area between status bar & home indicator */
+.safe-area{
+  position:absolute;
+  top: var(--status-height);
+  bottom: var(--home-height);
+  left: 0; right: 0;
+  padding: 0 24px;
+}
+
+/* Centered logo inside safe area */
+.brand{
+  width: 72%;              /* scale similar to mock */
+  max-width: 280px;
+  height: auto;
+  display:block;
+  filter: drop-shadow(0 1px 0 rgba(0,0,0,.15));
+}
+
+/* Home indicator (iOS pill) */
+.home-indicator{
+  position:absolute; left:50%; bottom: 8px;
+  transform: translateX(-50%);
+  width: 134px; height: 5px; border-radius:999px;
+  background:#e6e6e6; opacity:.95;
+}
+
+/* Real phones (≤576px): full-bleed, same behavior */
+@media (max-width: 576px){
+  .preview-center{ background: var(--app-bg); }
+  .device-frame{
+    width: 100vw; height: 100vh; border-radius: 0; box-shadow:none;
+  }
+  .brand{ width: min(68vw, 320px); }
+}

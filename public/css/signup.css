@@ -1,0 +1,142 @@
+/* JokiSure Sign Up — Bootstrap 5 */
+:root{
+  --bg: #ffffff;
+  --desk-bg: #0f0f10;
+  --radius: 32px;
+  --status: 44px;
+  --home: 34px;
+  --cta: #ff4961;
+  --cta-hover: #ff3650;
+  --cta-text: #ffffff;
+  --field-radius: 12px;
+  --field-border: #dadada;
+  --top-gray: #f5f5f5;
+  --divider: #e5e5e5;
+}
+
+/* Center preview on desktop */
+html, body{ height: 100%; }
+.preview-center{
+  min-height:100vh; margin:0;
+  background: var(--desk-bg);
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* Phone frame */
+.device-frame{
+  width: 375px; height: 812px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  position: relative; overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,.55), 0 2px 8px rgba(0,0,0,.35);
+  color:#0a0a0a;
+}
+
+/* Status bar */
+.status-bar{
+  height: var(--status);
+  color:#0a0a0a; font-weight:600; font-size:14px;
+  position:absolute; top:0; left:0; right:0;
+}
+
+/* Safe area */
+.safe-area{
+  position:absolute;
+  top: var(--status);
+  bottom: var(--home);
+  left: 0; right: 0;
+  display:flex; flex-direction:column;
+}
+
+/* Header */
+.header{
+  background: var(--top-gray);
+  padding: 12px 16px 18px;
+}
+
+/* Back button */
+.btn-back{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:36px; height:36px; border-radius:10px;
+  background:transparent; text-decoration:none;
+}
+
+/* Logo */
+.brand{
+  width: 170px; height:auto; display:block;
+}
+
+/* Content container */
+.content-wrap{
+  background:#fff;
+  border-top-left-radius:26px;
+  border-top-right-radius:26px;
+  padding:18px 0 0;
+  flex:1 1 auto;
+  box-shadow: 0 -1px 0 var(--divider) inset;
+}
+
+/* Inputs */
+.form-control{
+  height:44px;
+  border-radius:var(--field-radius);
+  border:1px solid var(--field-border);
+  font-size:.95rem;
+  padding:10px 12px;
+}
+.form-control::placeholder{ color:#9a9a9a; }
+
+/* Input group (phone number) */
+.input-group-text{
+  background:#fff;
+  border:1px solid var(--field-border);
+  border-right:0;
+  font-weight:600;
+  color:#555;
+}
+.input-group .form-control{
+  border-left:0;
+}
+
+/* Labels */
+.form-label{ font-size:.92rem; color:#222; }
+
+/* Links */
+.link-red{ color:#ff294d; }
+.link-red:hover{ color:#e6153a; }
+
+/* CTA Button */
+.btn-cta{
+  display:flex; align-items:center; justify-content:center;
+  height:52px;
+  border-radius:14px;
+  background:var(--cta); color:var(--cta-text);
+  font-weight:700; font-size:16px;
+  border:none;
+  box-shadow:0 10px 24px rgba(255,73,97,.25);
+  transition:transform .06s ease, box-shadow .2s ease, background .2s ease;
+}
+.btn-cta:hover{ background:var(--cta-hover); }
+.btn-cta:active{ transform:translateY(1px); box-shadow:0 6px 16px rgba(255,73,97,.25); }
+
+/* Footer terms */
+.text-muted a{ font-weight:600; }
+
+/* Home indicator */
+.home-indicator{
+  position:absolute; left:50%; bottom:8px;
+  transform:translateX(-50%);
+  width:134px; height:5px; border-radius:999px;
+  background:#0a0a0a; opacity:.2;
+}
+
+/* Animation */
+.device-frame, .brand, .content-wrap, .btn-cta{ animation:fadeIn .5s ease both; }
+@keyframes fadeIn{ from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:none;} }
+
+/* Mobile real phone */
+@media(max-width:576px){
+  .preview-center{ background:var(--bg); }
+  .device-frame{ width:100vw; height:100vh; border-radius:0; box-shadow:none; }
+  .brand{ width:min(48vw,210px); }
+}

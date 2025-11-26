@@ -1,0 +1,98 @@
+/* JokiSure Login */
+:root{
+  --bg:#ffffff;
+  --desk:#0f0f10;
+  --radius:32px;
+  --status:44px;
+  --home:34px;
+
+  --top-gray:#f5f5f5;      /* << abu-abu belakang logo */
+  --divider:#e6e6e6;
+
+  --cta:#ff4961;
+  --cta-hover:#ff3650;
+  --field-border:#dadada;
+  --field-radius:12px;
+}
+
+/* Desktop preview */
+html,body{height:100%}
+.preview-center{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:var(--desk);margin:0
+}
+.device-frame{
+  width:375px;height:812px;background:var(--bg);color:#0a0a0a;
+  border-radius:var(--radius);position:relative;overflow:hidden;
+  box-shadow:0 20px 50px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.35)
+}
+
+/* Status bar */
+.status-bar{
+  position:absolute;top:0;left:0;right:0;height:var(--status);
+  display:flex;align-items:center;justify-content:space-between;
+  font-weight:600;font-size:14px;user-select:none
+}
+
+/* Safe area */
+.safe-area{
+  position:absolute;top:var(--status);bottom:var(--home);left:0;right:0;
+  overflow:auto
+}
+
+/* ===== Header abu-abu (logo area) ===== */
+.header{background:var(--top-gray)}
+.brand{width:180px;height:auto;display:block;margin:18px auto}
+
+/* lengkung transisi abu-abu -> putih (sesuai mock) */
+.header-bottom{
+  height:16px;background:var(--top-gray);
+  border-bottom-left-radius:24px;border-bottom-right-radius:24px
+}
+
+/* ===== Blok form putih ===== */
+.content-wrap{
+  background:#fff;border-top-left-radius:24px;border-top-right-radius:24px;
+  padding:18px 16px 24px
+}
+.content-wrap .container{max-width: 540px}
+
+/* Inputs */
+.form-label{font-size:.95rem}
+.form-control{
+  height:44px;border-radius:var(--field-radius);
+  border:1px solid var(--field-border);font-size:.95rem
+}
+.form-control::placeholder{color:#999}
+
+/* Link */
+.link-red{color:#ff294d}.link-red:hover{color:#e6153a}
+
+/* CTA */
+.btn-cta{
+  height:52px;border-radius:14px;background:var(--cta);color:#fff;font-weight:700;border:none;
+  box-shadow:0 10px 24px rgba(255,73,97,.25)
+}
+.btn-cta:hover{background:var(--cta-hover)}
+
+/* Divider */
+.divider{display:flex;align-items:center;gap:10px}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--divider)}
+
+/* Social */
+.btn-social{
+  display:flex;align-items:center;gap:10px;justify-content:center;
+  height:48px;border-radius:12px;border:1px solid var(--field-border);background:#fff;font-weight:600
+}
+
+/* Home indicator */
+.home-indicator{
+  position:absolute;left:50%;bottom:8px;transform:translateX(-50%);
+  width:134px;height:5px;border-radius:999px;background:#0a0a0a;opacity:.2
+}
+
+/* Real phones */
+@media (max-width:576px){
+  .preview-center{background:var(--bg)}
+  .device-frame{width:100vw;height:100vh;border-radius:0;box-shadow:none}
+}
