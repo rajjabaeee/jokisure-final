@@ -28,22 +28,30 @@
         <div class="col-8"></div><div class="col-2"></div>
       </div>
 
+      <form method="POST" action="{{ route('otp.verify') }}">
+        @csrf
       <div class="row">
         <div class="col-12 px-4">
           <h1 class="h4 fw-bold mb-2">Verify Code</h1>
           <p class="text-muted mb-3 small">Check your SMS message. We've sent you the code at
             <span class="text-dark fw-semibold">+62 ********0000</span>
           </p>
+          @if($errors->has('otp'))
+            <div class="alert alert-danger small">{{ $errors->first('otp') }}</div>
+          @endif
+          @if(session('otp_code'))
+            <div class="alert alert-info small">Demo OTP: <strong>{{ session('otp_code') }}</strong></div>
+          @endif
         </div>
       </div>
 
       <div class="row">
         <div class="col-12 d-flex justify-content-center">
           <div class="otp-group" aria-label="Enter 4 digit code">
-            <input type="text" inputmode="numeric" maxlength="1" class="otp-input" aria-label="Digit 1">
-            <input type="text" inputmode="numeric" maxlength="1" class="otp-input" aria-label="Digit 2">
-            <input type="text" inputmode="numeric" maxlength="1" class="otp-input" aria-label="Digit 3">
-            <input type="text" inputmode="numeric" maxlength="1" class="otp-input" aria-label="Digit 4">
+            <input type="text" inputmode="numeric" maxlength="1" name="d1" class="otp-input" aria-label="Digit 1">
+            <input type="text" inputmode="numeric" maxlength="1" name="d2" class="otp-input" aria-label="Digit 2">
+            <input type="text" inputmode="numeric" maxlength="1" name="d3" class="otp-input" aria-label="Digit 3">
+            <input type="text" inputmode="numeric" maxlength="1" name="d4" class="otp-input" aria-label="Digit 4">
           </div>
         </div>
       </div>
@@ -52,6 +60,8 @@
         <div class="col-12 text-center">
           <span class="text-muted small">Send code</span>
           <a href="#" class="link-underline small ms-1">again</a>
+          <br>
+          <a href="{{ route('otp.demo.verify') }}" class="btn btn-link small mt-2">Demo: verify now (skip OTP)</a>
         </div>
       </div>
 
@@ -59,9 +69,22 @@
 
       <div class="row">
         <div class="col-12 px-4">
-          <button class="btn btn-cta w-100">Verify Code</button>
+          <input type="hidden" name="otp" id="otp-value">
+          <button type="submit" class="btn btn-cta w-100">Verify Code</button>
         </div>
       </div>
+      </form>
+
+      <script>
+        const inputs = document.querySelectorAll('.otp-input');
+        const otpHidden = document.getElementById('otp-value');
+        inputs.forEach((input, idx) => {
+          input.addEventListener('input', () => {
+            if (input.value.length === 1 && idx < inputs.length -1) inputs[idx+1].focus();
+            otpHidden.value = Array.from(inputs).map(i=>i.value||'').join('');
+          });
+        });
+      </script>
     </section>
 
     <div class="home-indicator" aria-hidden="true"></div>

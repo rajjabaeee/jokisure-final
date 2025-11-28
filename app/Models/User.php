@@ -2,18 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Notifications\Notifiable;
 
-class User extends Model
+class User extends Authenticatable
 {
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids, Notifiable;
 
     protected $table = 'user';
     protected $primaryKey = 'user_id';
+    public $incrementing = false;
+    protected $keyType = 'string';
     public $timestamps = false;
 
     protected $fillable = [
@@ -26,43 +27,58 @@ class User extends Model
         'created_at'
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'created_at' => 'datetime',
-            'user_profile_pic' => 'binary'
-        ];
-    }
+    protected $hidden = [
+        'user_password_hash',
+        'remember_token' // optional: add column if you create it
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+    ];
 
     /**
-     * Get the buyer associated with the user
+     * Return the password value for the auth system (non-standard column).
      */
-    public function buyer(): HasOne
+    public function getAuthPassword()
     {
-        return $this->hasOne(Buyer::class, 'user_id', 'user_id');
+        return $this->user_password_hash;
     }
 
-    /**
-     * Get the booster associated with the user
-     */
-    public function booster(): HasOne
+    public function login(Request $request)
     {
-        return $this->hasOne(Booster::class, 'user_id', 'user_id');
-    }
+        $request->validate([
+            'identity' => 'required|string',
+            'password' => 'required|string',
+        ]);
 
-    /**
-     * Get the chats sent by this user
-     */
-    public function sentChats(): HasMany
-    {
-        return $this->hasMany(Chat::class, 'sender_user_id', 'user_id');
-    }
+        $identity = $request->input('identity');
+        $password = $request->input('password');
+        $remember = $request->boolean('remember');
 
-    /**
-     * Get the chats received by this user
-     */
-    public function receivedChats(): HasMany
-    {
-        return $this->hasMany(Chat::class, 'receiver_user_id', 'user_id');
+        // jika identity email -> coba kolom user_email
+        if (filter_var($identity, FILTER_VALIDATE_EMAIL)) {
+            $credentials = ['user_email' => $identity, 'password' => $password];
+            if (Auth::attempt($credentials, $remember)) {
+                $request->session()->regenerate();
+                return redirect()->intended(route('home'));
+            }
+        } else {
+            // bukan email -> coba user_name dan user_nametag
+            $tries = [
+                ['user_name' => $identity, 'password' => $password],
+                ['user_nametag' => $identity, 'password' => $password],
+            ];
+
+            foreach ($tries as $credentials) {
+                if (Auth::attempt($credentials, $remember)) {
+                    $request->session()->regenerate();
+                    return redirect()->intended(route('home'));
+                }
+            }
+        }
+
+        return back()
+            ->withErrors(['identity' => 'Credentials do not match our records.'])
+            ->withInput($request->only('identity'));
     }
 }
