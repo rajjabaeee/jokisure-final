@@ -46,7 +46,7 @@
 
       @foreach ($boosters as $booster)
         <div class="card-block p-3 d-flex align-items-center gap-3 mt-3">
-          <img src="{{ asset('images/' . $booster['img']) }}" class="avatar" alt="{{ $booster['name'] }}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+          <img src="{{ asset('assets/' . $booster['img']) }}" class="avatar" alt="{{ $booster['name'] }}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
           <div class="flex-grow-1">
             <div class="fw-semibold">{{ $booster['name'] }}</div>
             <div class="text-muted small">{{ $booster['specialty'] }}</div>

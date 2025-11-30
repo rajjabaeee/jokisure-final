@@ -26,7 +26,7 @@
 
       <!-- Profile -->
       <div class="card-block p-3 d-flex align-items-center gap-3 mt-2">
-        <img src="{{ asset('assets/images/Tamago.jpg') }}" class="avatar" alt="avatar">
+        <img src="{{ asset('assets/Tamago.jpg') }}" class="avatar" alt="avatar" style="width: 60px; height: 60px;">
         <div class="flex-grow-1">
           <div class="fw-semibold">Tamago</div>
           <div class="text-muted small">@dppgroup2</div>
@@ -80,7 +80,7 @@
       </div>
       <div class="card-block p-2">
         <div class="d-flex gap-2">
-          <img class="review-thumb" src="{{ asset('assets/images/genshin boss.png') }}" alt="thumb">
+          <img class="review-thumb" src="{{ asset('assets/genshin boss.png') }}" alt="thumb">
           <div class="flex-grow-1">
             <div class="text-muted small mb-1">18 April 2025</div>
             <div class="fw-semibold small">Genshin Weekly Boss</div>

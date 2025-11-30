@@ -75,9 +75,9 @@
       <div class="tab-pane fade show active" id="tab-all" role="tabpanel" tabindex="0">
         <div class="container px-3">
           {{-- Waitlisted --}}
-          <div class="order-card">
-            <div class="d-flex align-items-start gap-3">
-              <img class="thumb" src="{{ asset('assets/Images/Natlan.png') }}" alt="">
+          <div class=\"order-card\">
+            <div class=\"d-flex align-items-start gap-3\">
+              <img class=\"thumb\" src=\"{{ asset('assets/Natlan.png') }}\" alt=\"\">
               <div class="flex-grow-1">
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="fw-semibold small">BangBoost</div>
@@ -92,9 +92,9 @@
           </div>
 
           {{-- Pending --}}
-          <div class="order-card">
-            <div class="d-flex align-items-start gap-3">
-              <img class="thumb" src="{{ asset('assets/Images/enkanomiya.png') }}" alt="">
+          <div class=\"order-card\">
+            <div class=\"d-flex align-items-start gap-3\">
+              <img class=\"thumb\" src=\"{{ asset('assets/enkanomiya.png') }}\" alt=\"\">
               <div class="flex-grow-1">
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="fw-semibold small">SealW</div>
@@ -109,9 +109,9 @@
           </div>
 
           {{-- On-Progress --}}
-          <div class="order-card">
-            <div class="d-flex align-items-start gap-3">
-              <img class="thumb" src="{{ asset('assets/Images/abyss.jpg') }}" alt="">
+          <div class=\"order-card\">
+            <div class=\"d-flex align-items-start gap-3\">
+              <img class=\"thumb\" src=\"{{ asset('assets/abyss.jpg') }}\" alt=\"\">
               <div class="flex-grow-1">
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="fw-semibold small">BangBoost</div>
@@ -126,9 +126,9 @@
           </div>
 
           {{-- Completed --}}
-          <div class="order-card">
-            <div class="d-flex align-items-start gap-3">
-              <img class="thumb" src="{{ asset('assets/Images/genshin boss.png') }}" alt="">
+          <div class=\"order-card\">
+            <div class=\"d-flex align-items-start gap-3\">
+              <img class=\"thumb\" src=\"{{ asset('assets/genshin-boss.png') }}\" alt=\"\">
               <div class="flex-grow-1">
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="fw-semibold small">MonkeyD</div>
@@ -148,11 +148,11 @@
       </div>
 
       {{-- WAITLIST --}}
-      <div class="tab-pane fade" id="tab-waitlist" role="tabpanel" tabindex="0">
-        <div class="container px-3">
-          <div class="order-card">
-            <div class="d-flex align-items-start gap-3">
-              <img class="thumb" src="{{ asset('assets/Images/Natlan.png') }}" alt="">
+      <div class=\"tab-pane fade\" id=\"tab-waitlist\" role=\"tabpanel\" tabindex=\"0\">
+        <div class=\"container px-3\">
+          <div class=\"order-card\">
+            <div class=\"d-flex align-items-start gap-3\">
+              <img class=\"thumb\" src=\"{{ asset('assets/Natlan.png') }}\" alt=\"\">
               <div class="flex-grow-1">
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="fw-semibold small">BangBoost</div>
@@ -169,11 +169,11 @@
       </div>
 
       {{-- PENDING --}}
-      <div class="tab-pane fade" id="tab-pending" role="tabpanel" tabindex="0">
-        <div class="container px-3">
-          <div class="order-card">
-            <div class="d-flex align-items-start gap-3">
-              <img class="thumb" src="{{ asset('assets/Images/enkanomiya.png') }}" alt="">
+      <div class=\"tab-pane fade\" id=\"tab-pending\" role=\"tabpanel\" tabindex=\"0\">
+        <div class=\"container px-3\">
+          <div class=\"order-card\">
+            <div class=\"d-flex align-items-start gap-3\">
+              <img class=\"thumb\" src=\"{{ asset('assets/enkanomiya.png') }}\" alt=\"\">
               <div class="flex-grow-1">
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="fw-semibold small">SealW</div>
@@ -190,11 +190,11 @@
       </div>
 
       {{-- ON PROGRESS --}}
-      <div class="tab-pane fade" id="tab-progress" role="tabpanel" tabindex="0">
-        <div class="container px-3">
-          <div class="order-card">
-            <div class="d-flex align-items-start gap-3">
-              <img class="thumb" src="{{ asset('assets/Images/abyss.jpg') }}" alt="">
+      <div class=\"tab-pane fade\" id=\"tab-progress\" role=\"tabpanel\" tabindex=\"0\">
+        <div class=\"container px-3\">
+          <div class=\"order-card\">
+            <div class=\"d-flex align-items-start gap-3\">
+              <img class=\"thumb\" src=\"{{ asset('assets/abyss.jpg') }}\" alt=\"\">
               <div class="flex-grow-1">
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="fw-semibold small">BangBoost</div>
@@ -211,11 +211,11 @@
       </div>
 
       {{-- COMPLETED --}}
-      <div class="tab-pane fade" id="tab-completed" role="tabpanel" tabindex="0">
-        <div class="container px-3">
-          <div class="order-card">
-            <div class="d-flex align-items-start gap-3">
-              <img class="thumb" src="{{ asset('assets/Images/genshin boss.png') }}" alt="">
+      <div class=\"tab-pane fade\" id=\"tab-completed\" role=\"tabpanel\" tabindex=\"0\">
+        <div class=\"container px-3\">
+          <div class=\"order-card\">
+            <div class=\"d-flex align-items-start gap-3\">
+              <img class=\"thumb\" src=\"{{ asset('assets/genshin-boss.png') }}\" alt=\"\">
               <div class="flex-grow-1">
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="fw-semibold small">MonkeyD</div>

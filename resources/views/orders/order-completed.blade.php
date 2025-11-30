@@ -37,7 +37,7 @@
       <div class="hr-soft"></div>
 
       <div class="card-soft booster-row">
-        <img src="{{ asset('assets/Images/monkey.png') }}" class="avatar" alt="">
+        <img src="{{ asset('assets/monkey.png') }}" class="avatar" alt="">
         <div class="name">MonkeyD</div>
         <button class="msg-btn" title="Message">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 8a6 6 0 016-6h4a6 6 0 016 6v2a6 6 0 01-6 6h-3l-4 3v-3H10a6 6 0 01-6-6V8z" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -46,7 +46,7 @@
 
       <div class="card-soft">
         <div class="d-flex align-items-center gap-2">
-          <img src="{{ asset('assets/Images/genshin boss.png') }}" class="thumb" alt="">
+          <img src="{{ asset('assets/genshin-boss.png') }}" class="thumb" alt="">
           <div>
             <div class="fw-bold">Genshin Weekly Boss</div>
             <small class="muted">Variant: Childe, Raiden, The Knaive</small>

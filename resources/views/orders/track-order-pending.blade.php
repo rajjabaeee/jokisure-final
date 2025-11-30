@@ -35,7 +35,7 @@
               Order ID: <strong>#12346</strong>
               <button class="copy-btn ms-2" type="button"
                       onclick="navigator.clipboard.writeText('#12346')" aria-label="Copy Order ID">
-                <img src="{{ asset('assets/Images/copy.png') }}" alt="Copy">
+                <img src="{{ asset('assets/copy.png') }}" alt="Copy">
               </button>
             </div>
             <div class="small text-muted">17 June 2025, 9:41 WIB</div>
@@ -50,9 +50,9 @@
         <div class="small text-muted mb-2">25 June 2025</div>
 
         <div class="d-flex justify-content-between align-items-center stage-labels mb-1">
-          <img src="{{ asset('assets/Images/pending.png') }}"  alt="Pending">
-          <img src="{{ asset('assets/Images/progress.png') }}" alt="On-Progress">
-          <img src="{{ asset('assets/Images/completed.png') }}" alt="Completed">
+          <img src="{{ asset('assets/pending.png') }}"  alt="Pending">
+          <img src="{{ asset('assets/progress.png') }}" alt="On-Progress">
+          <img src="{{ asset('assets/completed.png') }}" alt="Completed">
         </div>
 
         <div class="position-relative mb-1">
@@ -66,7 +66,7 @@
       <div class="box">
         <div class="d-flex align-items-center justify-content-between">
           <div class="d-flex align-items-center gap-2">
-            <img class="avatar" src="{{ asset('assets/Images/pp.jpg') }}" alt="">
+            <img class="avatar" src="{{ asset('assets/pp.jpg') }}" alt="">
             <div class="fw-semibold">SealW</div>
           </div>
           <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">

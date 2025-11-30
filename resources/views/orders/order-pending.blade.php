@@ -37,7 +37,7 @@
       <div class="hr-soft"></div>
 
       <div class="card-soft booster-row">
-        <img src="{{ asset('assets/Images/sealw.jpg') }}" class="avatar" alt="">
+        <img src="{{ asset('assets/sealw.jpg') }}" class="avatar" alt="">
         <div class="name">SealW</div>
         <button class="msg-btn" title="Message">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 8a6 6 0 016-6h4a6 6 0 016 6v2a6 6 0 01-6 6h-3l-4 3v-3H10a6 6 0 01-6-6V8z" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -46,7 +46,7 @@
 
       <div class="card-soft">
         <div class="d-flex align-items-center gap-2">
-          <img src="{{ asset('assets/Images/enkanomiya.png') }}" class="thumb" alt="">
+          <img src="{{ asset('assets/enkanomiya.png') }}" class="thumb" alt="">
           <div>
             <div class="fw-bold">Enkanomiya Exploration 100%</div>
             <small class="muted">Variant: Floor 9, Floor 10, Floor 12</small>

@@ -388,7 +388,7 @@
 
     <!-- APP BAR -->
     <div class="appbar d-flex align-items-center justify-content-between px-3">
-      <img src="{{ asset('images/jokisure-logo.png') }}" alt="JokiSure" height="28">
+      <img src="{{ asset('assets/jokisure-logo.png') }}" alt="JokiSure" height="28">
       <input type="text" class="form-control form-control-sm rounded-pill" placeholder="Search..." style="max-width: 140px; font-size: 12px;">
       <a href="#" class="icon-btn position-relative">
         <i class="bi bi-cart3" style="font-size: 20px;"></i>
@@ -401,7 +401,7 @@
 
       <!-- Banner -->
       <div class="card-block p-0 overflow-hidden mt-2 mb-3">
-        <img src="{{ asset('images/banner-naruto.jpg') }}" class="w-100" alt="Banner" style="height: 140px; object-fit: cover;">
+        <img src="{{ asset('assets/banner-naruto.jpg') }}" class="w-100" alt="Banner" style="height: 140px; object-fit: cover;">
       </div>
 
       <!-- Boost Games -->
@@ -412,7 +412,7 @@
       <div class="scroll-x mb-4">
         @foreach (['Genshin Impact', 'Roblox', 'Mobile Legends', 'Honkai Star Rail', 'Free Fire', 'VALORANT'] as $game)
           <a href="#" class="game-card">
-            <img src="{{ asset('images/' . str()->slug($game) . '.jpg') }}" alt="{{ $game }}">
+            <img src="{{ asset('assets/' . str()->slug($game) . '.jpg') }}" alt="{{ $game }}">
             <div class="label">{{ $game }}</div>
           </a>
         @endforeach
@@ -434,7 +434,7 @@
 
         @foreach ($boosters as $b)
           <a href="{{ route('booster.profile') }}" class="booster-card">
-            <img src="{{ asset('images/' . $b['img']) }}" alt="{{ $b['name'] }}">
+            <img src="{{ asset('assets/' . $b['img']) }}" alt="{{ $b['name'] }}">
             <div class="booster-info">
               <div>
                 <span class="badge bg-warning text-dark">{{ $b['tier'] }}</span>
@@ -457,7 +457,7 @@
       <div class="service-grid mb-5">
         @for ($i = 0; $i < 6; $i++)
           <a href="{{ route('service.detail.confirm') }}" class="service-card">
-            <img src="{{ asset('images/genshin-abyss.jpg') }}" alt="Service">
+            <img src="{{ asset('assets/abyss.jpg') }}" alt="Service">
             <div class="content">
               <span class="badge bg-primary">Open</span>
               <div class="title">Genshin Impact | Abyss</div>

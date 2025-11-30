@@ -45,7 +45,7 @@
       <div class="d-flex justify-content-center mt-3">
         <div class="avatar-wrap">
           {{-- Ganti src sesuai aset kamu --}}
-          <img src="{{ asset('assets/images/Tamago.jpg') }}" alt="avatar">
+          <img src="{{ asset('assets/Tamago.jpg') }}" alt="avatar">
           <label class="avatar-upload" title="Change photo">
             <input type="file" accept="image/*" hidden>
             <svg viewBox="0 0 24 24"><path d="M4 7h3l2-2h6l2 2h3v12H4V7Z" fill="#fff" stroke="#c9c9c9"/><path d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z" fill="none" stroke="#c9c9c9"/></svg>

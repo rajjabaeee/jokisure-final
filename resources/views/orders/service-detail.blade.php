@@ -119,7 +119,7 @@
             <div class="price-pill">1 Day</div>
           </div>
 
-          <button class="btn addtocart-btn w-100 mt-2 fw-semibold">Add To Cart</button>
+          <a href="/cart" class="btn addtocart-btn w-100 mt-2 fw-semibold text-decoration-none">Add To Cart</a>
         </div>
       </div>
 
