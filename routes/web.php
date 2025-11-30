@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UiController;
+use App\Http\Controllers\OrderController;
 
 // AUTH ROUTES
 Route::get('/',               [UiController::class, 'splash'])->name('welcome');
@@ -25,8 +26,12 @@ Route::get('/service/detail', [UiController::class,'serviceDetailConfirm'])->nam
 Route::get('/boost/request',  [UiController::class,'boostRequest'])->name('boost.request');
 Route::match(['get','post'],'/payment', [UiController::class,'payment'])->name('payment');
 Route::match(['get','post'],'/payment/success', [UiController::class,'paymentSuccess'])->name('payment.success');
-Route::get('/orders',         [UiController::class,'myOrders'])->name('my.orders');
-Route::get('/orders',         [UiController::class,'myOrders'])->name('orders.index');
+// Orders listing (show orders for authenticated user)
+Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+// Update order status (simple endpoint)
+Route::post('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update.status');
 
 // USER ROUTES
 Route::get('/profile',            [UiController::class, 'profile'])->name('profile');
@@ -52,3 +57,6 @@ Route::get('/track/progress',     [UiController::class, 'trackOrderProgress'])->
 Route::get('/track/progress',     [UiController::class, 'trackOrderProgress'])->name('orders.track.progress');
 Route::get('/track/completed',    [UiController::class, 'trackOrderCompleted'])->name('track.order.completed');
 Route::get('/track/completed',    [UiController::class, 'trackOrderCompleted'])->name('orders.track.completed');
+// Track order by id (dynamic)
+Route::get('/track/{order}', [OrderController::class, 'track'])->name('orders.track');
+Route::post('/track/{order}/events', [OrderController::class, 'addEvent'])->name('orders.track.event.store');
