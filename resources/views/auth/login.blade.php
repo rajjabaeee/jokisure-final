@@ -49,16 +49,20 @@
         <div class="container">
           <h1 class="h4 fw-bold mb-3">Login</h1>
 
-          <label class="form-label mb-1">Email or username</label>
-          <input type="text" class="form-control mb-3" placeholder="Enter Your Email or Username">
+          <form method="POST" action="{{ route('login.perform') }}">
+            @csrf
 
-          <div class="d-flex align-items-center justify-content-between">
-            <label class="form-label mb-1">Password</label>
-            <a href="{{ route('reset') }}" class="link-red small text-decoration-none">Forgot your password?</a>
-          </div>
-          <input type="password" class="form-control mb-3" placeholder="Enter Your Password">
+            <label class="form-label mb-1">Email or username</label>
+            <input type="text" name="identity" value="{{ old('identity') }}" class="form-control mb-3" placeholder="Enter Your Email or Username" required>
 
-          <button class="btn btn-cta w-100 mb-3">Log In</button>
+            <div class="d-flex align-items-center justify-content-between">
+              <label class="form-label mb-1">Password</label>
+              <a href="{{ route('reset') }}" class="link-red small text-decoration-none">Forgot your password?</a>
+            </div>
+            <input type="password" name="password" class="form-control mb-3" placeholder="Enter Your Password" required>
+
+            <button type="submit" class="btn btn-cta w-100 mb-3">Log In</button>
+          </form>
 
           <div class="divider my-3"><span class="text-muted small">Or login with</span></div>
 

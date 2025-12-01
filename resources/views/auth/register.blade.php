@@ -37,23 +37,57 @@
         <div class="container">
           <h1 class="h4 fw-bold mb-3">Sign Up</h1>
 
-          <label class="form-label mb-1">Email</label>
-          <input type="email" class="form-control mb-3" placeholder="Enter Your Email">
+          @if(session('status'))
+            <div class="alert alert-success small">{{ session('status') }}</div>
+          @endif
 
-          <label class="form-label mb-1">Password</label>
-          <input type="password" class="form-control mb-3" placeholder="Enter Your Password">
+          @if(session('signup.otp_verified'))
+            <div class="alert alert-success small">✓ Phone number verified — you can now complete sign up.</div>
+          @endif
 
-          <label class="form-label mb-1">Confirm Password</label>
-          <input type="password" class="form-control mb-3" placeholder="Confirm Your Password">
+          @if($errors->any())
+            <div class="alert alert-danger small">
+              @foreach($errors->all() as $err)
+                <div>{{ $err }}</div>
+              @endforeach
+            </div>
+          @endif
 
-          <label class="form-label mb-1">Phone Number</label>
-          <div class="input-group mb-1">
-            <span class="input-group-text">+62</span>
-            <input type="tel" class="form-control" placeholder="Enter Your Phone Number">
-          </div>
-          <a href="{{ route('otp') }}" class="link-red small d-block text-end mb-3 text-decoration-none">Verify Phone Number</a>
+          @if(session('signup.otp_verified'))
+            {{-- Step 3: Final Sign Up (after OTP verified) --}}
+            <form method="POST" action="{{ route('signup.perform') }}">
+              @csrf
+              <div class="alert alert-info small mb-3">
+                Click Sign Up below to save your account and proceed to login.
+              </div>
+              <button type="submit" class="btn btn-cta w-100 mb-3">Sign Up</button>
+            </form>
+          @else
+            {{-- Step 1: Fill form and Verify Phone Number --}}
+            <form method="POST" action="{{ route('signup.verify.phone') }}">
+              @csrf
 
-          <button class="btn btn-cta w-100 mb-3" >Sign Up</button>
+              <label class="form-label mb-1">Full name</label>
+              <input type="text" name="name" value="{{ session('signup.data.name', old('name')) }}" class="form-control mb-3" placeholder="Enter Your Full Name" required>
+
+              <label class="form-label mb-1">Email</label>
+              <input type="email" name="email" value="{{ session('signup.data.email', old('email')) }}" class="form-control mb-3" placeholder="Enter Your Email" required>
+
+              <label class="form-label mb-1">Password</label>
+              <input type="password" name="password" value="{{ session('signup.data.password', '') }}" class="form-control mb-3" placeholder="Enter Your Password" required>
+
+              <label class="form-label mb-1">Confirm Password</label>
+              <input type="password" name="password_confirmation" value="{{ session('signup.data.password', '') }}" class="form-control mb-3" placeholder="Confirm Your Password" required>
+
+              <label class="form-label mb-1">Phone Number</label>
+              <div class="input-group mb-1">
+                <span class="input-group-text">+62</span>
+                <input type="tel" name="phone" value="{{ session('signup.data.phone', old('phone')) }}" class="form-control" placeholder="Enter Your Phone Number">
+              </div>
+              
+              <button type="submit" class="btn btn-outline-danger w-100 mt-2 mb-3">Verify Phone Number</button>
+            </form>
+          @endif
         </div>
       </div>
     </section>

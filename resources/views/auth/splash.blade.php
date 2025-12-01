@@ -56,30 +56,22 @@
 
   <script>
     (function () {
-      const targetUrl = @json(route('home'));
+      // Target pindah ke halaman login
+      const targetUrl = @json(route('login'));
       const splash = document.getElementById('splash');
-      let navigated = false;
-      let timerId = null;
 
+      // Hapus auto redirect. Splash akan stay sampai user tap.
       function go() {
-        if (navigated) return;
-        navigated = true;
-        // animasi halus
         splash.classList.add('fade-out');
         setTimeout(() => { window.location.href = targetUrl; }, 280);
       }
 
-      // Auto-redirect setelah 5 detik
-      timerId = setTimeout(go, 5000);
-
-      // Tap/click di mana saja langsung masuk
+      // User bisa tap / click / tekan enter
       ['click', 'pointerdown', 'keydown'].forEach(evt => {
         splash.addEventListener(evt, (e) => {
-          // kalau keydown, hanya Enter/Space yang trigger
           if (evt === 'keydown' && !['Enter', ' '].includes(e.key)) return;
-          clearTimeout(timerId);
           go();
-        }, { once: true });
+        });
       });
     })();
   </script>
