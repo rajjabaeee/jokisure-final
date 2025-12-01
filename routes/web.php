@@ -2,6 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UiController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\BoosterController;
+use App\Http\Controllers\GameController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Middleware\RedirectIfAuthenticated;
@@ -44,35 +50,39 @@ Route::middleware('auth')->group(function () {
 
 	// MARKETPLACE ROUTES
 	Route::get('/home', [UiController::class, 'home'])->name('home');
-	Route::view('/games', 'marketplace.games');
-	Route::view('/boosters', 'marketplace.boosters');
-	Route::view('/cart', 'marketplace.cart');
-	Route::view('/chat', 'marketplace.chat');
+	Route::get('/games', [GameController::class, 'index'])->name('games.index');
+	Route::get('/games/{game}', [GameController::class, 'show'])->name('games.show');
+	Route::get('/boosters', [UiController::class, 'boosters'])->name('boosters');
+	Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+	Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+	Route::post('/cart/remove/{item}', [CartController::class, 'remove'])->name('cart.remove');
+	Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
 	Route::view('/game-detail', 'marketplace.game-detail');
 
 	// SERVICE DETAIL
 	Route::get('/service/detail', [UiController::class,'serviceDetailConfirm'])->name('service.detail.confirm');
 
-	// ORDERS & TRANSACTIONS
+	// ORDERS & TRANSACTIONS (Dynamic via OrderController)
 	Route::get('/boost/request', [UiController::class,'boostRequest'])->name('boost.request');
 	Route::match(['get','post'],'/payment', [UiController::class,'payment'])->name('payment');
 	Route::match(['get','post'],'/payment/success', [UiController::class,'paymentSuccess'])->name('payment.success');
-	Route::get('/orders', [UiController::class,'myOrders'])->name('my.orders');
+	
+	// Order listing and detail (dynamic - no status-specific static routes needed)
+	Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+	Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+	Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+	Route::post('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update.status');
+	
+	// Order tracking (dynamic - returns appropriate track view based on status)
+	Route::get('/track/{order}', [OrderController::class, 'track'])->name('orders.track');
+	Route::post('/track/{order}/events', [OrderController::class, 'addEvent'])->name('orders.track.event.store');
 
 	// USER ROUTES
-	Route::get('/profile', [UiController::class, 'profile'])->name('profile');
-	Route::get('/profile/edit', [UiController::class, 'editProfile'])->name('profile.edit');
-	Route::post('/profile/update', [UiController::class, 'editProfile'])->name('profile.update.mock');
-	Route::get('/booster/profile', [UiController::class, 'boosterProfile'])->name('booster.profile');
+	Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+	Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+	Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update.mock');
+	Route::get('/booster/profile/{booster}', [BoosterController::class, 'show'])->name('booster.profile');
 	Route::get('/favorites/boosters', [UiController::class, 'favoriteBoosters'])->name('favorite.boosters');
 	Route::get('/favorites/boosts', [UiController::class, 'favoriteBoosts'])->name('favorite.boosts');
 
-	// ORDER DETAILS
-	Route::get('/orders/pending', [UiController::class, 'orderPending'])->name('order.pending');
-	Route::get('/orders/progress', [UiController::class, 'orderProgress'])->name('order.progress');
-	Route::get('/orders/completed', [UiController::class, 'orderCompleted'])->name('order.completed');
-	Route::get('/orders/waitlist', [UiController::class, 'orderWaitlist'])->name('order.waitlist');
-	Route::get('/track/pending', [UiController::class, 'trackOrderPending'])->name('track.order.pending');
-	Route::get('/track/progress', [UiController::class, 'trackOrderProgress'])->name('track.order.progress');
-	Route::get('/track/completed', [UiController::class, 'trackOrderCompleted'])->name('track.order.completed');
 });

@@ -52,7 +52,7 @@
             <div class="text-muted small">{{ $booster['specialty'] }}</div>
             <span class="badge bg-warning text-dark mt-1">⭐ {{ $booster['rating'] }}</span>
           </div>
-          <a href="{{ route('booster.profile') }}" class="icon-btn">
+          <a href="{{ route('booster.profile', 1) }}" class="icon-btn">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#0066cc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
         </div>

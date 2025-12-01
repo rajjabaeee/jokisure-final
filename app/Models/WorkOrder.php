@@ -74,4 +74,12 @@ class WorkOrder extends Model
     {
         return $this->hasMany(Payment::class, 'order_id', 'order_id');
     }
+
+    /**
+     * Get timeline events for this order
+     */
+    public function events(): HasMany
+    {
+        return $this->hasMany(WorkOrderEvent::class, 'order_id', 'order_id');
+    }
 }
