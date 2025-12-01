@@ -30,9 +30,15 @@
 
     <!-- APP BAR -->
     <div class="appbar d-flex align-items-center justify-content-between px-3">
-      @yield('appbar-left')
-      @yield('appbar-center')
-      @yield('appbar-right')
+      <a href="javascript:history.back()" class="back-btn" style="color: #0a0a0a; text-decoration: none; font-size: 24px;">←</a>
+      <div class="fw-semibold">@yield('appbar-title', 'JokiSure')</div>
+      <a href="#" class="icon-btn">
+      <svg width="22" height="22" fill="none" aria-hidden="true">
+        <circle cx="11" cy="11" r="10" stroke="#000" stroke-width="2"/>
+        <text x="11" y="15" text-anchor="middle" font-size="10" font-family="Inter, sans-serif" fill="#000">?</text>
+      </svg>
+        <!-- <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> -->
+      </a>
     </div>
 
     <!-- BODY -->
