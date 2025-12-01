@@ -1,5 +1,6 @@
-{{-- resources/views/marketplace/chat.blade.php --}}
 @extends('layouts.app')
+
+@section('title', 'Chat')
 
 @section('content')
 <div class="container py-3" style="height: 85vh; display: flex; flex-direction: column;">

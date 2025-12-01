@@ -1,4 +1,4 @@
-{{-- resources/views/marketplace/cart.blade.php --}}
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -268,14 +268,7 @@
 <body class="preview-center">
 <main class="device-frame">
 
-  {{-- Status bar --}}
-  <div class="status-bar d-flex align-items-center justify-content-between">
-    <div class="fw-semibold">9:41</div>
-    <div class="d-flex align-items-center gap-2"><div class="battery"></div></div>
-  </div>
-
-  {{-- Safe area --}}
-  <section class="safe-area">
+@section
     {{-- App bar --}}
     <div class="appbar d-flex align-items-center justify-content-between">
       <a href="{{ url()->previous() }}" class="text-dark text-decoration-none" aria-label="Back">

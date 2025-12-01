@@ -1,5 +1,6 @@
-{{-- resources/views/marketplace/game-detail.blade.php --}}
 @extends('layouts.app')
+
+@section('title', 'Mobile Legends Details')
 
 @section('content')
 <div class="container py-4">
