@@ -496,7 +496,7 @@
       <svg viewBox="0 0 24 24"><path d="M9 2a1 1 0 0 0 0 2h.01a1 1 0 0 0 0-2H9z"/><path d="M5 5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5z"/></svg>
       <span>Notification</span>
     </a>
-    <a class="tab" href="{{ route('profile.show') }}">
+    <a class="tab" href="{{ route('profile') }}">
       <svg viewBox="0 0 24 24" class="profile-icon">
         <circle cx="12" cy="12" r="9" fill="none"/>
         <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-6 7a6 6 0 0 1 12 0" fill="none"/>

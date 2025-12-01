@@ -7,9 +7,22 @@ use Illuminate\Http\Request;
 class UiController extends Controller
 {
     // AUTH
-    public function splash()            { return view('auth.splash'); }
+    public function splash(Request $request) { 
+        // Clear all signup session data when starting fresh from splash
+        $request->session()->forget('signup.data');
+        $request->session()->forget('signup.otp');
+        $request->session()->forget('signup.otp_verified');
+        return view('auth.splash'); 
+    }
     public function login()             { return view('auth.login'); }
-    public function signup()            { return view('auth.register'); }
+    public function signup(Request $request) { 
+        // Clear any old signup session data when entering signup page fresh
+        if (!$request->session()->has('signup.otp_verified')) {
+            $request->session()->forget('signup.data');
+            $request->session()->forget('signup.otp');
+        }
+        return view('auth.register'); 
+    }
     public function reset()             { return view('auth.reset-password'); }
     public function otp()               { return view('auth.otp-verify'); }
 
