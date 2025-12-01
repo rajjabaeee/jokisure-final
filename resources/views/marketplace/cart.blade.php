@@ -268,7 +268,14 @@
 <body class="preview-center">
 <main class="device-frame">
 
-@section
+  {{-- Status bar --}}
+  <div class="status-bar d-flex align-items-center justify-content-between">
+    <div class="fw-semibold">9:41</div>
+    <div class="d-flex align-items-center gap-2"><div class="battery"></div></div>
+  </div>
+
+  {{-- Safe area --}}
+  <section class="safe-area">
     {{-- App bar --}}
     <div class="appbar d-flex align-items-center justify-content-between">
       <a href="{{ url()->previous() }}" class="text-dark text-decoration-none" aria-label="Back">
@@ -306,7 +313,7 @@
     <div class="bottom-section">
       <button class="coupon-btn">No Coupons</button>
       <div class="price-display">Rp120.000</div>
-      <button class="pay-btn">Pay</button>
+      <a href="{{ route('boost.request') }}" class="pay-btn" style="text-decoration: none; color: white;">Pay</a>
     </div>
 
     <div class="navbar-bottom">
