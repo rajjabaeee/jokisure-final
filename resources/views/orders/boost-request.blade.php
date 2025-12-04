@@ -19,7 +19,7 @@
 
     {{-- TOP BAR --}}
     <div class="appbar d-flex align-items-center justify-content-between px-3">
-      <a href="{{ route('service.detail.confirm') }}" class="text-dark text-decoration-none">
+      <a href="{{ route('cart.index') }}" class="text-dark text-decoration-none">
         <svg width="22" height="22" fill="none">
           <path d="M14 5l-6 6 6 6" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>

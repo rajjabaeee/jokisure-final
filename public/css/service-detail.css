@@ -1,12 +1,15 @@
 :root{
   --bg:#fff; --desk:#0f0f10;
-  --radius:28px; --status:44px; --home:34px;
-  --line:#e6e6e6; --muted:#8a8a8a;
+  --radius:28px;
+  --line:#e6e6e6; 
+  --muted:#8a8a8a;
   --card:#eaeaea;
   --voucher-border:#0d6efd;
-  --cta:#ff4961; --cta-hover:#ff3650;
+  --cta:#ff4961; 
+  --cta-hover:#ff3650;
 }
 
+/* FRAME */
 html,body{height:100%}
 
 .preview-center{
@@ -30,37 +33,26 @@ html,body{height:100%}
              0 2px 8px rgba(0,0,0,.35)
 }
 
-/* STATUS BAR */
-.status-bar{
-  position:absolute;
-  top:0; left:0; right:0;
-  height:var(--status);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  font-weight:600;
-  font-size:14px;
-  user-select:none;
-  padding-top:2px;
-}
-
-/* SAFE AREA */
+/* SAFE AREA TANPA STATUS BAR / HOME BAR */
 .safe-area{
   position:absolute;
-  top:var(--status);
-  bottom:var(--home);
-  left:0; right:0;
+  top:0;
+  bottom:0;
+  left:0; 
+  right:0;
   overflow:auto;
   background:#fff;
 }
 
-/* APPBAR */
+/* APP BAR */
 .appbar{ height:50px; }
 
 .icon-btn{
   width:36px; height:36px;
   border-radius:999px;
-  display:flex; align-items:center; justify-content:center;
+  display:flex; 
+  align-items:center; 
+  justify-content:center;
   background:#f2f2f2;
   text-decoration:none;
   border:1px solid #eaeaea;
@@ -84,8 +76,8 @@ html,body{height:100%}
 /* VOUCHER */
 .voucher-row{
   border:1.5px solid #d8d8d8;
-  color:#0a0a0a;
   background:#fff;
+  color:#0a0a0a;
 }
 .voucher-row:hover{
   background:#f7f7f7;
@@ -97,7 +89,6 @@ html,body{height:100%}
   cursor:pointer;
   transition:.2s;
 }
-
 .voucher-card:hover{
   border-color:var(--voucher-border);
   background:#eef6ff;
@@ -138,23 +129,10 @@ html,body{height:100%}
 }
 .btn-cta:hover{
   background:var(--cta-hover);
-  color:#fff
+  color:#fff;
 }
 
-/* HOME INDICATOR */
-.home-indicator{
-  position:absolute;
-  left:50%;
-  bottom:8px;
-  transform:translateX(-50%);
-  width:134px;
-  height:5px;
-  border-radius:999px;
-  background:#0a0a0a;
-  opacity:.2;
-}
-
-/* RESPONSIVE → REAL PHONE */
+/* RESPONSIVE */
 @media (max-width:576px){
   .preview-center{ background:#fff }
   .device-frame{
@@ -162,14 +140,5 @@ html,body{height:100%}
     height:100vh;
     border-radius:0;
     box-shadow:none;
-  }
-
-  .modal-dialog.modal-sm{
-    max-width: 300px;
-    margin: auto;
-  }
-
-  .modal-content{
-    border-radius:16px !important;
   }
 }
