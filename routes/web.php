@@ -21,20 +21,15 @@ Route::post('/login', [LoginController::class, 'login'])
 	->name('login.perform')
 	->withoutMiddleware([RedirectIfAuthenticated::class]);
 
-// Public account pages (signup / reset / otp)
+// Public account pages (signup / otp / reset)
 Route::get('/signup', [UiController::class, 'signup'])->name('signup');
-// Step 1: Verify Phone Number button - stores data in session and redirects to OTP
+// Step 1: Store data and redirect to OTP
 Route::post('/signup/verify-phone', [RegisterController::class, 'storeDataForOTP'])->name('signup.verify.phone')->withoutMiddleware([RedirectIfAuthenticated::class]);
-// Step 2: OTP verification (always true) - redirects back to signup
+// Step 2: OTP verification and redirect back to signup
 Route::get('/otp', [UiController::class, 'otp'])->name('otp');
 Route::post('/otp', [RegisterController::class, 'verifyOTP'])->name('otp.verify')->withoutMiddleware([RedirectIfAuthenticated::class]);
-// Step 3: Final Sign Up button - saves to database and redirects to login
+// Step 3: Create account after signup button clicked
 Route::post('/signup', [RegisterController::class, 'register'])->name('signup.perform')->withoutMiddleware([RedirectIfAuthenticated::class]);
-// Demo helper: mark OTP verified via GET (dev only)
-Route::get('/otp/verify-demo', function (\Illuminate\Http\Request $request) {
-    $request->session()->put('signup.otp_verified', true);
-    return redirect()->route('signup')->with('status', 'Phone verified (demo). Please complete sign up.');
-})->name('otp.demo.verify')->withoutMiddleware([RedirectIfAuthenticated::class]);
 Route::get('/reset-password', [UiController::class, 'reset'])->name('reset');
 
 // Protected routes (requires auth)

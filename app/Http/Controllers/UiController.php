@@ -11,15 +11,15 @@ class UiController extends Controller
         // Clear all signup session data when starting fresh from splash
         $request->session()->forget('signup.data');
         $request->session()->forget('signup.otp');
-        $request->session()->forget('signup.otp_verified');
+        $request->session()->forget('signup.phone_verified');
         return view('auth.splash'); 
     }
     public function login()             { return view('auth.login'); }
     public function signup(Request $request) { 
-        // Clear any old signup session data when entering signup page fresh
-        if (!$request->session()->has('signup.otp_verified')) {
-            $request->session()->forget('signup.data');
+        // Only clear signup session data if starting completely fresh (no signup data exists)
+        if (!$request->session()->has('signup.data')) {
             $request->session()->forget('signup.otp');
+            $request->session()->forget('signup.phone_verified');
         }
         return view('auth.register'); 
     }
