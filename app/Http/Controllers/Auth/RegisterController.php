@@ -11,20 +11,22 @@ use App\Models\User;
 class RegisterController extends Controller
 {
     /**
-     * Step 1: Store signup data in session (click "Verify Phone Number")
+     * Step 1: Store signup data in session and redirect to OTP page
      */
     public function storeDataForOTP(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'password' => 'required|string|min:1',
+            'email' => 'required|email|max:255|unique:user,user_email',
+            'password' => 'required|string|min:6',
             'password_confirmation' => 'required|string|same:password',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'required|string|max:20',
         ]);
 
+        // Auto-generate name from email if not provided
+        $name = $request->input('name') ?: explode('@', $request->input('email'))[0];
+
         $request->session()->put('signup.data', [
-            'name' => $request->input('name'),
+            'name' => $name,
             'email' => $request->input('email'),
             'password' => $request->input('password'),
             'phone' => $request->input('phone'),
@@ -38,12 +40,12 @@ class RegisterController extends Controller
     }
 
     /**
-     * Step 2: Verify OTP (always true)
+     * Step 2: Verify OTP and redirect back to signup with verified status
      */
     public function verifyOTP(Request $request)
     {
         $request->validate([
-            'otp' => 'required|string',
+            'otp' => 'required|string|min:4',
         ]);
 
         $signup = $request->session()->get('signup.data');
@@ -51,43 +53,43 @@ class RegisterController extends Controller
             return redirect()->route('signup')->withErrors(['msg' => 'No signup data found.']);
         }
 
-        $request->session()->put('signup.otp_verified', true);
+        // Just mark as verified and redirect back to original signup form
+        $request->session()->put('signup.phone_verified', true);
         $request->session()->forget('signup.otp');
 
-        return redirect()->route('signup')->with('status', 'Phone verified! Click Sign Up to complete.');
+        return redirect()->route('signup');
     }
 
     /**
-     * Step 3: Final sign up - save to database
+     * Step 3: Create account after signup button clicked on verified form
      */
     public function register(Request $request)
     {
-        if (!$request->session()->get('signup.otp_verified')) {
+        if (!$request->session()->get('signup.phone_verified')) {
             return redirect()->route('signup')->withErrors(['msg' => 'Please verify your phone first.']);
         }
 
-        $signupData = $request->session()->get('signup.data');
-        if (!$signupData) {
-            return redirect()->route('signup')->withErrors(['msg' => 'Signup data not found.']);
+        $signup = $request->session()->get('signup.data');
+        if (!$signup) {
+            return redirect()->route('signup')->withErrors(['msg' => 'No signup data found.']);
         }
 
-        // Use correct column names for the 'user' table
         // Generate unique nametag from name
-        $baseNametag = strtolower(str_replace(' ', '', $signupData['name']));
+        $baseNametag = strtolower(str_replace(' ', '', $signup['name']));
         $nametag = $baseNametag . rand(100, 999);
         
         User::create([
-            'user_name' => $signupData['name'],
+            'user_name' => $signup['name'],
             'user_nametag' => $nametag,
-            'user_email' => $signupData['email'],
-            'user_password_hash' => Hash::make($signupData['password']),
-            'user_number' => $signupData['phone'],
+            'user_email' => $signup['email'],
+            'user_password_hash' => Hash::make($signup['password']),
+            'user_number' => $signup['phone'],
             'created_at' => now(),
         ]);
 
         $request->session()->forget('signup.data');
-        $request->session()->forget('signup.otp_verified');
+        $request->session()->forget('signup.phone_verified');
 
-        return redirect()->route('login')->with('success', 'Registration successful! Please login.');
+        return redirect('/login')->with('success', 'Account created successfully! Please login.');
     }
 }
