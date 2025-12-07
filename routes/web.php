@@ -8,6 +8,7 @@ use App\Http\Controllers\BoosterController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Middleware\RedirectIfAuthenticated;
@@ -27,15 +28,20 @@ Route::post('/login', [LoginController::class, 'login'])
 	->name('login.perform')
 	->withoutMiddleware([RedirectIfAuthenticated::class]);
 
-// Public account pages (signup / otp / reset)
+// Public account pages (signup / reset / otp)
 Route::get('/signup', [UiController::class, 'signup'])->name('signup');
-// Step 1: Store data and redirect to OTP
+// Step 1: Verify Phone Number button - stores data in session and redirects to OTP
 Route::post('/signup/verify-phone', [RegisterController::class, 'storeDataForOTP'])->name('signup.verify.phone')->withoutMiddleware([RedirectIfAuthenticated::class]);
-// Step 2: OTP verification and redirect back to signup
+// Step 2: OTP verification (always true) - redirects back to signup
 Route::get('/otp', [UiController::class, 'otp'])->name('otp');
 Route::post('/otp', [RegisterController::class, 'verifyOTP'])->name('otp.verify')->withoutMiddleware([RedirectIfAuthenticated::class]);
-// Step 3: Create account after signup button clicked
+// Step 3: Final Sign Up button - saves to database and redirects to login
 Route::post('/signup', [RegisterController::class, 'register'])->name('signup.perform')->withoutMiddleware([RedirectIfAuthenticated::class]);
+// Demo helper: mark OTP verified via GET (dev only)
+Route::get('/otp/verify-demo', function (\Illuminate\Http\Request $request) {
+    $request->session()->put('signup.otp_verified', true);
+    return redirect()->route('signup')->with('status', 'Phone verified (demo). Please complete sign up.');
+})->name('otp.demo.verify')->withoutMiddleware([RedirectIfAuthenticated::class]);
 Route::get('/reset-password', [UiController::class, 'reset'])->name('reset');
 
 // Protected routes (requires auth)
@@ -57,10 +63,16 @@ Route::middleware('auth')->group(function () {
 	// SERVICE DETAIL
 	Route::get('/service/detail', [UiController::class,'serviceDetailConfirm'])->name('service.detail.confirm');
 
+	// VOUCHER / DISCOUNT API
+	Route::get('/api/vouchers/available', [VoucherController::class, 'getAvailable'])->name('vouchers.available');
+	Route::post('/api/vouchers/validate', [VoucherController::class, 'validateVoucher'])->name('vouchers.validate');
+
 	// ORDERS & TRANSACTIONS (Dynamic via OrderController)
 	Route::get('/boost/request', [UiController::class,'boostRequest'])->name('boost.request');
-	Route::match(['get','post'],'/payment', [UiController::class,'payment'])->name('payment');
-	Route::match(['get','post'],'/payment/success', [UiController::class,'paymentSuccess'])->name('payment.success');
+	Route::post('/boost/request', [UiController::class,'storeBoostRequest'])->name('boost.request.store');
+	Route::get('/payment', [UiController::class,'payment'])->name('payment');
+	Route::post('/payment', [UiController::class,'processPayment'])->name('payment.process');
+	Route::get('/payment/success', [UiController::class,'paymentSuccess'])->name('payment.success');
 	
 	// Order listing and detail (dynamic - no status-specific static routes needed)
 	Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');

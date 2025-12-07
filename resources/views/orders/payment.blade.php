@@ -1,3 +1,4 @@
+{{-- resources/views/orders/payment.blade.php --}}
 <!doctype html>
 <html lang="en">
 <head>
@@ -10,38 +11,12 @@
 </head>
 
 <body class="preview-center">
+<main class="device-frame" role="main" aria-label="Payment">
 
-<main class="device-frame" role="main" aria-label="Service Detail Payment">
-
-  {{-- STATUS BAR --}}
-  <div class="status-bar d-flex align-items-center justify-content-between px-3">
-    <div class="time">9:41</div>
-    <div class="status-icons d-flex align-items-center gap-2">
-      <svg width="20" height="12" viewBox="0 0 20 12" fill="none">
-        <rect x="1" y="7" width="2" height="4" rx=".75" fill="#0a0a0a"/>
-        <rect x="5" y="5" width="2" height="6" rx=".75" fill="#0a0a0a"/>
-        <rect x="9" y="3" width="2" height="8" rx=".75" fill="#0a0a0a"/>
-        <rect x="13" y="1" width="2" height="10" rx=".75" fill="#0a0a0a"/>
-      </svg>
-
-      <svg width="18" height="12" viewBox="0 0 18 12" fill="none">
-        <path d="M9 9.5c.7 0 1.25.55 1.25 1.25S9.7 12 9 12 7.75 11.45 7.75 10.75 8.3 9.5 9 9.5Z" fill="#0a0a0a"/>
-        <path d="M3 6.5c3.9-3.2 8.1-3.2 12 0" stroke="#0a0a0a" stroke-width="1.6" stroke-linecap="round"/>
-        <path d="M5.6 8c2.53-2.05 4.27-2.05 6.8 0" stroke="#0a0a0a" stroke-width="1.6" stroke-linecap="round"/>
-      </svg>
-
-      <svg width="26" height="12" viewBox="0 0 26 12" fill="none">
-        <rect x="1" y="1" width="20" height="10" rx="2" stroke="#0a0a0a" stroke-width="1.5"/>
-        <rect x="3" y="3" width="16" height="6" rx="1.5" fill="#0a0a0a"/>
-        <rect x="22" y="4" width="3" height="4" rx="1" fill="#0a0a0a"/>
-      </svg>
-    </div>
-  </div>
-
-  {{-- SAFE AREA --}}
+  {{-- SAFE AREA TANPA STATUS BAR --}}
   <section class="safe-area d-flex flex-column">
 
-    {{-- APP BAR --}}
+    {{-- TOP BAR --}}
     <div class="appbar d-flex align-items-center justify-content-between px-3">
       <a href="{{ route('boost.request') }}" class="icon-btn">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -83,7 +58,7 @@
         </div>
       </div>
 
-      {{-- VOUCHER TRIGGER --}}
+      {{-- VOUCHER --}}
       <a class="voucher-row mb-3 d-flex align-items-center justify-content-between rounded-2 px-3 py-3 text-decoration-none"
          data-bs-toggle="modal" data-bs-target="#voucherModal">
 
@@ -98,8 +73,11 @@
       {{-- PAYMENT METHOD --}}
       <div class="mb-2 fw-semibold">Payment Method</div>
 
-      <form method="post" action="{{ route('payment.success') }}">
+      <form method="post" action="{{ route('payment.process') }}">
         @csrf
+
+        <input type="hidden" name="voucher_id" id="selectedVoucherId" value="">
+        <input type="hidden" name="discount_amount" id="selectedDiscountAmount" value="0">
 
         <select name="method" class="form-select form-select-dark mb-3" required>
           <option disabled selected>Select your payment</option>
@@ -140,7 +118,6 @@
     </div>
   </section>
 
-  <div class="home-indicator"></div>
 </main>
 
 {{-- MODAL VOUCHER --}}
@@ -150,13 +127,13 @@
 
       <h5 class="fw-bold mb-3 text-center">Available Vouchers</h5>
 
-      <div class="voucher-card p-3 mb-2 rounded-3 border" onclick="selectVoucher(20)">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <div class="fw-bold">20% OFF</div>
-            <div class="small text-muted">Discount applies to all packs</div>
+      <div id="voucherList">
+        <!-- Vouchers will be loaded here dynamically -->
+        <div class="text-center text-muted py-3">
+          <div class="spinner-border spinner-border-sm" role="status">
+            <span class="visually-hidden">Loading...</span>
           </div>
-          <input type="radio" name="voucher" value="20">
+          <div class="mt-2">Loading vouchers...</div>
         </div>
       </div>
 
@@ -173,31 +150,116 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-
-  let selectedVoucher = 0;
+  let selectedVoucher = null;
+  let availableVouchers = [];
   const basePrice = 60000;
   const tax = 5000;
 
-  function selectVoucher(voucher) {
-    selectedVoucher = voucher;
+  // Load vouchers when modal is opened
+  document.getElementById('voucherModal').addEventListener('show.bs.modal', function () {
+    loadVouchers();
+  });
+
+  // Fetch available vouchers from backend
+  function loadVouchers() {
+    const cartTotal = basePrice; // Hardcoded for now, will be dynamic later
+
+    fetch(`/api/vouchers/available?cart_total=${cartTotal}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.success && data.data.length > 0) {
+          availableVouchers = data.data;
+          displayVouchers(data.data);
+        } else {
+          displayNoVouchers();
+        }
+      })
+      .catch(error => {
+        console.error('Error loading vouchers:', error);
+        displayError();
+      });
   }
 
+  // Display vouchers in modal
+  function displayVouchers(vouchers) {
+    const voucherList = document.getElementById('voucherList');
+    voucherList.innerHTML = '';
+
+    vouchers.forEach(voucher => {
+      const voucherCard = document.createElement('div');
+      voucherCard.className = 'voucher-card p-3 mb-2 rounded-3 border';
+      voucherCard.style.cursor = 'pointer';
+      voucherCard.onclick = () => selectVoucher(voucher);
+
+      voucherCard.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="fw-bold">${voucher.discount_value}% OFF</div>
+            <div class="small text-muted">${voucher.discount_desc || 'Discount applies to all packs'}</div>
+            ${voucher.min_transaction > 0 ? `<div class="small text-muted mt-1">Min: Rp ${voucher.min_transaction.toLocaleString()}</div>` : ''}
+          </div>
+          <input type="radio" name="voucher" value="${voucher.discount_id}" id="voucher_${voucher.discount_id}">
+        </div>
+      `;
+
+      voucherList.appendChild(voucherCard);
+    });
+  }
+
+  // Display message when no vouchers available
+  function displayNoVouchers() {
+    const voucherList = document.getElementById('voucherList');
+    voucherList.innerHTML = `
+      <div class="text-center text-muted py-4">
+        <div class="mb-2">😔</div>
+        <div>No vouchers available for this order</div>
+      </div>
+    `;
+  }
+
+  // Display error message
+  function displayError() {
+    const voucherList = document.getElementById('voucherList');
+    voucherList.innerHTML = `
+      <div class="text-center text-danger py-4">
+        <div class="mb-2">⚠️</div>
+        <div>Failed to load vouchers</div>
+        <button class="btn btn-sm btn-outline-secondary mt-2" onclick="loadVouchers()">Retry</button>
+      </div>
+    `;
+  }
+
+  // Select a voucher
+  function selectVoucher(voucher) {
+    selectedVoucher = voucher;
+    // Check the corresponding radio button
+    document.getElementById(`voucher_${voucher.discount_id}`).checked = true;
+  }
+
+  // Apply selected voucher
   function applyVoucher() {
-    if (selectedVoucher === 0) {
+    if (!selectedVoucher) {
       alert("Please select a voucher!");
       return;
     }
 
-    const discountAmount = (basePrice * selectedVoucher) / 100;
+    const discountAmount = (basePrice * selectedVoucher.discount_value) / 100;
     const total = basePrice - discountAmount + tax;
 
+    // Update display
     document.getElementById("discountAmount").innerText = "-Rp " + discountAmount.toLocaleString();
     document.getElementById("totalPrice").innerText = "Rp " + total.toLocaleString();
 
+    // Set hidden inputs for form submission
+    document.getElementById("selectedVoucherId").value = selectedVoucher.discount_id;
+    document.getElementById("selectedDiscountAmount").value = discountAmount;
+
+    // Close modal
     let modal = bootstrap.Modal.getInstance(document.getElementById('voucherModal'));
     modal.hide();
-  }
 
+    console.log('Voucher applied:', selectedVoucher);
+  }
 </script>
 
 </body>
