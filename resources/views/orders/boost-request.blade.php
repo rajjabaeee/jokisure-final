@@ -36,7 +36,7 @@
     <div class="divider"></div>
 
     {{-- FORM --}}
-    <form id="boostForm" class="container px-3 pb-5" method="post" action="{{ route('payment') }}" novalidate>
+    <form id="boostForm" class="container px-3 pb-5" method="post" action="{{ route('boost.request.store') }}" novalidate>
       @csrf
 
       <h2 class="section-head mt-3">Contact</h2>
