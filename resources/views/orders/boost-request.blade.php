@@ -48,7 +48,10 @@
 
       <div class="mb-3">
         <label class="form-label required">Contact Details</label>
-        <input type="email" class="form-control input-lg" name="email" placeholder="Enter your email" required>
+        <input type="email" class="form-control input-lg" name="email" id="emailInput" placeholder="Enter your email" required>
+        <div class="invalid-feedback-custom" id="emailError" style="display:none;">
+          Please enter a valid email address with '@'
+        </div>
       </div>
 
       <div class="mb-3">
@@ -114,13 +117,44 @@
   const form      = document.getElementById('boostForm');
   const submitBtn = document.getElementById('submitBtn');
   const consent   = document.getElementById('consent');
+  const emailInput = document.getElementById('emailInput');
+  const emailError = document.getElementById('emailError');
 
   const reqNames = ['name','email','phone','username','password'];
+
+  // Email validation - real-time
+  emailInput.addEventListener('input', function() {
+    const email = this.value.trim();
+    
+    if (email.length > 0 && !email.includes('@')) {
+      // Show error
+      this.classList.add('is-invalid-custom');
+      emailError.style.display = 'block';
+    } else if (email.length > 0 && email.includes('@') && !isValidEmail(email)) {
+      // Has @ but still invalid format
+      this.classList.add('is-invalid-custom');
+      emailError.style.display = 'block';
+      emailError.textContent = 'Please enter a valid email format (example@email.com)';
+    } else {
+      // Valid or empty
+      this.classList.remove('is-invalid-custom');
+      emailError.style.display = 'none';
+      emailError.textContent = "Please enter a valid email address with '@'";
+    }
+    
+    syncBtn();
+  });
+
+  function isValidEmail(email) {
+    // Simple email regex
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
 
   function isValid() {
     const filled = reqNames.every(n => (form.elements[n]?.value || '').trim().length > 0);
     const chosen = [...form.querySelectorAll('input[name="priority"]')].some(r => r.checked);
-    return filled && chosen && consent.checked;
+    const emailValid = isValidEmail(emailInput.value.trim());
+    return filled && chosen && consent.checked && emailValid;
   }
 
   function syncBtn(){
