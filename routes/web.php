@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UiController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Middleware\RedirectIfAuthenticated;
 
 // Show splash at root (public)
@@ -30,7 +31,15 @@ Route::get('/otp', [UiController::class, 'otp'])->name('otp');
 Route::post('/otp', [RegisterController::class, 'verifyOTP'])->name('otp.verify')->withoutMiddleware([RedirectIfAuthenticated::class]);
 // Step 3: Create account after signup button clicked
 Route::post('/signup', [RegisterController::class, 'register'])->name('signup.perform')->withoutMiddleware([RedirectIfAuthenticated::class]);
-Route::get('/reset-password', [UiController::class, 'reset'])->name('reset');
+// Demo helper: mark OTP verified via GET (dev only)
+Route::get('/otp/verify-demo', function (\Illuminate\Http\Request $request) {
+    $request->session()->put('signup.otp_verified', true);
+    return redirect()->route('signup')->with('status', 'Phone verified (demo). Please complete sign up.');
+})->name('otp.demo.verify')->withoutMiddleware([RedirectIfAuthenticated::class]);
+
+// Password Reset Routes
+Route::get('/reset-password', [ResetPasswordController::class, 'showResetForm'])->name('reset');
+Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.reset.perform');
 
 // Protected routes (requires auth)
 Route::middleware('auth')->group(function () {
