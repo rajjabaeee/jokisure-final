@@ -142,6 +142,7 @@ class BoosterController extends Controller
         // Format services data
         $services = $servicesQuery->get()->map(function($service) {
             return [
+                'service_id' => $service->service_id,
                 'service_name' => $service->service_name ?? 'Service',
                 'game_name' => $service->game->game_name ?? 'Unknown Game',
                 'price' => $service->service_price ?? 0,
