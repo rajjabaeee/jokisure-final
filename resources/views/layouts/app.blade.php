@@ -13,6 +13,9 @@
 
   <!-- Page CSS -->
   <link href="{{ asset('css/my-profile.css') }}" rel="stylesheet">
+
+  {{-- Extra styles per-page --}}
+  @stack('styles')
 </head>
 
 <body class="preview-center">
@@ -33,10 +36,13 @@
 
     <!-- APP BAR -->
     <div class="appbar d-flex align-items-center justify-content-between px-3">
-      <a href="{{ route('home') }}" class="icon-btn" aria-label="Back">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 12h12M10 8l-4 4 4 4" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-      <div class="fw-semibold">@yield('title', 'JokiSure')</div>
+      {{-- Back button --}}
+      <a href="javascript:history.back()" class="back-btn" style="color: #0a0a0a; text-decoration: none; font-size: 24px;">←</a>
+
+      {{-- Title (pakai appbar-title biar konsisten dengan halaman lain) --}}
+      <div class="fw-semibold">@yield('appbar-title', 'JokiSure')</div>
+
+      {{-- Help button (buka overlay) --}}
       <button type="button" class="icon-btn" aria-label="Help" onclick="openHelpOverlay()" style="border: none; background: none; padding: 0; cursor: pointer;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
@@ -59,7 +65,7 @@
       function openHelpOverlay() {
         document.getElementById('helpOverlay').style.display = 'flex';
       }
-      
+
       function closeHelpOverlay(event) {
         if (!event || event.target.id === 'helpOverlay') {
           document.getElementById('helpOverlay').style.display = 'none';

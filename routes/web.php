@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Controllers\ReviewController;
 
 // Show splash at root (public)
 Route::get('/', [UiController::class, 'splash'])->name('welcome');
@@ -101,13 +102,22 @@ Route::middleware('auth')->group(function () {
 	Route::post('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update.status');
 	
 	// Order tracking (dynamic - returns appropriate track view based on status)
-	Route::get('/track/{order}', [OrderController::class, 'track'])->name('orders.track');
 	Route::post('/track/{order}/events', [OrderController::class, 'addEvent'])->name('orders.track.event.store');
 
 	//CHAT ROUTERS
 	Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
     Route::get('/chat/{receiverId}', [ChatController::class, 'show'])->name('chat.show');
     Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
+	
+	//Track Order
+	Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+	Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+	Route::get('/track/{order}', [OrderController::class, 'track'])->name('orders.track');
+
+	//Review and Rating
+	Route::get('/orders/{orderId}/review', [ReviewController::class, 'create'])->name('reviews.create');
+	Route::post('/orders/{orderId}/review', [ReviewController::class, 'store'])->name('reviews.store');
+	Route::get('/service/{serviceId}/reviews', [ReviewController::class, 'index'])->name('reviews.index');
 
 	// USER ROUTES
 	Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
