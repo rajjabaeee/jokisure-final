@@ -59,28 +59,6 @@
         homepage.
       </p>
 
-      <div class="mb-3 text-start" style="max-width:290px">
-        <div class="d-flex justify-content-between mb-1">
-          <span class="small text-muted">Subtotal:</span>
-          <span class="small">Rp {{ number_format($paymentResult['subtotal'] ?? 0, 0, ',', '.') }}</span>
-        </div>
-        @if(isset($paymentResult['discount']) && $paymentResult['discount'] > 0)
-        <div class="d-flex justify-content-between mb-1">
-          <span class="small text-muted">Discount:</span>
-          <span class="small text-danger">-Rp {{ number_format($paymentResult['discount'], 0, ',', '.') }}</span>
-        </div>
-        @endif
-        <div class="d-flex justify-content-between mb-1">
-          <span class="small text-muted">Tax & Service:</span>
-          <span class="small">Rp {{ number_format($paymentResult['tax'] ?? 0, 0, ',', '.') }}</span>
-        </div>
-        <hr class="my-2">
-        <div class="d-flex justify-content-between">
-          <span class="fw-semibold">Total Paid:</span>
-          <span class="fw-bold">Rp {{ number_format($paymentResult['total'] ?? 0, 0, ',', '.') }}</span>
-        </div>
-      </div>
-
       <div class="d-flex gap-3 w-100 justify-content-center">
         <a href="{{ route('home') }}" class="btn btn-back w-50">Back to Homepage</a>
         <a href="{{ route('orders.index') }}" class="btn btn-cta w-50">View Order</a>
