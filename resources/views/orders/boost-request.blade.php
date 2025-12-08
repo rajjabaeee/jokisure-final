@@ -77,22 +77,22 @@
         <label class="form-label required d-block">Boost Priority</label>
 
         <div class="form-check rb">
-          <input class="form-check-input" type="radio" name="priority" id="p1" value="vip_plus">
+          <input class="form-check-input" type="radio" name="priority" id="p1" value="VIP+ (>6 hours)">
           <label class="form-check-label" for="p1">VIP+ (&gt;6 Hours)</label>
         </div>
 
         <div class="form-check rb">
-          <input class="form-check-input" type="radio" name="priority" id="p2" value="vip">
+          <input class="form-check-input" type="radio" name="priority" id="p2" value="VIP (<6 hours)">
           <label class="form-check-label" for="p2">VIP (&lt;6 Hours)</label>
         </div>
 
         <div class="form-check rb">
-          <input class="form-check-input" type="radio" name="priority" id="p3" value="same_day">
+          <input class="form-check-input" type="radio" name="priority" id="p3" value="Same Day (1 day)">
           <label class="form-check-label" for="p3">Same Day (1 Day)</label>
         </div>
 
         <div class="form-check rb mb-2">
-          <input class="form-check-input" type="radio" name="priority" id="p4" value="regular">
+          <input class="form-check-input" type="radio" name="priority" id="p4" value="Regular (1 - 2 day)">
           <label class="form-check-label" for="p4">Regular (1–2 Day)</label>
         </div>
       </div>
