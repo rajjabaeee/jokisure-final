@@ -36,7 +36,15 @@ class UiController extends Controller
         return view('orders.service-detail', compact('service')); 
     }
     
-    public function boostRequest()      { return view('orders.boost-request'); }
+    public function boostRequest() { 
+        $user = auth()->user();
+        
+        return view('orders.boost-request', [
+            'userName' => $user->user_name ?? '',
+            'userEmail' => $user->user_email ?? '',
+            'userPhone' => $user->user_number ?? ''
+        ]);
+    }
     
     public function storeBoostRequest(Request $request) {
         // Validate incoming data

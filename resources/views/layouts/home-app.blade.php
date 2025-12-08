@@ -33,25 +33,25 @@
       <div class="container-fluid" style="padding: 0; display: flex; align-items: center; gap: 12px;">
         <!-- Menu Toggle Button - Sebelah Kiri -->
         <button class="btn btn-light" type="button" id="menuToggleBtn" style="border: none; padding: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M3 6h18M3 12h18M3 18h18"/>
           </svg>
         </button>
 
         <!-- Logo -->
         <a class="navbar-brand" href="{{ route('home') }}" style="margin: 0; display: flex; align-items: center; flex-shrink: 0;">
-          <img src="{{ asset('assets/logo.png') }}" alt="JokiSure" height="32">
+          <img src="{{ asset('assets/logo.png') }}" alt="JokiSure" height="30">
         </a>
 
         <!-- Search Bar -->
-        <div style="flex-grow: 1; max-width: 300px;">
-          <input type="text" class="form-control rounded-pill" placeholder="Search..." style="height: 36px; font-size: 14px;">
+        <div style="flex-grow: 1; max-width: 200px;">
+          <input type="text" class="form-control rounded-pill" placeholder="Search..." style="height: 30px; font-size: 12px;">
         </div>
 
         <!-- Cart Icon -->
-        <a href="{{ route('cart.index') }}" class="position-relative" style="text-decoration: none; color: #0a0a0a; flex-shrink: 0;">
+        <a href="{{ route('cart.index') }}" class="position-relative" style="text-decoration: none; color: #0a0a0a; flex-shrink: 0; margin-left: auto;">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 2a1 1 0 0 0 0 2h.01a1 1 0 0 0 0-2H9z"/><path d="M5 5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5z"/>
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
           </svg>
           <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 10px; padding: 2px 6px;">1</span>
         </a>
@@ -134,7 +134,7 @@
       <span>Home</span>
     </a>
     <a class="tab{{ Route::currentRouteName() === 'cart.index' ? ' active' : '' }}" href="{{ route('cart.index') }}">
-      <svg viewBox="0 0 24 24"><path d="M6 7h12l-1 11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 7Z" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 7V5a3 3 0 0 1 6 0v2" fill="none"/></svg>
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1" fill="none"/><circle cx="20" cy="21" r="1" fill="none"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" fill="none"/></svg>
       <span>Cart</span>
     </a>
     <a class="tab{{ Route::currentRouteName() === 'chat.index' ? ' active' : '' }}" href="{{ route('chat.index') }}">
