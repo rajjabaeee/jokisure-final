@@ -11,29 +11,32 @@
   <link href="{{ asset('css/boost-request.css') }}" rel="stylesheet">
 </head>
 <body class="preview-center">
+
 <main class="device-frame">
 
-  <div class="status-bar d-flex align-items-center justify-content-between px-3">
-    <div class="fw-semibold">9:41</div>
-    <div class="d-flex align-items-center gap-2"><div class="battery"></div></div>
-  </div>
-
+  {{-- SAFE AREA --}}
   <section class="safe-area">
+
+    {{-- TOP BAR --}}
     <div class="appbar d-flex align-items-center justify-content-between px-3">
-      <a href="{{ route('service.detail.confirm') }}" class="text-dark text-decoration-none" aria-label="Back">
-        <svg width="22" height="22" fill="none" aria-hidden="true">
+      <a href="{{ route('cart.index') }}" class="text-dark text-decoration-none">
+        <svg width="22" height="22" fill="none">
           <path d="M14 5l-6 6 6 6" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </a>
+
       <div class="title-appbar">Boost Request</div>
-      <svg width="22" height="22" fill="none" aria-hidden="true">
+
+      <svg width="22" height="22" fill="none">
         <circle cx="11" cy="11" r="10" stroke="#000" stroke-width="2"/>
         <text x="11" y="15" text-anchor="middle" font-size="10" font-family="Inter, sans-serif" fill="#000">?</text>
       </svg>
     </div>
+
     <div class="divider"></div>
 
-    <form id="boostForm" class="container px-3 pb-5" method="post" action="{{ route('payment') }}" novalidate>
+    {{-- FORM --}}
+    <form id="boostForm" class="container px-3 pb-5" method="post" action="{{ route('boost.request.store') }}" novalidate>
       @csrf
 
       <h2 class="section-head mt-3">Contact</h2>
@@ -64,6 +67,7 @@
         <label class="form-label required">Password</label>
         <input type="text" class="form-control input-lg" name="password" placeholder="Enter your password" required>
       </div>
+
       <p class="helper mb-3">We will contact you for the 2FA Verification by direct messages</p>
 
       <div class="mb-2">
@@ -97,11 +101,13 @@
         </label>
       </div>
 
-      <button type="submit" id="submitBtn" class="btn submit w-100 fw-semibold" aria-disabled="true">Submit</button>
+      <button type="submit" id="submitBtn" class="btn submit w-100 fw-semibold" aria-disabled="true">
+        Submit
+      </button>
+
     </form>
   </section>
 
-  <div class="home-indicator"></div>
 </main>
 
 <script>
@@ -109,23 +115,29 @@
   const submitBtn = document.getElementById('submitBtn');
   const consent   = document.getElementById('consent');
 
-  // fields that must be non-empty
   const reqNames = ['name','email','phone','username','password'];
+
   function isValid() {
     const filled = reqNames.every(n => (form.elements[n]?.value || '').trim().length > 0);
     const chosen = [...form.querySelectorAll('input[name="priority"]')].some(r => r.checked);
     return filled && chosen && consent.checked;
   }
+
   function syncBtn(){
-    if (isValid()) { submitBtn.classList.add('enabled'); submitBtn.setAttribute('aria-disabled','false'); }
-    else { submitBtn.classList.remove('enabled'); submitBtn.setAttribute('aria-disabled','true'); }
+    if (isValid()) {
+      submitBtn.classList.add('enabled');
+      submitBtn.setAttribute('aria-disabled','false');
+    } else {
+      submitBtn.classList.remove('enabled');
+      submitBtn.setAttribute('aria-disabled','true');
+    }
   }
+
   form.addEventListener('input', syncBtn);
   form.addEventListener('change', syncBtn);
-  form.addEventListener('submit', (e)=>{
-    if (!isValid()) { e.preventDefault(); }
-  });
+  form.addEventListener('submit', (e)=>{ if (!isValid()) e.preventDefault(); });
   syncBtn();
 </script>
+
 </body>
 </html>
