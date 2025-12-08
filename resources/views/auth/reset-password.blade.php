@@ -37,15 +37,82 @@
         <div class="container">
           <h1 class="h4 fw-bold mb-3">Reset Password</h1>
 
+          <form method="POST" action="{{ route('password.reset.perform') }}" style="display: none;">
+            @csrf
+            <input type="text" name="identity" value="{{ old('identity') }}">
+            <input type="password" name="password">
+            <input type="password" name="password_confirmation">
+          </form>
+
           <label class="form-label mb-1">New Password</label>
-          <input type="password" class="form-control mb-3" placeholder="Enter Your Password">
+          <input type="password" id="new-password" class="form-control mb-3" placeholder="Enter Your Password">
 
           <label class="form-label mb-1">Confirm New Password</label>
-          <input type="password" class="form-control mb-4" placeholder="Confirm Your Password">
+          <input type="password" id="confirm-password" class="form-control mb-4" placeholder="Confirm Your Password">
 
-          <button class="btn btn-cta w-100 mt-2">Change Password</button>
+          <button onclick="submitPasswordReset()" class="btn btn-cta w-100 mt-2">Change Password</button>
+          
+          @if(session('success'))
+            <div class="alert alert-success mt-3">{{ session('success') }}</div>
+          @endif
+          
+          @error('identity')
+            <div class="text-danger small mt-2">{{ $message }}</div>
+          @enderror
+          
+          @error('password')
+            <div class="text-danger small mt-2">{{ $message }}</div>
+          @enderror
         </div>
       </div>
+
+      <script>
+        // Get identity from session storage when page loads
+        let storedIdentity = '';
+        document.addEventListener('DOMContentLoaded', function() {
+          storedIdentity = sessionStorage.getItem('resetIdentity') || '';
+          if (storedIdentity) {
+            // Clear session storage after use
+            sessionStorage.removeItem('resetIdentity');
+          }
+        });
+
+        function submitPasswordReset() {
+          const newPassword = document.getElementById('new-password').value;
+          const confirmPassword = document.getElementById('confirm-password').value;
+          
+          if (!newPassword || !confirmPassword) {
+            alert('Please fill in all fields');
+            return;
+          }
+          
+          if (newPassword !== confirmPassword) {
+            alert('Passwords do not match');
+            return;
+          }
+          
+          if (newPassword.length < 6) {
+            alert('Password must be at least 6 characters');
+            return;
+          }
+          
+          // Use stored identity or ask for it
+          let identity = storedIdentity;
+          if (!identity) {
+            identity = prompt('Enter your username or email for password reset:');
+            if (!identity) {
+              return;
+            }
+          }
+          
+          // Fill hidden form and submit
+          const form = document.querySelector('form');
+          form.querySelector('input[name="identity"]').value = identity;
+          form.querySelector('input[name="password"]').value = newPassword;
+          form.querySelector('input[name="password_confirmation"]').value = confirmPassword;
+          form.submit();
+        }
+      </script>
     </section>
 
     <div class="home-indicator" aria-hidden="true"></div>

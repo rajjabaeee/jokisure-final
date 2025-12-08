@@ -13,6 +13,7 @@ use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Middleware\RedirectIfAuthenticated;
 
 // Show splash at root (public)
@@ -44,7 +45,10 @@ Route::get('/otp/verify-demo', function (\Illuminate\Http\Request $request) {
     $request->session()->put('signup.otp_verified', true);
     return redirect()->route('signup')->with('status', 'Phone verified (demo). Please complete sign up.');
 })->name('otp.demo.verify')->withoutMiddleware([RedirectIfAuthenticated::class]);
-Route::get('/reset-password', [UiController::class, 'reset'])->name('reset');
+
+// Password Reset Routes
+Route::get('/reset-password', [ResetPasswordController::class, 'showResetForm'])->name('reset');
+Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.reset.perform');
 
 // Protected routes (requires auth)
 Route::middleware('auth')->group(function () {
