@@ -24,23 +24,54 @@ class PaymentController extends Controller
         // Fetch payment methods from database
         $paymentMethods = PaymentMethod::where('is_active', true)->get();
 
-        // Get cart items for authenticated user
+        // Get cart items based on order source
         $user = auth()->user();
         $buyer = Buyer::where('user_id', $user->user_id)->first();
         
         $cartItems = collect();
         $subtotal = 0;
         
-        if ($buyer) {
-            $cartItems = CartItem::where('cart_id', $buyer->cart_id)
-                ->with('service.game')
-                ->get();
-            $subtotal = $cartItems->sum(fn($item) => $item->service->service_price);
-        }
-
-        // If cart is empty, use hardcoded value for testing
-        if ($cartItems->isEmpty()) {
-            $subtotal = 60000;
+        $orderSource = session('order_source', 'cart');
+        
+        if ($orderSource === 'cart') {
+            // From cart - fetch only selected items
+            $selectedServices = session('selected_services', []);
+            
+            if ($buyer && !empty($selectedServices)) {
+                $cartItems = CartItem::where('cart_id', $buyer->cart_id)
+                    ->whereIn('service_id', $selectedServices)
+                    ->with('service.game')
+                    ->get();
+                $subtotal = $cartItems->sum(fn($item) => $item->service->service_price);
+            }
+            
+            // Fallback if no items found
+            if ($cartItems->isEmpty()) {
+                $subtotal = 60000;
+            }
+        } else {
+            // Direct purchase - fetch single service
+            $serviceId = session('service_id');
+            
+            if ($serviceId) {
+                $service = \App\Models\Service::with('game')->find($serviceId);
+                
+                if ($service) {
+                    // Wrap service as cart item for view compatibility
+                    $cartItems = collect([
+                        (object)[
+                            'service' => $service,
+                            'service_id' => $service->service_id
+                        ]
+                    ]);
+                    $subtotal = $service->service_price;
+                }
+            }
+            
+            // Fallback if service not found
+            if ($cartItems->isEmpty()) {
+                $subtotal = 60000;
+            }
         }
 
         return view('orders.payment', compact('paymentMethods', 'cartItems', 'subtotal'));

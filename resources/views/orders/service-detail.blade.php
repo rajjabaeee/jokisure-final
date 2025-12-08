@@ -207,7 +207,7 @@
 
   proceedBtn.addEventListener('click', ()=>{
     if (proceedBtn.classList.contains('enabled')) {
-      window.location.href = "{{ route('boost.request') }}";
+      window.location.href = "{{ route('boost.request') }}?service_id={{ $service->service_id ?? '' }}";
     }
   });
 

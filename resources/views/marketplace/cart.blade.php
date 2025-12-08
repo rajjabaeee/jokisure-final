@@ -336,8 +336,8 @@
           return;
         }
 
-        // Redirect to checkout with selected services
-        const queryString = selectedServices.map(id => 'services=' + id).join('&');
+        // Redirect to checkout with selected services (array format)
+        const queryString = selectedServices.map(id => 'services[]=' + id).join('&');
         window.location.href = '{{ route("boost.request") }}?' + queryString;
       }
     </script>

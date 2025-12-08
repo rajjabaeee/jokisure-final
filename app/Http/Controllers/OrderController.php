@@ -193,6 +193,7 @@ class OrderController extends Controller
         // Get data from session
         $boostData = session('boost_request');
         $paymentData = session('payment_data');
+        $orderSource = session('order_source', 'cart');
 
         if (!$boostData || !$paymentData) {
             return redirect()->route('boost.request')->with('error', 'Missing order data. Please start again.');
@@ -210,13 +211,46 @@ class OrderController extends Controller
             return back()->with('error', 'Order status not configured. Please contact support.');
         }
 
-        // Get cart items
-        $cartItems = CartItem::where('cart_id', $buyer->cart_id)
-            ->with('service')
-            ->get();
-
-        if ($cartItems->isEmpty()) {
-            return back()->with('error', 'Your cart is empty.');
+        // Get items based on order source
+        $items = collect();
+        
+        if ($orderSource === 'cart') {
+            // From cart - get selected items only
+            $selectedServices = session('selected_services', []);
+            
+            if (empty($selectedServices)) {
+                return back()->with('error', 'No items selected.');
+            }
+            
+            $items = CartItem::where('cart_id', $buyer->cart_id)
+                ->whereIn('service_id', $selectedServices)
+                ->with('service')
+                ->get();
+                
+            if ($items->isEmpty()) {
+                return back()->with('error', 'Selected items not found in cart.');
+            }
+        } else {
+            // Direct purchase - get single service
+            $serviceId = session('service_id');
+            
+            if (!$serviceId) {
+                return back()->with('error', 'Service not found.');
+            }
+            
+            $service = \App\Models\Service::find($serviceId);
+            
+            if (!$service) {
+                return back()->with('error', 'Service not found.');
+            }
+            
+            // Wrap service as cart item for unified processing
+            $items = collect([
+                (object)[
+                    'service_id' => $service->service_id,
+                    'service' => $service
+                ]
+            ]);
         }
 
         // Create work order
@@ -230,14 +264,14 @@ class OrderController extends Controller
             'total_amount' => $paymentData['total']
         ]);
 
-        // Create order items from cart
-        foreach ($cartItems as $cartItem) {
+        // Create order items
+        foreach ($items as $item) {
             OrderItem::create([
                 'order_id' => $workOrder->order_id,
                 'buyer_id' => $buyer->buyer_id,
-                'service_id' => $cartItem->service_id,
+                'service_id' => $item->service_id,
                 'quantity' => 1,
-                'item_subtotal' => $cartItem->service->service_price,
+                'item_subtotal' => $item->service->service_price,
                 'game_username' => $boostData['username'],
                 'game_password_encrypt' => encrypt($boostData['password']),
                 'contact_name' => $boostData['name'],
@@ -251,13 +285,18 @@ class OrderController extends Controller
             'order_id' => $workOrder->order_id,
             'buyer_id' => $buyer->buyer_id,
             'method_id' => $paymentData['method_id'],
-            'payment_status_id' => $orderStatus->order_status_id, // Same as order status for now
-            'gateway_reference' => null, // Will be updated by payment gateway callback
+            'payment_status_id' => $orderStatus->order_status_id,
+            'gateway_reference' => null,
             'latest_update' => now()
         ]);
 
-        // Delete cart items
-        CartItem::where('cart_id', $buyer->cart_id)->delete();
+        // Delete cart items only if order source is cart
+        if ($orderSource === 'cart') {
+            $selectedServices = session('selected_services', []);
+            CartItem::where('cart_id', $buyer->cart_id)
+                ->whereIn('service_id', $selectedServices)
+                ->delete();
+        }
 
         // Store order info for success page
         session([
@@ -268,8 +307,8 @@ class OrderController extends Controller
             ]
         ]);
 
-        // Clear boost request and payment data from session
-        session()->forget(['boost_request', 'payment_data']);
+        // Clear session data
+        session()->forget(['boost_request', 'payment_data', 'order_source', 'selected_services', 'service_id']);
 
         // Redirect to payment success
         return redirect()->route('payment.success');
