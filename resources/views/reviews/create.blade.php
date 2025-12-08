@@ -208,7 +208,35 @@
                     @csrf
 
                     <div class="d-flex align-items-center mb-4 mt-2">
-                        <img src="{{ asset('assets/default-thumb.png') }}" class="modal-service-img">
+                        @php
+                            // Get service-specific image based on content
+                            $serviceContent = strtolower(($item->service->service_name ?? '') . ' ' . ($item->service->service_desc ?? ''));
+                            
+                            if (str_contains($serviceContent, 'abyss')) {
+                                $imageName = 'abyss.jpg';
+                            } elseif (str_contains($serviceContent, 'natlan')) {
+                                $imageName = 'natlan.jpg';
+                            } elseif (str_contains($serviceContent, 'inazuma')) {
+                                $imageName = 'inazuma.jpg';
+                            } elseif (str_contains($serviceContent, 'liyue')) {
+                                $imageName = 'liyue.jpg';
+                            } elseif (str_contains($serviceContent, 'mondstadt')) {
+                                $imageName = 'Monstandt.png';
+                            } elseif (str_contains($serviceContent, 'fontaine')) {
+                                $imageName = 'fontaine.jpg';
+                            } elseif (str_contains($serviceContent, 'sumeru')) {
+                                $imageName = 'sumeru.jpg';
+                            } elseif (str_contains($serviceContent, 'enkanomiya')) {
+                                $imageName = 'enkanomiya.jpg';
+                            } elseif (str_contains($serviceContent, 'dragonspine')) {
+                                $imageName = 'dragonspine.jpg';
+                            } elseif (str_contains($serviceContent, 'chasm')) {
+                                $imageName = 'chasm.jpg';
+                            } else {
+                                $imageName = 'default-thumb.png';
+                            }
+                        @endphp
+                        <img src="{{ asset('assets/' . $imageName) }}" class="modal-service-img">
                         <div>
                             <div class="modal-service-title">{{ $item->service->game->game_name }}</div>
                             <div class="modal-service-variant text-muted">Variant: {{ $item->service->service_desc }}</div>

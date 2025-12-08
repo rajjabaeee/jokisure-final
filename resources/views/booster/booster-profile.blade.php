@@ -41,7 +41,15 @@
       <img class="cover-img" src="{{ $booster['banner'] }}" alt="cover">
       <div class="cover-gradient"></div>
 
-      <a href="{{ url()->previous() }}" class="btn-back" aria-label="Back">
+      @php
+        $backUrl = route('home'); // Default to home
+        if ($referrer === 'boosters') {
+          $backUrl = route('boosters');
+        } elseif ($referrer === 'game') {
+          $backUrl = url()->previous(); // For game detail, use previous URL
+        }
+      @endphp
+      <a href="{{ $backUrl }}" class="btn-back" aria-label="Back">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
           <path d="M15 6l-6 6 6 6" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -167,6 +175,7 @@
 
       <div class="d-flex align-items-center gap-2 mb-2">
         <form method="GET" action="{{ route('booster.profile', $booster_id) }}" style="display: flex; align-items: center; gap: 8px; width: 100%;">
+          <input type="hidden" name="referrer" value="{{ $referrer }}">>
           <!-- Filter by Rating -->
           <select name="filter" onchange="this.form.submit()" style="display:inline-flex; align-items:center; gap:6px; height:34px; padding:0 10px; background:#EAF4FA; color:#1572A0; border:1px solid #C9E2F1; border-radius:10px; font-weight:700; font-size: 14px; cursor: pointer; z-index: 10; position: relative;">
             <span style="display: none;">Filter</span>
@@ -224,11 +233,91 @@
     </div>
   </div>
 
-  <div id="reviews-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1000; padding: 16px;">
-    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 16px; padding: 24px; max-width: 90%; width: 340px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);">
-      <button onclick="closeOverlay('reviews')" style="position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 24px; cursor: pointer; color: #999;">&times;</button>
-      <h2 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 700; color: #0a0a0a;">Reviews</h2>
-      <p style="margin: 0; font-size: 14px; color: #666; line-height: 1.5;">No reviews available yet.</p>
+  <div id="reviews-overlay" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1000; border-radius: 40px; padding: 20px;">
+    <div style="position: absolute; top: 80px; left: 20px; right: 20px; bottom: 60px; background: #fff; border-radius: 20px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);"
+      <!-- Header -->
+      <div style="position: sticky; top: 0; background: #fff; padding: 16px 20px 12px; border-bottom: 1px solid #eee; z-index: 10; border-radius: 20px 20px 0 0;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <h2 style="margin: 0; font-size: 18px; font-weight: 700; color: #0a0a0a;">Reviews</h2>
+          <button onclick="closeOverlay('reviews')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #999; padding: 0; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">&times;</button>
+        </div>
+        
+        <!-- Booster Name -->
+        <div style="display: flex; align-items: center; gap: 10px; margin-top: 12px;">
+          <img src="{{ asset('assets/' . str()->slug($booster['name']) . '.jpg') }}" alt="{{ $booster['name'] }}" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover;">
+          <span style="font-size: 16px; font-weight: 600; color: #0a0a0a;">{{ $booster['name'] }}</span>
+        </div>
+
+        <!-- Filter Bar -->
+        <div style="display: flex; gap: 8px; margin-top: 16px;">
+          <select id="reviewFilter" onchange="filterReviews()" style="padding: 6px 14px; background: #e3f2fd; color: #1976d2; border: none; border-radius: 18px; font-size: 13px; font-weight: 600; cursor: pointer; min-width: 70px;">
+            <option value="all">All</option>
+            <option value="5">5 Stars</option>
+            <option value="4">4 Stars</option>
+            <option value="3">3 Stars</option>
+            <option value="2">2 Stars</option>
+            <option value="1">1 Star</option>
+          </select>
+          <select style="padding: 6px 14px; background: #f5f5f5; color: #666; border: none; border-radius: 18px; font-size: 13px; font-weight: 600; min-width: 70px;">
+            <option>Star</option>
+          </select>
+        </div>
+
+        <!-- Rating Statistics -->
+        @if($rating_stats['total'] > 0)
+        <div style="margin-top: 16px;">
+          @for($i = 5; $i >= 1; $i--)
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+            <span style="font-size: 14px; font-weight: 600; width: 10px;">{{ $i }}</span>
+            <div style="flex: 1; height: 8px; background: #f0f0f0; border-radius: 4px; overflow: hidden;">
+              @php
+                $percentage = $rating_stats['total'] > 0 ? ($rating_stats['distribution'][$i] / $rating_stats['total']) * 100 : 0;
+              @endphp
+              <div style="height: 100%; background: #ff4961; width: {{ $percentage }}%; transition: width 0.3s ease;"></div>
+            </div>
+          </div>
+          @endfor
+        </div>
+        @endif
+      </div>
+
+      <!-- Reviews List -->
+      <div style="padding: 0 20px 80px;">
+        @if($reviews && $reviews->count() > 0)
+          @foreach($reviews as $review)
+          <div class="review-item" data-rating="{{ $review['rating'] }}" style="padding: 16px 0; border-bottom: 1px solid #f0f0f0;">
+            <!-- User Header -->
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+              <div style="width: 36px; height: 36px; background: {{ ['#ff4961', '#2196f3', '#4caf50', '#ff9800', '#9c27b0'][array_rand(['#ff4961', '#2196f3', '#4caf50', '#ff9800', '#9c27b0'])] }}; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700;">
+                {{ $review['user_initial'] }}
+              </div>
+              <span style="font-size: 16px; font-weight: 600; color: #0a0a0a;">{{ $review['user_name'] }}</span>
+            </div>
+
+            <!-- Rating Stars -->
+            <div style="display: flex; align-items: center; gap: 2px; margin-bottom: 10px;">
+              @for($i = 1; $i <= 5; $i++)
+                @if($i <= $review['rating'])
+                  <span style="color: #ffd700; font-size: 16px;">★</span>
+                @else
+                  <span style="color: #ddd; font-size: 16px;">★</span>
+                @endif
+              @endfor
+            </div>
+
+            <!-- Review Text -->
+            <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.4; color: #333;">{{ $review['review_text'] }}</p>
+            
+            <!-- Service Info -->
+            <p style="margin: 0; font-size: 12px; color: #888; font-weight: 600;">Order: {{ $review['service_name'] }}</p>
+          </div>
+          @endforeach
+        @else
+          <div style="text-align: center; padding: 50px 20px; color: #999;">
+            <p style="margin: 0; font-size: 16px;">No reviews available yet.</p>
+          </div>
+        @endif
+      </div>
     </div>
   </div>
 
@@ -240,6 +329,7 @@ function openOverlay(overlayId) {
   const overlay = document.getElementById(overlayId + '-overlay');
   if (overlay) {
     overlay.style.display = 'block';
+    document.body.style.overflow = 'hidden'; // Prevent background scroll
   }
 }
 
@@ -247,7 +337,26 @@ function closeOverlay(overlayId) {
   const overlay = document.getElementById(overlayId + '-overlay');
   if (overlay) {
     overlay.style.display = 'none';
+    document.body.style.overflow = 'auto'; // Restore background scroll
   }
+}
+
+function filterReviews() {
+  const filterValue = document.getElementById('reviewFilter').value;
+  const reviewItems = document.querySelectorAll('.review-item');
+  
+  reviewItems.forEach(item => {
+    if (filterValue === 'all') {
+      item.style.display = 'block';
+    } else {
+      const rating = item.getAttribute('data-rating');
+      if (rating === filterValue) {
+        item.style.display = 'block';
+      } else {
+        item.style.display = 'none';
+      }
+    }
+  });
 }
 
 // Close overlay when clicking outside the modal
@@ -256,10 +365,10 @@ document.addEventListener('click', function(event) {
   const reviewsOverlay = document.getElementById('reviews-overlay');
   
   if (event.target === workQueueOverlay) {
-    workQueueOverlay.style.display = 'none';
+    closeOverlay('work-queue');
   }
   if (event.target === reviewsOverlay) {
-    reviewsOverlay.style.display = 'none';
+    closeOverlay('reviews');
   }
 });
 </script>

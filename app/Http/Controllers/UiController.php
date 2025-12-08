@@ -33,6 +33,9 @@ class UiController extends Controller
     // ORDERS & TRANSACTIONS
     public function serviceDetailConfirm(Service $service = null) 
     { 
+        if ($service) {
+            $service->load('game'); // Load the game relationship
+        }
         return view('orders.service-detail', compact('service')); 
     }
     

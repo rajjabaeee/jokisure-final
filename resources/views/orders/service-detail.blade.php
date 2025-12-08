@@ -26,7 +26,7 @@
       <a href="{{ url()->previous() }}" class="text-dark text-decoration-none" aria-label="Back">
         <svg width="22" height="22" fill="none" aria-hidden="true"><path d="M14 5l-6 6 6 6" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
-      <div class="title-appbar">Genshin Impact | Abyss</div>
+      <div class="title-appbar">{{ $service->service_name ?? 'Service' }} | {{ $service->game->game_name ?? 'Game' }}</div>
       <svg width="22" height="22" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="10" stroke="#000" stroke-width="2"/><text x="11" y="15" text-anchor="middle" font-size="10" font-family="Inter, sans-serif" fill="#000">?</text></svg>
     </div>
     <div class="divider"></div>
@@ -34,15 +34,52 @@
     <div class="content container px-3 pb-5">
       {{-- Banner --}}
       <div class="mt-3 rounded-3 overflow-hidden">
-        <img src="{{ asset('assets/abyss.jpg') }}" class="w-100 rounded-3" alt="Abyss Banner">
+        @php
+          // Create banner image path based on service name AND description
+          $imageName = '';
+          if($service) {
+            $serviceName = strtolower($service->service_name ?? '');
+            $serviceDesc = strtolower($service->service_desc ?? '');
+            $serviceContent = $serviceName . ' ' . $serviceDesc;
+            
+            if(str_contains($serviceContent, 'abyss')) {
+              $imageName = 'abyss.jpg';
+            } elseif(str_contains($serviceContent, 'inazuma')) {
+              $imageName = 'inazuma.png';
+            } elseif(str_contains($serviceContent, 'liyue')) {
+              $imageName = 'liyue.png';
+            } elseif(str_contains($serviceContent, 'mondstadt')) {
+              $imageName = 'Monstandt.png';
+            } elseif(str_contains($serviceContent, 'fontaine')) {
+              $imageName = 'fontaine.png';
+            } elseif(str_contains($serviceContent, 'sumeru')) {
+              $imageName = 'Sumeru.png';
+            } elseif(str_contains($serviceContent, 'dragonspine')) {
+              $imageName = 'Dragonspine.png';
+            } elseif(str_contains($serviceContent, 'enkanomiya')) {
+              $imageName = 'enkanomiya.png';
+            } elseif(str_contains($serviceContent, 'natlan')) {
+              $imageName = 'Natlan.png';
+            } elseif(str_contains($serviceContent, 'chasm')) {
+              $imageName = 'Chasm.png';
+            } else {
+              // Default to game image
+              $gameName = strtolower($service->game->game_name ?? 'genshin-impact');
+              $imageName = str_replace(' ', '-', $gameName) . '.jpg';
+            }
+          } else {
+            $imageName = 'abyss.jpg'; // fallback
+          }
+        @endphp
+        <img src="{{ asset('assets/' . $imageName) }}" class="w-100 rounded-3" alt="{{ $service->service_name ?? 'Service' }} Banner">
       </div>
 
       {{-- Detail card --}}
       <div class="mt-3 p-3 border rounded-3">
         <div class="d-flex justify-content-between align-items-start">
           <div>
-            <h6 class="h6-title mb-1">Genshin Impact | Abyss</h6>
-            <div class="meta-variant">Variant: Floor 9, Floor 10, Floor 12</div>
+            <h6 class="h6-title mb-1">{{ $service->service_name ?? 'Service' }} | {{ $service->game->game_name ?? 'Game' }}</h6>
+            <div class="meta-variant">{{ $service->service_desc ?? 'Service description not available' }}</div>
           </div>
 
           {{-- Chips (buttons) --}}
@@ -51,7 +88,7 @@
                     class="chip share"
                     title="Share"
                     aria-label="Share this service"
-                    data-share-title="Genshin Impact | Abyss"
+                    data-share-title="{{ $service->service_name ?? 'Service' }} | {{ $service->game->game_name ?? 'Game' }}"
                     data-share-url="{{ url()->current() }}">
               {{-- share icon (white) --}}
               <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -78,20 +115,71 @@
 
         <div class="mt-3">
           <h6 class="section-title">Joki Details:</h6>
-          <ul class="details-list mb-3">
-            <li>✅ Completion of Abyss Floors 9–12</li>
-            <li>✅ Optional full stars clear (3 stars per floor)</li>
-            <li>✅ Customized team strategies based on your roster</li>
-            <li>✅ Weekly resets accepted</li>
-          </ul>
+          @php
+            $desc = strtolower($service->service_name ?? '');
+            $gameDesc = strtolower($service->service_desc ?? '');
+          @endphp
+          
+          @if(str_contains($desc, 'abyss'))
+            <ul class="details-list mb-3">
+              <li>✅ Completion of Abyss Floors 9–12</li>
+              <li>✅ Optional full stars clear (3 stars per floor)</li>
+              <li>✅ Customized team strategies based on your roster</li>
+              <li>✅ Weekly resets accepted</li>
+            </ul>
+          @elseif(str_contains($desc, 'explore') || str_contains($gameDesc, 'exploration'))
+            @php
+              $region = '';
+              if(str_contains($desc, 'inazuma') || str_contains($gameDesc, 'inazuma')) $region = 'Inazuma';
+              elseif(str_contains($desc, 'liyue') || str_contains($gameDesc, 'liyue')) $region = 'Liyue';
+              elseif(str_contains($desc, 'mondstadt') || str_contains($gameDesc, 'mondstadt')) $region = 'mondstadt';
+              elseif(str_contains($desc, 'fontaine') || str_contains($gameDesc, 'fontaine')) $region = 'Fontaine';
+              elseif(str_contains($desc, 'sumeru') || str_contains($gameDesc, 'sumeru')) $region = 'Sumeru';
+              elseif(str_contains($desc, 'dragonspine') || str_contains($gameDesc, 'dragonspine')) $region = 'Dragonspine';
+              elseif(str_contains($desc, 'enkanomiya') || str_contains($gameDesc, 'enkanomiya')) $region = 'Enkanomiya';
+              elseif(str_contains($desc, 'natlan') || str_contains($gameDesc, 'natlan')) $region = 'Natlan';
+              elseif(str_contains($desc, 'chasm') || str_contains($gameDesc, 'chasm')) $region = 'Chasm';
+              else $region = 'Region';
+            @endphp
+            <ul class="details-list mb-3">
+              <li>✅ Complete {{ $region }} exploration to 100%</li>
+              <li>✅ All waypoints and teleport points activated</li>
+              <li>✅ All treasure chests collected</li>
+              <li>✅ All oculi and collectibles gathered</li>
+              <li>✅ World quests and puzzles completed</li>
+            </ul>
+          @else
+            <ul class="details-list mb-3">
+              <li>✅ {{ $service->service_desc ?? 'Professional service completion' }}</li>
+              <li>✅ Fast and reliable completion</li>
+              <li>✅ Account safety guaranteed</li>
+              <li>✅ Professional boosters only</li>
+            </ul>
+          @endif
 
           <h6 class="section-title">How It Works</h6>
-          <ol class="howto ps-3 mb-0">
-            <li>Choose the floors you want boosted (9, 10, 11, 12 – or all).</li>
-            <li>Select any add-ons (e.g., full stars, specific characters).</li>
-            <li>Confirm your order and preferred time slot.</li>
-            <li>Sit back and track your boost progress live.</li>
-          </ol>
+          @if(str_contains($desc, 'abyss'))
+            <ol class="howto ps-3 mb-0">
+              <li>Choose the floors you want boosted (9, 10, 11, 12 – or all).</li>
+              <li>Select any add-ons (e.g., full stars, specific characters).</li>
+              <li>Confirm your order and preferred time slot.</li>
+              <li>Sit back and track your boost progress live.</li>
+            </ol>
+          @elseif(str_contains($desc, 'explore') || str_contains($gameDesc, 'exploration'))
+            <ol class="howto ps-3 mb-0">
+              <li>Provide your account details and current exploration progress.</li>
+              <li>Our booster will systematically explore all areas.</li>
+              <li>All chests, waypoints, and collectibles will be gathered.</li>
+              <li>Receive completion confirmation with progress screenshots.</li>
+            </ol>
+          @else
+            <ol class="howto ps-3 mb-0">
+              <li>Provide your account details and service requirements.</li>
+              <li>Our professional booster will handle your request.</li>
+              <li>Track progress through real-time updates.</li>
+              <li>Receive completion notification with results.</li>
+            </ol>
+          @endif
         </div>
       </div>
 

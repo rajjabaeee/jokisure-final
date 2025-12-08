@@ -37,7 +37,13 @@
     <!-- APP BAR -->
     <div class="appbar d-flex align-items-center justify-content-between px-3">
       {{-- Back button --}}
-      <a href="javascript:history.back()" class="back-btn" style="color: #0a0a0a; text-decoration: none; font-size: 24px;">←</a>
+      @php
+        $backUrl = 'javascript:history.back()'; // Default behavior
+        if (Route::currentRouteName() === 'boosters') {
+          $backUrl = route('home'); // For boosters page, go to home
+        }
+      @endphp
+      <a href="{{ $backUrl }}" class="back-btn" style="color: #0a0a0a; text-decoration: none; font-size: 24px;">←</a>
 
       {{-- Title (pakai appbar-title biar konsisten dengan halaman lain) --}}
       <div class="fw-semibold">@yield('appbar-title', 'JokiSure')</div>

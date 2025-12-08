@@ -139,7 +139,7 @@
             @if($filteredBoosters->count() > 0)
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                     @foreach($filteredBoosters as $booster)
-                        <a href="{{ route('booster.profile', $booster->booster_id) }}" style="display: flex; background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.3) 100%), url('{{ asset('assets/' . str()->slug($booster->user->user_name) . '-bg.jpg') }}') center/cover; border: 1px solid #e9e9e9; border-radius: 16px; padding: 12px; gap: 12px; text-decoration: none; color: #0a0a0a; align-items: center; transition: all 0.3s ease;">
+                        <a href="{{ route('booster.profile', ['booster' => $booster->booster_id, 'referrer' => 'game']) }}" style="display: flex; background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.3) 100%), url('{{ asset('assets/' . str()->slug($booster->user->user_name) . '-bg.jpg') }}') center/cover; border: 1px solid #e9e9e9; border-radius: 16px; padding: 12px; gap: 12px; text-decoration: none; color: #0a0a0a; align-items: center; transition: all 0.3s ease;">
                             <img src="{{ asset('assets/' . str()->slug($booster->user->user_name) . '.jpg') }}" alt="{{ $booster->user->user_name }}" style="width: 80px; height: 80px; border-radius: 12px; object-fit: cover; flex-shrink: 0;" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">
                             <div style="flex: 1; min-width: 0;">
                                 <div style="margin-bottom: 4px;">

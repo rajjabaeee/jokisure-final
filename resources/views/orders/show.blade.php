@@ -173,7 +173,35 @@
             <div class="section-divider"></div>
 
             <div class="service-row">
-                <img src="{{ asset('assets/' . str()->slug($item->service->game->game_name) . '.jpg') }}" class="thumb-img" onerror="this.src='{{ asset('assets/default-thumb.png') }}'">
+                @php
+                    // Get service-specific image based on content
+                    $serviceContent = strtolower(($item->service->service_name ?? '') . ' ' . ($item->service->service_desc ?? ''));
+                    
+                    if (str_contains($serviceContent, 'abyss')) {
+                        $imageName = 'abyss.jpg';
+                    } elseif (str_contains($serviceContent, 'natlan')) {
+                        $imageName = 'natlan.jpg';
+                    } elseif (str_contains($serviceContent, 'inazuma')) {
+                        $imageName = 'inazuma.jpg';
+                    } elseif (str_contains($serviceContent, 'liyue')) {
+                        $imageName = 'liyue.jpg';
+                    } elseif (str_contains($serviceContent, 'mondstadt')) {
+                        $imageName = 'Monstandt.png';
+                    } elseif (str_contains($serviceContent, 'fontaine')) {
+                        $imageName = 'fontaine.jpg';
+                    } elseif (str_contains($serviceContent, 'sumeru')) {
+                        $imageName = 'sumeru.jpg';
+                    } elseif (str_contains($serviceContent, 'enkanomiya')) {
+                        $imageName = 'enkanomiya.jpg';
+                    } elseif (str_contains($serviceContent, 'dragonspine')) {
+                        $imageName = 'dragonspine.jpg';
+                    } elseif (str_contains($serviceContent, 'chasm')) {
+                        $imageName = 'chasm.jpg';
+                    } else {
+                        $imageName = str()->slug($item->service->game->game_name) . '.jpg';
+                    }
+                @endphp
+                <img src="{{ asset('assets/' . $imageName) }}" class="thumb-img" onerror="this.src='{{ asset('assets/default-thumb.png') }}'">
                 <div>
                     <div class="fw-bold text-dark">{{ $item->service->game->game_name }}</div>
                     <div class="fw-bold text-dark" style="font-size: 0.85rem;">{{ $item->service->service_desc }}</div>
