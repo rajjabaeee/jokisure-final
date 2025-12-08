@@ -27,13 +27,13 @@ class GameController extends Controller
         if ($request->has('rating') && $request->rating != '') {
             switch ($request->rating) {
                 case 'top':
-                    $query->where('game_rating', '>=', 4.5);
+                    $query->where('game_rating', '>=', 4);
                     break;
                 case 'popular':
-                    $query->where('game_rating', '>=', 3.5);
+                    $query->where('game_rating', '>=', 3);
                     break;
                 case 'trending':
-                    $query->where('game_rating', '>=', 3.0);
+                    $query->where('game_rating', '>=', 2);
                     break;
             }
         }

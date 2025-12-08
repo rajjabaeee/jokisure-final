@@ -139,8 +139,8 @@
 
       {{-- CTA --}}
       <div class="d-flex gap-3 mt-3">
-        <a class="btn btn-cta flex-fill" href="#">Work Queue</a>
-        <a class="btn btn-cta flex-fill" href="#">Reviews</a>
+        <button class="btn btn-cta flex-fill" onclick="openOverlay('work-queue')" style="border: none; background: #ff4961; color: #fff; padding: 0; cursor: pointer; font-weight: 700; transition: all 0.2s ease;" onmousedown="this.style.background='#fff'; this.style.color='#ff4961'; this.style.border='2px solid #ff4961';" onmouseup="this.style.background='#ff4961'; this.style.color='#fff'; this.style.border='none';" onmouseleave="this.style.background='#ff4961'; this.style.color='#fff'; this.style.border='none';">Work Queue</button>
+        <button class="btn btn-cta flex-fill" onclick="openOverlay('reviews')" style="border: none; background: #ff4961; color: #fff; padding: 0; cursor: pointer; font-weight: 700; transition: all 0.2s ease;" onmousedown="this.style.background='#fff'; this.style.color='#ff4961'; this.style.border='2px solid #ff4961';" onmouseup="this.style.background='#ff4961'; this.style.color='#fff'; this.style.border='none';" onmouseleave="this.style.background='#ff4961'; this.style.color='#fff'; this.style.border='none';">Reviews</button>
       </div>
     </div>
 
@@ -166,9 +166,9 @@
       <h3 class="h6 fw-bold mb-2">Services</h3>
 
       <div class="d-flex align-items-center gap-2 mb-2">
-        <form method="GET" action="{{ route('booster.profile', $booster_id) }}" style="display: flex; align-items: center; gap: 8px;">
+        <form method="GET" action="{{ route('booster.profile', $booster_id) }}" style="display: flex; align-items: center; gap: 8px; width: 100%;">
           <!-- Filter by Rating -->
-          <select name="filter" onchange="this.form.submit()" style="display:inline-flex; align-items:center; gap:6px; height:34px; padding:0 10px; background:#EAF4FA; color:#1572A0; border:1px solid #C9E2F1; border-radius:10px; font-weight:700; font-size: 14px; cursor: pointer;">
+          <select name="filter" onchange="this.form.submit()" style="display:inline-flex; align-items:center; gap:6px; height:34px; padding:0 10px; background:#EAF4FA; color:#1572A0; border:1px solid #C9E2F1; border-radius:10px; font-weight:700; font-size: 14px; cursor: pointer; z-index: 10; position: relative;">
             <span style="display: none;">Filter</span>
             <option value="">Filter</option>
             <option value="all" {{ request('filter') == 'all' ? 'selected' : '' }}>All</option>
@@ -178,7 +178,7 @@
           </select>
 
           <!-- Sort By -->
-          <select name="sort" onchange="this.form.submit()" style="display:inline-flex; align-items:center; gap:6px; height:34px; padding:0 10px; background:#EAF4FA; color:#1572A0; border:1px solid #C9E2F1; border-radius:10px; font-weight:700; font-size: 14px; cursor: pointer;">
+          <select name="sort" onchange="this.form.submit()" style="display:inline-flex; align-items:center; gap:6px; height:34px; padding:0 10px; background:#EAF4FA; color:#1572A0; border:1px solid #C9E2F1; border-radius:10px; font-weight:700; font-size: 14px; cursor: pointer; z-index: 10; position: relative;">
             <span style="display: none;">Sort</span>
             <option value="">Sort</option>
             <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Price (Low to High)</option>
@@ -192,7 +192,7 @@
       <div class="row g-3">
         @foreach($services as $s)
           <div class="col-6">
-            <a class="srv-card" href="#">
+            <a class="srv-card" href="{{ route('service.detail.confirm', $s['service_id']) }}">
               <div class="srv-thumb">
                 <img src="{{ $s['thumb'] }}" alt="">
                 <span class="srv-badge {{ strtolower($s['status']) === 'open' ? 'open' : 'closed' }}">
@@ -214,8 +214,54 @@
   </section>
 
   <div class="home-indicator" aria-hidden="true"></div>
+
+  {{-- Overlays --}}
+  <div id="work-queue-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1000; padding: 16px;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 16px; padding: 24px; max-width: 90%; width: 340px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);">
+      <button onclick="closeOverlay('work-queue')" style="position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 24px; cursor: pointer; color: #999;">&times;</button>
+      <h2 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 700; color: #0a0a0a;">Work Queue</h2>
+      <p style="margin: 0; font-size: 14px; color: #666; line-height: 1.5;">No work queue content available yet.</p>
+    </div>
+  </div>
+
+  <div id="reviews-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1000; padding: 16px;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 16px; padding: 24px; max-width: 90%; width: 340px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);">
+      <button onclick="closeOverlay('reviews')" style="position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 24px; cursor: pointer; color: #999;">&times;</button>
+      <h2 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 700; color: #0a0a0a;">Reviews</h2>
+      <p style="margin: 0; font-size: 14px; color: #666; line-height: 1.5;">No reviews available yet.</p>
+    </div>
+  </div>
+
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openOverlay(overlayId) {
+  const overlay = document.getElementById(overlayId + '-overlay');
+  if (overlay) {
+    overlay.style.display = 'block';
+  }
+}
+
+function closeOverlay(overlayId) {
+  const overlay = document.getElementById(overlayId + '-overlay');
+  if (overlay) {
+    overlay.style.display = 'none';
+  }
+}
+
+// Close overlay when clicking outside the modal
+document.addEventListener('click', function(event) {
+  const workQueueOverlay = document.getElementById('work-queue-overlay');
+  const reviewsOverlay = document.getElementById('reviews-overlay');
+  
+  if (event.target === workQueueOverlay) {
+    workQueueOverlay.style.display = 'none';
+  }
+  if (event.target === reviewsOverlay) {
+    reviewsOverlay.style.display = 'none';
+  }
+});
+</script>
 </body>
 </html>

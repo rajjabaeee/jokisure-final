@@ -160,7 +160,7 @@
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="#0066cc"><path d="M10.5 1.5H4.605c-.606 0-1.122.233-1.5.612-.389.378-.605.894-.605 1.5v16.776c0 .606.233 1.122.612 1.5.378.389.894.605 1.5.605h14.776c.606 0 1.122-.233 1.5-.612.389-.378.605-.894.605-1.5V11.5M10.5 1.5v8m0-8L21 10.5m-10.5-9h8.25"/></svg>
                                     @endif
                                 </div>
-                                <div style="font-size: 11px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">★ {{ number_format($booster->booster_rating / 10, 1) }}</div>
+                                <div style="font-size: 11px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">★ {{ number_format($booster->booster_rating, 1) }}</div>
                             </div>
                         </a>
                     @endforeach
