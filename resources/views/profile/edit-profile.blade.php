@@ -44,39 +44,39 @@
       {{-- AVATAR SELECTOR --}}
       <div class="d-flex justify-content-center mt-3">
         <div class="avatar-wrap">
-          {{-- Ganti src sesuai aset kamu --}}
-          <img src="{{ asset('assets/images/Tamago.jpg') }}" alt="avatar">
+          {{-- Display user's profile picture or default --}}
+          <img src="{{ $user->user_profile_pic ? asset('storage/' . $user->user_profile_pic) : asset('assets/Tamago.jpg') }}" alt="avatar">
           <label class="avatar-upload" title="Change photo">
-            <input type="file" accept="image/*" hidden>
+            <input type="file" accept="image/*" name="profile_pic" hidden>
             <svg viewBox="0 0 24 24"><path d="M4 7h3l2-2h6l2 2h3v12H4V7Z" fill="#fff" stroke="#c9c9c9"/><path d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z" fill="none" stroke="#c9c9c9"/></svg>
           </label>
         </div>
       </div>
 
-      {{-- FORM (tanpa DB – hanya mock POST) --}}
-      <form id="editProfileForm" class="mt-3" method="POST" action="{{ route('profile.update.mock') }}">
+      {{-- FORM (with DB integration) --}}
+      <form id="editProfileForm" class="mt-3" method="POST" action="{{ route('profile.update.mock') }}" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
           <label class="form-label">Name<span class="req">*</span></label>
-          <input type="text" class="form-control" name="name" placeholder="Tamago" value="Tamago">
+          <input type="text" class="form-control" name="name" placeholder="Enter your name" value="{{ $user->user_name ?? '' }}">
         </div>
 
         <div class="mb-3">
-          <label class="form-label">Username<span class="req">*</span></label>
-          <input type="text" class="form-control" name="username" placeholder="@dppgroup2" value="@dppgroup2">
+          <label class="form-label">Nametag<span class="req">*</span></label>
+          <input type="text" class="form-control" name="nametag" placeholder="@yourname" value="{{ $user->user_nametag ? '@' . $user->user_nametag : '' }}">
         </div>
 
         <div class="mb-3">
           <label class="form-label">Phone Number<span class="req">*</span></label>
           <div class="input-group">
             <span class="input-group-text">+62</span>
-            <input type="tel" class="form-control" name="phone" placeholder="812345678" value="812345678">
+            <input type="tel" class="form-control" name="phone" placeholder="812345678" value="{{ $user->user_number ? str_replace('+62', '', $user->user_number) : '' }}">
           </div>
         </div>
 
         <div class="mb-3">
           <label class="form-label">Email<span class="req">*</span></label>
-          <input type="email" class="form-control" name="email" placeholder="dppgroup2@gmail.com" value="dppgroup2@gmail.com">
+          <input type="email" class="form-control" name="email" placeholder="your@email.com" value="{{ $user->user_email ?? '' }}">
         </div>
       </form>
     </div>

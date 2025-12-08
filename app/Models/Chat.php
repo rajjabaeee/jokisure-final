@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Carbon\Carbon;
 
 class Chat extends Model
 {
@@ -22,16 +23,22 @@ class Chat extends Model
         'receive_date'
     ];
 
-    protected function casts(): array
+    protected $casts = [
+        'send_date' => 'datetime',
+        'receive_date' => 'datetime',
+    ];
+
+    // Supaya Blade tetap bisa pakai ->created_at
+    protected $appends = ['created_at'];
+
+    public function getCreatedAtAttribute()
     {
-        return [
-            'send_date' => 'datetime',
-            'receive_date' => 'datetime'
-        ];
+        // created_at = send_date
+        return $this->send_date ? Carbon::parse($this->send_date) : null;
     }
 
     /**
-     * Get the sender of this message
+     * Sender
      */
     public function sender(): BelongsTo
     {
@@ -39,7 +46,7 @@ class Chat extends Model
     }
 
     /**
-     * Get the receiver of this message
+     * Receiver
      */
     public function receiver(): BelongsTo
     {

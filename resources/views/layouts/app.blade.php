@@ -5,11 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>@yield('title', 'JokiSure')</title>
 
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{{ asset('assets/logo.png') }}">
+
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- Page CSS -->
   <link href="{{ asset('css/my-profile.css') }}" rel="stylesheet">
+
+  {{-- Extra styles per-page --}}
+  @stack('styles')
 </head>
 
 <body class="preview-center">
@@ -30,10 +36,42 @@
 
     <!-- APP BAR -->
     <div class="appbar d-flex align-items-center justify-content-between px-3">
-      @yield('appbar-left')
-      @yield('appbar-center')
-      @yield('appbar-right')
+      {{-- Back button --}}
+      <a href="javascript:history.back()" class="back-btn" style="color: #0a0a0a; text-decoration: none; font-size: 24px;">←</a>
+
+      {{-- Title (pakai appbar-title biar konsisten dengan halaman lain) --}}
+      <div class="fw-semibold">@yield('appbar-title', 'JokiSure')</div>
+
+      {{-- Help button (buka overlay) --}}
+      <button type="button" class="icon-btn" aria-label="Help" onclick="openHelpOverlay()" style="border: none; background: none; padding: 0; cursor: pointer;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+        </svg>
+      </button>
     </div>
+
+    <!-- Help Overlay -->
+    <div id="helpOverlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1000; display: none; align-items: center; justify-content: center;" onclick="closeHelpOverlay(event)">
+      <div style="background: #fff; width: 90%; max-width: 500px; border-radius: 16px; padding: 20px; max-height: 70vh; overflow-y: auto;" onclick="event.stopPropagation()">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h5 style="margin: 0; font-weight: 600;">About</h5>
+          <button type="button" onclick="closeHelpOverlay()" style="border: none; background: none; padding: 0; cursor: pointer; font-size: 20px;">×</button>
+        </div>
+        @yield('help-content')
+      </div>
+    </div>
+
+    <script>
+      function openHelpOverlay() {
+        document.getElementById('helpOverlay').style.display = 'flex';
+      }
+
+      function closeHelpOverlay(event) {
+        if (!event || event.target.id === 'helpOverlay') {
+          document.getElementById('helpOverlay').style.display = 'none';
+        }
+      }
+    </script>
 
     <!-- BODY -->
     <div class="container px-3 pb-5">
@@ -48,15 +86,15 @@
       <svg viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v8a2 2 0 0 1-2 2h-3v-5H8v5H5a2 2 0 0 1-2-2v-8Z"/></svg>
       <span>Home</span>
     </a>
-    <a class="tab" href="#">
-      <svg viewBox="0 0 24 24"><path d="M6 7h12l-1 11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 7Z" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 7V5a3 3 0 0 1 6 0v2" fill="none"/></svg>
-      <span>Explore</span>
+    <a class="tab{{ Route::currentRouteName() === 'cart.index' ? ' active' : '' }}" href="{{ route('cart.index') }}">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1" fill="none"/><circle cx="20" cy="21" r="1" fill="none"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" fill="none"/></svg>
+      <span>Cart</span>
     </a>
-    <a class="tab" href="#">
+    <a class="tab{{ Route::currentRouteName() === 'chat.index' ? ' active' : '' }}" href="{{ route('chat.index') }}">
       <svg viewBox="0 0 24 24"><path d="M21 12a8.5 8.5 0 1 1-17 0 8.5 8.5 0 0 1 17 0Zm-8.5-5v5l3 2" fill="none"/></svg>
       <span>Message</span>
     </a>
-    <a class="tab" href="#">
+    <a class="tab{{ Route::currentRouteName() === 'notification' ? ' active' : '' }}" href="#notification">
       <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v5l1.5 1.5a1 1 0 0 1-.7 1.7H5.2a1 1 0 0 1-.7-1.7L6 14V9Z" fill="none"/><path d="M10 19a2 2 0 1 0 4 0" fill="none"/></svg>
       <span>Notification</span>
     </a>

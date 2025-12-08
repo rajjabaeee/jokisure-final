@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Buyer;
+use Illuminate\Support\Str;
 
 class LoginController extends Controller
 {
@@ -79,6 +81,9 @@ class LoginController extends Controller
         $bypassPassword = env('DEV_BYPASS_PASSWORD', '');
 
         if ($bypassEnabled && ! empty($bypassPassword) && $inputPw === (string) $bypassPassword) {
+            // Check if user has buyer profile, create if missing
+            $this->ensureBuyerExists($user);
+            
             // Force login for demo
             Auth::login($user);
             $request->session()->regenerate();
@@ -89,6 +94,9 @@ class LoginController extends Controller
         $stored = (string) ($user->user_password_hash ?? '');
 
         if (!empty($stored) && hash_equals($stored, $inputPw)) {
+            // Check if user has buyer profile, create if missing
+            $this->ensureBuyerExists($user);
+            
             Auth::login($user);
             $request->session()->regenerate();
             return redirect()->route('home');
@@ -96,6 +104,9 @@ class LoginController extends Controller
 
         // 3) Try password_verify (for hashed passwords)
         if (!empty($stored) && password_verify($inputPw, $stored)) {
+            // Check if user has buyer profile, create if missing
+            $this->ensureBuyerExists($user);
+            
             Auth::login($user);
             $request->session()->regenerate();
             return redirect()->route('home');
@@ -117,5 +128,23 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('login');
+    }
+
+    /**
+     * Ensure the user has a buyer profile.
+     * Creates one automatically if missing (for existing users).
+     */
+    private function ensureBuyerExists(User $user)
+    {
+        // Check if buyer profile already exists
+        $buyer = Buyer::where('user_id', $user->user_id)->first();
+        
+        if (!$buyer) {
+            // Create buyer profile with unique cart_id
+            Buyer::create([
+                'user_id' => $user->user_id,
+                'cart_id' => (string) Str::uuid(),
+            ]);
+        }
     }
 }

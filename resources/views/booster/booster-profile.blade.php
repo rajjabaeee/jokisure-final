@@ -70,24 +70,22 @@
           </div>
         </div>
 
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-1">
           <button class="icon-btn" title="Share">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
               <path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M16 6l-4-4-4 4M12 2v14" stroke="#1572A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
           <button class="icon-btn" title="Favorite">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
               <path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 10-7.8 7.8l1 1L12 22l7.8-8.6 1-1a5.5 5.5 0 000-7.8z" stroke="#ff4961" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
-          <button class="icon-btn" title="More">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <circle cx="5" cy="12" r="2" fill="#0a0a0a"/>
-              <circle cx="12" cy="12" r="2" fill="#0a0a0a"/>
-              <circle cx="19" cy="12" r="2" fill="#0a0a0a"/>
+          <a href="{{ route('chat.index') }}" class="icon-btn" title="Chat">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="#1572A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-          </button>
+          </a>
         </div>
       </div>
 
@@ -153,7 +151,7 @@
       <h3 class="h6 fw-bold mb-2">Booster Games</h3>
       <div class="games-scroll">
         @foreach($games as $g)
-          <a class="game-card" href="#">
+          <a class="game-card" href="{{ route('games.show', $g['game_id']) }}">
             <img src="{{ $g['poster'] }}" alt="{{ $g['game_name'] }}">
             <span class="game-title">{!! str_replace(' ', '<br>', e($g['game_name'])) !!}</span>
           </a>
@@ -168,12 +166,27 @@
       <h3 class="h6 fw-bold mb-2">Services</h3>
 
       <div class="d-flex align-items-center gap-2 mb-2">
-        <button class="btn btn-filter"><span>Filter</span>
-          <svg width="14" height="14" viewBox="0 0 24 24"><path d="M3 5h18M6 12h12m-8 7h4" stroke="#1572A0" stroke-width="2" stroke-linecap="round"/></svg>
-        </button>
-        <button class="btn btn-filter"><span>Sort</span>
-          <svg width="14" height="14" viewBox="0 0 24 24"><path d="M8 7l4-4 4 4M8 17l4 4 4-4" stroke="#1572A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+        <form method="GET" action="{{ route('booster.profile', $booster_id) }}" style="display: flex; align-items: center; gap: 8px;">
+          <!-- Filter by Rating -->
+          <select name="filter" onchange="this.form.submit()" style="display:inline-flex; align-items:center; gap:6px; height:34px; padding:0 10px; background:#EAF4FA; color:#1572A0; border:1px solid #C9E2F1; border-radius:10px; font-weight:700; font-size: 14px; cursor: pointer;">
+            <span style="display: none;">Filter</span>
+            <option value="">Filter</option>
+            <option value="all" {{ request('filter') == 'all' ? 'selected' : '' }}>All</option>
+            <option value="rank" {{ request('filter') == 'rank' ? 'selected' : '' }}>Rank Boost</option>
+            <option value="winrate" {{ request('filter') == 'winrate' ? 'selected' : '' }}>Winrate</option>
+            <option value="other" {{ request('filter') == 'other' ? 'selected' : '' }}>Other</option>
+          </select>
+
+          <!-- Sort By -->
+          <select name="sort" onchange="this.form.submit()" style="display:inline-flex; align-items:center; gap:6px; height:34px; padding:0 10px; background:#EAF4FA; color:#1572A0; border:1px solid #C9E2F1; border-radius:10px; font-weight:700; font-size: 14px; cursor: pointer;">
+            <span style="display: none;">Sort</span>
+            <option value="">Sort</option>
+            <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Price (Low to High)</option>
+            <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Price (High to Low)</option>
+            <option value="rating_asc" {{ request('sort') == 'rating_asc' ? 'selected' : '' }}>Rating (Low to High)</option>
+            <option value="rating_desc" {{ request('sort') == 'rating_desc' ? 'selected' : '' }}>Rating (High to Low)</option>
+          </select>
+        </form>
       </div>
 
       <div class="row g-3">

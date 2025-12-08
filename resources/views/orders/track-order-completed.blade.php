@@ -28,18 +28,34 @@
 
     <div class="p-3">
       <div class="box mb-3 header-meta">
+        @php
+          use Illuminate\Support\Str;
+          $orderDate = optional($order->order_date);
+          $statusName = $order->orderStatus->order_status_name ?? 'Unknown';
+          $booster = $order->orderItems->first()?->service?->booster?->user?->user_name ?? 'Booster';
+          $events = [];
+          $events[] = ['date' => $orderDate, 'desc' => 'Order placed'];
+          foreach($order->payments as $p) {
+              $events[] = ['date' => optional($p->latest_update), 'desc' => 'Payment: ' . ($p->paymentMethod->method_name ?? $p->gateway_reference ?? 'Paid')];
+          }
+          // add a completion event if status is completed
+          if (str_contains(strtolower($statusName), 'complete')) {
+              $completeAt = $order->payments->first()?->latest_update ?? $orderDate;
+              $events[] = ['date' => optional($completeAt), 'desc' => 'Service completed'];
+          }
+        @endphp
         <div class="d-flex justify-content-between align-items-center">
           <div>
             <div class="small text-muted">
-              Order ID: <strong>#12346</strong>
+              Order ID: <strong>#{{ $order->order_id }}</strong>
               <button class="copy-btn ms-2" type="button"
-                      onclick="navigator.clipboard.writeText('#12346')" aria-label="Copy Order ID">
-                <img src="{{ asset('assets/Images/copy.png') }}" alt="">
+                      onclick="navigator.clipboard.writeText('#{{ $order->order_id }}')" aria-label="Copy Order ID">
+                <img src="{{ asset('assets/copy.png') }}" alt="">
               </button>
             </div>
-            <div class="small text-muted">18 April 2025, 9:41 WIB</div>
+            <div class="small text-muted">{{ $orderDate->format('d F Y, H:i') }}</div>
           </div>
-          <span class="pill-status status-done">Completed</span>
+          <span class="pill-status status-done">{{ $statusName }}</span>
         </div>
       </div>
 
@@ -48,9 +64,9 @@
         <div class="small text-muted mb-2">25 June 2025</div>
 
         <div class="d-flex justify-content-between align-items-center stage-labels mb-1">
-          <img src="{{ asset('assets/Images/pending.png') }}"  alt="Pending">
-          <img src="{{ asset('assets/Images/progress.png') }}" alt="On-Progress">
-          <img src="{{ asset('assets/Images/completed.png') }}" alt="Completed">
+          <img src="{{ asset('assets/pending.png') }}"  alt="Pending">
+          <img src="{{ asset('assets/progress.png') }}" alt="On-Progress">
+          <img src="{{ asset('assets/completed.png') }}" alt="Completed">
         </div>
 
         <div class="position-relative mb-1">
@@ -60,43 +76,24 @@
         </div>
       </div>
 
-      <div class="box">
+        <div class="box">
         <div class="d-flex align-items-center justify-content-between">
           <div class="d-flex align-items-center gap-2">
-            <img class="avatar" src="{{ asset('assets/Images/pp.jpg') }}" alt="">
-            <div class="fw-semibold">MonkeyD</div>
+            <img class="avatar" src="{{ asset('assets/pp.jpg') }}" alt="">
+            <div class="fw-semibold">{{ $booster }}</div>
           </div>
           <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M21 15a4 4 0 0 1-4 4H8l-5 3 1-5a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h13a4 4 0 0 1 4 4v8z" stroke="#111" stroke-width="2"/>
           </svg>
         </div>
         <hr class="my-2">
-
         <div class="timeline" style="--progress:1">
-          <div class="tl-item done">
-            <span class="tl-dot"></span>
-            <div class="tl-content"><div class="date">22 April 2025</div><div class="desc">Account logged out</div></div>
-          </div>
-
-          <div class="tl-item done">
-            <span class="tl-dot"></span>
-            <div class="tl-content"><div class="date">22 April 2025</div><div class="desc">Abyss level 12 cleared</div></div>
-          </div>
-
-          <div class="tl-item done">
-            <span class="tl-dot"></span>
-            <div class="tl-content"><div class="date">21 April 2025</div><div class="desc">Abyss level 9, 10, 11 cleared</div></div>
-          </div>
-
-          <div class="tl-item done">
-            <span class="tl-dot"></span>
-            <div class="tl-content"><div class="date">21 April 2025</div><div class="desc">Account logged in by booster</div></div>
-          </div>
-
-          <div class="tl-item done">
-            <span class="tl-dot"></span>
-            <div class="tl-content"><div class="date">20 April 2025</div><div class="desc">Order queued</div></div>
-          </div>
+          @foreach($events as $ev)
+            <div class="tl-item done">
+              <span class="tl-dot"></span>
+              <div class="tl-content"><div class="date">{{ optional($ev['date'])->format('d F Y') }}</div><div class="desc">{{ $ev['desc'] }}</div></div>
+            </div>
+          @endforeach
         </div>
       </div>
     </div>
@@ -105,8 +102,8 @@
   {{-- Bottom actions --}}
   <div class="action-wrap">
     <div class="action-bar px-3">
-      <button class="btn-cta btn-red">Track Order</button>
-      <button class="btn-cta btn-blue">View Order</button>
+      <a href="{{ route('orders.show', $order->order_id) }}" class="btn-cta btn-red">View Order</a>
+      <a href="{{ route('orders.track', $order->order_id) }}" class="btn-cta btn-blue">Refresh</a>
     </div>
   </div>
 

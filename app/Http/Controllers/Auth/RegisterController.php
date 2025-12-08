@@ -7,26 +7,26 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Buyer;
+use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
     /**
-     * Step 1: Store signup data in session and redirect to OTP page
+     * Step 1: Store signup data in session (click "Verify Phone Number")
      */
     public function storeDataForOTP(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|max:255|unique:user,user_email',
-            'password' => 'required|string|min:6',
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'password' => 'required|string|min:1',
             'password_confirmation' => 'required|string|same:password',
-            'phone' => 'required|string|max:20',
+            'phone' => 'nullable|string|max:20',
         ]);
 
-        // Auto-generate name from email if not provided
-        $name = $request->input('name') ?: explode('@', $request->input('email'))[0];
-
         $request->session()->put('signup.data', [
-            'name' => $name,
+            'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => $request->input('password'),
             'phone' => $request->input('phone'),
@@ -40,12 +40,12 @@ class RegisterController extends Controller
     }
 
     /**
-     * Step 2: Verify OTP and redirect back to signup with verified status
+     * Step 2: Verify OTP (always true)
      */
     public function verifyOTP(Request $request)
     {
         $request->validate([
-            'otp' => 'required|string|min:4',
+            'otp' => 'required|string',
         ]);
 
         $signup = $request->session()->get('signup.data');
@@ -53,43 +53,49 @@ class RegisterController extends Controller
             return redirect()->route('signup')->withErrors(['msg' => 'No signup data found.']);
         }
 
-        // Just mark as verified and redirect back to original signup form
-        $request->session()->put('signup.phone_verified', true);
+        $request->session()->put('signup.otp_verified', true);
         $request->session()->forget('signup.otp');
 
-        return redirect()->route('signup');
+        return redirect()->route('signup')->with('status', 'Phone verified! Click Sign Up to complete.');
     }
 
     /**
-     * Step 3: Create account after signup button clicked on verified form
+     * Step 3: Final sign up - save to database
      */
     public function register(Request $request)
     {
-        if (!$request->session()->get('signup.phone_verified')) {
+        if (!$request->session()->get('signup.otp_verified')) {
             return redirect()->route('signup')->withErrors(['msg' => 'Please verify your phone first.']);
         }
 
-        $signup = $request->session()->get('signup.data');
-        if (!$signup) {
-            return redirect()->route('signup')->withErrors(['msg' => 'No signup data found.']);
+        $signupData = $request->session()->get('signup.data');
+        if (!$signupData) {
+            return redirect()->route('signup')->withErrors(['msg' => 'Signup data not found.']);
         }
 
+        // Use correct column names for the 'user' table
         // Generate unique nametag from name
-        $baseNametag = strtolower(str_replace(' ', '', $signup['name']));
+        $baseNametag = strtolower(str_replace(' ', '', $signupData['name']));
         $nametag = $baseNametag . rand(100, 999);
         
-        User::create([
-            'user_name' => $signup['name'],
+        $user = User::create([
+            'user_name' => $signupData['name'],
             'user_nametag' => $nametag,
-            'user_email' => $signup['email'],
-            'user_password_hash' => Hash::make($signup['password']),
-            'user_number' => $signup['phone'],
+            'user_email' => $signupData['email'],
+            'user_password_hash' => Hash::make($signupData['password']),
+            'user_number' => $signupData['phone'],
             'created_at' => now(),
         ]);
 
-        $request->session()->forget('signup.data');
-        $request->session()->forget('signup.phone_verified');
+        // Automatically create buyer profile with cart_id for new user
+        Buyer::create([
+            'user_id' => $user->user_id,
+            'cart_id' => (string) Str::uuid(),
+        ]);
 
-        return redirect('/login')->with('success', 'Account created successfully! Please login.');
+        $request->session()->forget('signup.data');
+        $request->session()->forget('signup.otp_verified');
+
+        return redirect()->route('login')->with('success', 'Registration successful! Please login.');
     }
 }

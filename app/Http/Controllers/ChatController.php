@@ -3,8 +3,66 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Chat;
+use App\Models\User;
+use Carbon\Carbon;
 
 class ChatController extends Controller
 {
-    //
+    /**
+     * List all users except current logged user
+     */
+    public function index()
+    {
+        $myId = Auth::user()->user_id;
+
+        $users = User::where('user_id', '!=', $myId)->get();
+
+        return view('marketplace.chat_list', compact('users'));
+    }
+
+    /**
+     * Show chat room with selected receiver
+     */
+    public function show($receiverId)
+    {
+        $myId = Auth::user()->user_id;
+
+        $receiver = User::where('user_id', $receiverId)->firstOrFail();
+
+        // Get both sides of conversation
+        $chats = Chat::where(function ($q) use ($myId, $receiverId) {
+                        $q->where('sender_user_id', $myId)
+                          ->where('receiver_user_id', $receiverId);
+                    })
+                    ->orWhere(function ($q) use ($myId, $receiverId) {
+                        $q->where('sender_user_id', $receiverId)
+                          ->where('receiver_user_id', $myId);
+                    })
+                    ->orderBy('send_date', 'asc')   // pakai send_date karena database kamu pakai itu
+                    ->get();
+
+        return view('marketplace.chat_room', compact('receiver', 'chats'));
+    }
+
+    /**
+     * Send chat message
+     */
+    public function sendMessage(Request $request)
+    {
+        $request->validate([
+            'message' => 'required|string',
+            'receiver_user_id' => 'required|exists:user,user_id',
+        ]);
+
+        Chat::create([
+            'sender_user_id'   => Auth::user()->user_id,
+            'receiver_user_id' => $request->receiver_user_id,
+            'chat_msg'         => $request->message,
+            'send_date'        => Carbon::now(), // supaya ada waktu kirim di DB
+        ]);
+
+        return redirect()->route('chat.show', $request->receiver_user_id);
+    }
 }

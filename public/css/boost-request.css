@@ -1,58 +1,143 @@
 :root{
-  --red:#FF204E;         /* submit enabled */
-  --disabled:#CAC6C6;    /* submit disabled */
+  --red:#FF204E;
+  --disabled:#CAC6C6;
   --text:#000;
   --border:#E8E8E8;
   --font:"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
-  --radius:28px; --status:44px; --home:34px;
+  --radius:28px;
 }
 
-/* ===== Device frame (konsisten) ===== */
-html,body{height:100%;margin:0;font-family:var(--font);color:var(--text);}
-.preview-center{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a0a0a;}
-.device-frame{width:375px;height:812px;background:#fff;border-radius:var(--radius);position:relative;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.55);}
-.status-bar{position:absolute;top:0;left:0;right:0;height:var(--status);font-size:14px}
-.safe-area{position:absolute;top:var(--status);bottom:var(--home);left:0;right:0;overflow:auto;background:#fff;}
-.home-indicator{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);width:134px;height:5px;border-radius:999px;background:#0a0a0a;opacity:.2}
+/* FRAME */
+html,body{
+  height:100%;
+  margin:0;
+  font-family:var(--font);
+  color:var(--text);
+}
+.preview-center{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#0a0a0a;
+}
+.device-frame{
+  width:375px;
+  height:812px;
+  background:#fff;
+  border-radius:var(--radius);
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 20px 50px rgba(0,0,0,.55);
+}
 
-/* Appbar */
-.appbar{height:50px}
-.title-appbar{font-weight:700;font-size:16px;letter-spacing:.2px}
-.divider{height:1px;background:#ededed}
+/* SAFE AREA (naik sampai atas, tanpa status bar & tanpa home bar) */
+.safe-area{
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  overflow:auto;
+  background:#fff;
+}
 
-/* ===== Form styles ===== */
-.section-head{font-size:26px;font-weight:800;letter-spacing:.2px}
+/* APPBAR */
+.appbar{
+  height:50px;
+  display:flex;
+  align-items:center;
+}
+.title-appbar{
+  font-weight:700;
+  font-size:16px;
+}
+.divider{
+  height:1px;
+  background:#ededed;
+}
 
-.form-label{font-weight:700;font-size:13.5px;margin-bottom:.35rem}
-.form-label.required::after{content:"*"; color:#FF3B30; margin-left:4px; font-weight:800}
+/* FORM */
+.section-head{
+  font-size:26px;
+  font-weight:800;
+}
+.form-label{
+  font-weight:700;
+  font-size:13.5px;
+}
+.form-label.required::after{
+  content:"*";
+  color:#FF3B30;
+  margin-left:4px;
+  font-weight:800;
+}
 
 .input-lg{
-  border-radius:12px; border:1px solid var(--border); height:44px;
-  font-weight:600; font-size:14px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  height:44px;
+  font-weight:600;
+  font-size:14px;
 }
-.input-lg::placeholder{color:#BEBEBE; font-weight:600}
+.input-lg::placeholder{
+  color:#BEBEBE;
+  font-weight:600;
+}
 
-.helper{color:#8f8f8f;font-weight:600;font-size:12.5px;margin-top:4px}
+/* VALIDATION ERROR */
+.input-lg.is-invalid-custom{
+  border-color:#FF3B30;
+  border-width:1.5px;
+}
+.invalid-feedback-custom{
+  color:#FF3B30;
+  font-size:12px;
+  font-weight:600;
+  margin-top:4px;
+}
 
-/* Radios */
-.form-check.rb{margin-bottom:.55rem}
+.helper{
+  color:#8f8f8f;
+  font-size:12.5px;
+}
+
+/* RADIO */
+.form-check.rb{ margin-bottom:.55rem; }
 .form-check-input{
-  width:18px;height:18px;border:2px solid #BFC2CA;margin-top:.25rem;
+  width:18px; height:18px;
+  border:2px solid #BFC2CA;
+  margin-top:.25rem;
 }
-.form-check-input:checked{background-color:#111;border-color:#111}
+.form-check-input:checked{
+  background-color:#111;
+  border-color:#111;
+}
+.form-check-label{
+  font-weight:600;
+  color:#3b3b3b;
+}
+.form-check-input:checked + .form-check-label{
+  font-weight:800;
+  color:#000;
+}
 
-/* default 600, selected 800 */
-.form-check-label{font-weight:600;color:#3b3b3b}
-.form-check-input:checked + .form-check-label{font-weight:800;color:#000}
+/* CHECKBOX */
+.agree{
+  font-size:13px;
+  color:#7b7b7b;
+  font-weight:600;
+}
 
-/* Consent */
-.agree{font-size:13px;color:#7b7b7b;font-weight:600}
-
-/* Submit button */
+/* SUBMIT BUTTON */
 .submit{
-  height:48px;border:none;border-radius:12px;
-  font-size:16px;font-weight:700;color:#fff;
+  height:48px;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:700;
+  color:#fff;
   background:var(--disabled);
   pointer-events:none;
 }

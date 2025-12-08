@@ -1,269 +1,269 @@
-{{-- resources/views/orders/my-orders.blade.php --}}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>JokiSure • My Orders</title>
+@extends('layouts.app')
 
-  {{-- Bootstrap --}}
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+@push('styles')
+    <style>
+        .badge-status {
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
 
-  {{-- Page CSS --}}
-  <link href="{{ asset('css/my-orders.css') }}" rel="stylesheet">
-</head>
-<body class="preview-center">
-<main class="device-frame" role="main" aria-label="My Orders">
+        .badge-status.waitlist {
+            background-color: #d8b4fe;
+            color: #fff;
+        }
 
-  {{-- STATUS BAR --}}
-  <div class="status-bar d-flex align-items-center justify-content-between px-3">
-    <div class="time">9:41</div>
-    <div class="status-icons d-flex align-items-center gap-2">
-      <svg width="20" height="12" viewBox="0 0 20 12" fill="none"><rect x="1" y="7" width="2" height="4" rx=".75" fill="#0a0a0a"/><rect x="5" y="5" width="2" height="6" rx=".75" fill="#0a0a0a"/><rect x="9" y="3" width="2" height="8" rx=".75" fill="#0a0a0a"/><rect x="13" y="1" width="2" height="10" rx=".75" fill="#0a0a0a"/></svg>
-      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><path d="M9 9.5c.7 0 1.25.55 1.25 1.25S9.7 12 9 12 7.75 11.45 7.75 10.75 8.3 9.5 9 9.5Z" fill="#0a0a0a"/><path d="M3 6.5c3.9-3.2 8.1-3.2 12 0" stroke="#0a0a0a" stroke-width="1.6" stroke-linecap="round"/><path d="M5.6 8c2.53-2.05 4.27-2.05 6.8 0" stroke="#0a0a0a" stroke-width="1.6" stroke-linecap="round"/></svg>
-      <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2" stroke="#0a0a0a" stroke-width="1.5"/><rect x="3" y="3" width="16" height="6" rx="1.5" fill="#0a0a0a"/><rect x="22" y="4" width="3" height="4" rx="1" fill="#0a0a0a"/></svg>
-    </div>
-  </div>
+        .badge-status.pending {
+            background-color: #ffa500;
+            color: #fff;
+        }
 
-  {{-- SAFE AREA --}}
-  <section class="safe-area">
+        .badge-status.on-progress, .badge-status.progress {
+            background-color: #336791;
+            color: #fff;
+        }
 
-    {{-- APP BAR --}}
-    <div class="appbar d-flex align-items-center justify-content-between px-3">
-      <a href="{{ route('profile.show') }}" class="icon-btn" aria-label="Back">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 12h12M10 8l-4 4 4 4" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-      <div class="fw-semibold">My Orders</div>
-      <a href="#" class="icon-btn" aria-label="Help">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#0a0a0a" stroke-width="2"/><path d="M9.5 9a2.5 2.5 0 1 1 4.33 1.67c-.6.6-1.33.97-1.83 1.58-.3.36-.5.75-.5 1.25v.5" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="#0a0a0a"/></svg>
-      </a>
-    </div>
+        .badge-status.completed {
+            background-color: #32cd32;
+            color: #fff;
+        }
 
-    {{-- SEARCH --}}
+        .order-card-new {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 16px;
+            padding: 16px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .booster-name {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #000;
+        }
+
+        .order-date {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .card-divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 0 -16px;
+        }
+
+        .card-body-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+        }
+
+        .game-thumb {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            background-color: #ddd;
+        }
+
+        .service-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+        .card-footer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+        }
+
+        .price-label {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .price-value {
+            font-weight: 500;
+            font-size: 1rem;
+            color: #000;
+        }
+
+        .btn-track {
+            background-color: #e0e0e0;
+            color: #757575;
+            font-size: 0.8rem;
+            padding: 6px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-track:hover {
+            background-color: #d0d0d0;
+            color: #000;
+        }
+
+        .btn-ori {
+            color: #333;
+            font-size: 1.3 rem;
+            padding: 6px 16px;
+            text-decoration: none;
+            font-weight: 900;
+            border: none;
+        }
+
+        .nav-underline .nav-link {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .nav-underline .nav-link.active {
+            color: #000;
+            font-weight: 700;
+            border-bottom-color: #000;
+        }
+
+        .no-wrap {
+            white-space: nowrap;
+        }
+    </style>
+@endpush
+
+@section('appbar-title', 'My Orders')
+
+@section('content')
     <div class="px-3 mt-2">
-      <div class="search-wrap">
-        <svg viewBox="0 0 24 24"><path d="M11 19a8 8 0 1 1 6.32-3.1L22 20.6 20.6 22l-4.7-4.7A8 8 0 0 1 11 19Z" fill="#8d8d8d"/></svg>
-        <input type="search" class="form-control" placeholder="Search">
-      </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text bg-white border-end-0">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8d8d8d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </span>
+            <input type="search" class="form-control border-start-0 ps-0" placeholder="Search">
+        </div>
     </div>
 
-    {{-- TABS --}}
-    <div class="tabs-text px-3">
-      <ul class="nav nav-underline flex-nowrap" id="ordersTab" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active no-wrap" data-bs-toggle="tab" data-bs-target="#tab-all" type="button" role="tab">All</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link no-wrap" data-bs-toggle="tab" data-bs-target="#tab-waitlist" type="button" role="tab">Waitlist</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link no-wrap" data-bs-toggle="tab" data-bs-target="#tab-pending" type="button" role="tab">Pending</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link no-wrap" data-bs-toggle="tab" data-bs-target="#tab-progress" type="button" role="tab">On Progress</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link no-wrap" data-bs-toggle="tab" data-bs-target="#tab-completed" type="button" role="tab">Completed</button>
-        </li>
-      </ul>
+    <div class="tabs-text px-3 overflow-auto">
+        <ul class="nav nav-underline flex-nowrap" id="ordersTab" role="tablist">
+            @foreach(['all' => 'All', 'waitlist' => 'Waitlist', 'pending' => 'Pending', 'on-progress' => 'On Progress', 'completed' => 'Completed'] as $key => $label)
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link no-wrap {{ $key == 'all' ? 'active' : '' }}"
+                            id="tab-btn-{{ $key }}"
+                            data-bs-toggle="tab"
+                            data-bs-target="#tab-{{ $key }}"
+                            type="button" role="tab">
+                        {{ $label }}
+                    </button>
+                </li>
+            @endforeach
+        </ul>
     </div>
 
-    {{-- CONTENT --}}
-    <div class="tab-content mt-2 pb-5">
+    <div class="tab-content mt-3 pb-5">
 
-      {{-- ALL --}}
-      <div class="tab-pane fade show active" id="tab-all" role="tabpanel" tabindex="0">
-        <div class="container px-3">
-          {{-- Waitlisted --}}
-          <div class="order-card">
-            <div class="d-flex align-items-start gap-3">
-              <img class="thumb" src="{{ asset('assets/Images/Natlan.png') }}" alt="">
-              <div class="flex-grow-1">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="fw-semibold small">BangBoost</div>
-                  <span class="badge-status waitlist">Waitlisted</span>
-                </div>
-                <div class="muted-xxs">16 June 2025</div>
-                <div class="title">Natlan Exploration 100%</div>
-                <div class="price-row"><div>Total Price:</div><div class="fw-semibold">Rp260.000</div></div>
-              </div>
-            </div>
-            <div class="mt-2 text-end"><button class="btn btn-outline-secondary btn-xxs">Track Order</button></div>
-          </div>
+        @foreach(['all', 'waitlist', 'pending', 'on-progress', 'completed'] as $tabKey)
 
-          {{-- Pending --}}
-          <div class="order-card">
-            <div class="d-flex align-items-start gap-3">
-              <img class="thumb" src="{{ asset('assets/Images/enkanomiya.png') }}" alt="">
-              <div class="flex-grow-1">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="fw-semibold small">SealW</div>
-                  <span class="badge-status pending">Pending</span>
-                </div>
-                <div class="muted-xxs">17 June 2025</div>
-                <div class="title">Enkanomiya Exploration 100%</div>
-                <div class="price-row"><div>Total Price:</div><div class="fw-semibold">Rp120.000</div></div>
-              </div>
-            </div>
-            <div class="mt-2 text-end"><a href="{{ route('orders.track.pending') }}" class="btn btn-outline-secondary btn-xxs"> Track Order</a></div>
-          </div>
+            <div class="tab-pane fade {{ $tabKey == 'all' ? 'show active' : '' }}" id="tab-{{ $tabKey }}" role="tabpanel">
 
-          {{-- On-Progress --}}
-          <div class="order-card">
-            <div class="d-flex align-items-start gap-3">
-              <img class="thumb" src="{{ asset('assets/Images/abyss.jpg') }}" alt="">
-              <div class="flex-grow-1">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="fw-semibold small">BangBoost</div>
-                  <span class="badge-status progress">On-Progress</span>
-                </div>
-                <div class="muted-xxs">10 Juni 2025</div>
-                <div class="title">Genshin Impact | Abyss<br><span class="muted-xxs">Variant: Floor 9, Floor 10, Floor 12</span></div>
-                <div class="price-row"><div>Total Price:</div><div class="fw-semibold">Rp60.000</div></div>
-              </div>
-            </div>
-            <div class="mt-2 text-end"><a href="{{ route('orders.track.progress') }}" class="btn btn-outline-secondary btn-xxs"> Track Order</a></div>
-          </div>
+                @php
+                    $filteredOrders = $ordersnya->filter(function($order) use ($tabKey) {
+                        if ($tabKey == 'all') return true;
+                        $statusName = strtolower(str_replace(' ', '-', $order->orderStatus->order_status_name));
+                        return $statusName == $tabKey;
+                    });
+                @endphp
 
-          {{-- Completed --}}
-          <div class="order-card">
-            <div class="d-flex align-items-start gap-3">
-              <img class="thumb" src="{{ asset('assets/Images/genshin boss.png') }}" alt="">
-              <div class="flex-grow-1">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="fw-semibold small">MonkeyD</div>
-                  <span class="badge-status completed">Completed</span>
-                </div>
-                <div class="muted-xxs">18 April 2025</div>
-                <div class="title">Genshin Weekly Boss<br><span class="muted-xxs">Variant: Childe, Raiden, The Knave</span></div>
-                <div class="price-row"><div>Total Price:</div><div class="fw-semibold">Rp25.000</div></div>
-              </div>
-            </div>
-            <div class="mt-2 d-flex gap-2 justify-content-end">
-              <button class="btn btn-outline-secondary btn-xxs">Order Again</button>
-              <a href="{{ route('orders.track.completed') }}" class="btn btn-outline-secondary btn-xxs">Review</a>
-            </div>
-          </div>
-        </div>
-      </div>
+                @forelse($filteredOrders as $order)
+                    @php
+                        $item = $order->orderItems->first();
+                        $gameName = $item->service->game->game_name ?? 'Unknown Game';
+                        $serviceName = $item->service->service_desc ?? 'Service';
+                        $fullTitle = $gameName . ' - ' . $serviceName;
+                        $thumb = asset('assets/default-thumb.png');
+                        $boosterName = $item->service->booster->user->user_name ?? 'Waiting for Booster';
+                        $rawStatus = $order->orderStatus->order_status_name ?? 'Unknown';
+                        $statusClass = strtolower(str_replace(' ', '-', $rawStatus));
+                        $date = \Carbon\Carbon::parse($order->order_date)->format('d F Y');
+                        $isCompleted = (strtolower($rawStatus) == 'completed');
+                    @endphp
 
-      {{-- WAITLIST --}}
-      <div class="tab-pane fade" id="tab-waitlist" role="tabpanel" tabindex="0">
-        <div class="container px-3">
-          <div class="order-card">
-            <div class="d-flex align-items-start gap-3">
-              <img class="thumb" src="{{ asset('assets/Images/Natlan.png') }}" alt="">
-              <div class="flex-grow-1">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="fw-semibold small">BangBoost</div>
-                  <span class="badge-status waitlist">Waitlisted</span>
-                </div>
-                <div class="muted-xxs">16 June 2025</div>
-                <div class="title">Natlan Exploration 100%</div>
-                <div class="price-row"><div>Total Price:</div><div class="fw-semibold">Rp260.000</div></div>
-              </div>
-            </div>
-            <div class="mt-2 text-end"><button class="btn btn-outline-secondary btn-xxs">Track Order</button></div>
-          </div>
-        </div>
-      </div>
+                    <div class="order-card-new">
+                        <div class="card-header-row">
+                            <div>
+                                <div class="booster-name">{{ $boosterName }}</div>
+                                <div class="order-date">{{ $date }}</div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="badge-status {{ $statusClass }}">
+                                    {{ $rawStatus }}
+                                </span>
+                                <a href="{{ route('orders.show', $order->order_id) }}" class="btn-ori text-decoration-none">
+                                    <i class="bi bi-chevron-right" style="font-size: 0.9rem;"></i>
+                                </a>
+                            </div>
+                        </div>
 
-      {{-- PENDING --}}
-      <div class="tab-pane fade" id="tab-pending" role="tabpanel" tabindex="0">
-        <div class="container px-3">
-          <div class="order-card">
-            <div class="d-flex align-items-start gap-3">
-              <img class="thumb" src="{{ asset('assets/Images/enkanomiya.png') }}" alt="">
-              <div class="flex-grow-1">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="fw-semibold small">SealW</div>
-                  <span class="badge-status pending">Pending</span>
-                </div>
-                <div class="muted-xxs">17 June 2025</div>
-                <div class="title">Enkanomiya Exploration 100%</div>
-                <div class="price-row"><div>Total Price:</div><div class="fw-semibold">Rp120.000</div></div>
-              </div>
-            </div>
-            <div class="mt-2 text-end"><a href="{{ route('orders.track.pending') }}" class="btn btn-outline-secondary btn-xxs"> Track Order</a></div>
-          </div>
-        </div>
-      </div>
+                        <div class="card-divider"></div>
 
-      {{-- ON PROGRESS --}}
-      <div class="tab-pane fade" id="tab-progress" role="tabpanel" tabindex="0">
-        <div class="container px-3">
-          <div class="order-card">
-            <div class="d-flex align-items-start gap-3">
-              <img class="thumb" src="{{ asset('assets/Images/abyss.jpg') }}" alt="">
-              <div class="flex-grow-1">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="fw-semibold small">BangBoost</div>
-                  <span class="badge-status progress">On-Progress</span>
-                </div>
-                <div class="muted-xxs">10 Juni 2025</div>
-                <div class="title">Genshin Impact | Abyss<br><span class="muted-xxs">Variant: Floor 9, Floor 10, Floor 12</span></div>
-                <div class="price-row"><div>Total Price:</div><div class="fw-semibold">Rp60.000</div></div>
-              </div>
-            </div>
-            <div class="mt-2 text-end"><a href="{{ route('orders.track.progress') }}" class="btn btn-outline-secondary btn-xxs"> Track Order</a></div>
-          </div>
-        </div>
-      </div>
+                        <div class="card-body-row">
+                            <img src="{{ $thumb }}" class="game-thumb" alt="Game">
+                            <div class="service-title">
+                                {{ $fullTitle }}
+                            </div>
+                        </div>
 
-      {{-- COMPLETED --}}
-      <div class="tab-pane fade" id="tab-completed" role="tabpanel" tabindex="0">
-        <div class="container px-3">
-          <div class="order-card">
-            <div class="d-flex align-items-start gap-3">
-              <img class="thumb" src="{{ asset('assets/Images/genshin boss.png') }}" alt="">
-              <div class="flex-grow-1">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="fw-semibold small">MonkeyD</div>
-                  <span class="badge-status completed">Completed</span>
-                </div>
-                <div class="muted-xxs">18 April 2025</div>
-                <div class="title">Genshin Weekly Boss<br><span class="muted-xxs">Variant: Childe, Raiden, The Knave</span></div>
-                <div class="price-row"><div>Total Price:</div><div class="fw-semibold">Rp25.000</div></div>
-              </div>
+                        <div class="card-divider"></div>
+
+                        <div class="card-footer-row">
+                            <div>
+                                <div class="price-label">Total Price:</div>
+                                <div class="price-value">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</div>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                @if($isCompleted)
+                                    <a href="{{ url('/') }}" class="btn-track">Joki Again</a>
+                                    <a href="{{ route('reviews.create', $order->order_id) }}" class="btn-track">Review</a>
+                                @else
+                                    <a href="{{ route('orders.track', $order->order_id) }}" class="btn-track">Track Order</a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                @empty
+                    <div class="py-5 text-center text-muted">
+                        <div class="mb-2">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="3" y1="9" x2="21" y2="9"></line>
+                                <line x1="9" y1="21" x2="9" y2="9"></line>
+                            </svg>
+                        </div>
+                        <small>No orders found in {{ ucfirst(str_replace('-', ' ', $tabKey)) }}.</small>
+                    </div>
+                @endforelse
+
             </div>
-            <div class="mt-2 d-flex gap-2 justify-content-end">
-              <button class="btn btn-outline-secondary btn-xxs">Order Again</button>
-              <a href="{{ route('orders.track.completed') }}" class="btn btn-outline-secondary btn-xxs"> Track Order</a>
-            </div>
-          </div>
-        </div>
-      </div>
+        @endforeach
 
     </div>
-  </section>
-
-  {{-- BOTTOM NAV --}}
-  <nav class="bottom-nav">
-    <a href="#" class="tab">
-      <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-10.5Z" fill="none" stroke="#777" stroke-width="1.8"/></svg>
-      <span>Home</span>
-    </a>
-    <a href="#" class="tab">
-      <svg viewBox="0 0 24 24"><path d="M7 7h10l1 10H6l1-10Zm2 0V5a3 3 0 1 1 6 0v2" fill="none" stroke="#777" stroke-width="1.8" stroke-linecap="round"/></svg>
-      <span>Cart</span>
-    </a>
-    <a href="#" class="tab">
-      <svg viewBox="0 0 24 24"><path d="M20 16a4 4 0 0 1-4 4H6l-2 2V8a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v8Z" fill="none" stroke="#777" stroke-width="1.8"/></svg>
-      <span>Message</span>
-    </a>
-    <a href="#" class="tab">
-      <svg viewBox="0 0 24 24"><path d="M12 5V3m6 10a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z" fill="none" stroke="#777" stroke-width="1.8"/></svg>
-      <span>Notification</span>
-    </a>
-    <a href="{{ route('profile.show') }}" class="tab active">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="#ff4961" stroke-width="1.8"/><path d="M4 21a8 8 0 0 1 16 0" fill="none" stroke="#ff4961" stroke-width="1.8"/></svg>
-      <span class="active">Profile</span>
-    </a>
-  </nav>
-
-  <div class="home-indicator" aria-hidden="true"></div>
-</main>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+@endsection

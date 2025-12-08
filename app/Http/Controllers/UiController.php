@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Service;
 use Illuminate\Http\Request;
 
 class UiController extends Controller
@@ -11,15 +12,15 @@ class UiController extends Controller
         // Clear all signup session data when starting fresh from splash
         $request->session()->forget('signup.data');
         $request->session()->forget('signup.otp');
-        $request->session()->forget('signup.phone_verified');
+        $request->session()->forget('signup.otp_verified');
         return view('auth.splash'); 
     }
     public function login()             { return view('auth.login'); }
     public function signup(Request $request) { 
-        // Only clear signup session data if starting completely fresh (no signup data exists)
-        if (!$request->session()->has('signup.data')) {
+        // Clear any old signup session data when entering signup page fresh
+        if (!$request->session()->has('signup.otp_verified')) {
+            $request->session()->forget('signup.data');
             $request->session()->forget('signup.otp');
-            $request->session()->forget('signup.phone_verified');
         }
         return view('auth.register'); 
     }
@@ -30,10 +31,56 @@ class UiController extends Controller
     public function home()              { return view('marketplace.home'); }
 
     // ORDERS & TRANSACTIONS
-    public function serviceDetailConfirm() { return view('orders.service-detail'); }
-    public function boostRequest()      { return view('orders.boost-request'); }
-    public function payment(Request $r) { return view('orders.payment'); }
-    public function paymentSuccess(Request $r) { return view('orders.payment-success'); }
+    public function serviceDetailConfirm(Service $service = null) 
+    { 
+        return view('orders.service-detail', compact('service')); 
+    }
+    
+    public function boostRequest(Request $request) { 
+        $user = auth()->user();
+        
+        // Detect order source from query parameters
+        if ($request->has('services')) {
+            // From cart - multiple items
+            session([
+                'order_source' => 'cart',
+                'selected_services' => $request->input('services', [])
+            ]);
+        } elseif ($request->has('service_id')) {
+            // Direct purchase - single item
+            session([
+                'order_source' => 'direct',
+                'service_id' => $request->input('service_id')
+            ]);
+        }
+        
+        return view('orders.boost-request', [
+            'userName' => $user->user_name ?? '',
+            'userEmail' => $user->user_email ?? '',
+            'userPhone' => $user->user_number ?? ''
+        ]);
+    }
+    
+    public function storeBoostRequest(Request $request) {
+        // Validate incoming data
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'username' => 'required|string|max:255',
+            'password' => 'required|string',
+            'priority' => 'required|string'
+        ]);
+
+        // Store boost request data in session
+        session([
+            'boost_request' => $validated
+        ]);
+
+        // Redirect to payment page
+        return redirect()->route('payment');
+    }
+    
     public function myOrders()          { return view('orders.my-orders'); }
     public function orderPending()      { return view('orders.order-pending'); }
     public function orderProgress()     { return view('orders.order-progress'); }

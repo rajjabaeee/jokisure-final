@@ -28,17 +28,30 @@
     </div>
 
     <div class="section pt-3">
-      <span class="badge-chip badge-pend">Pending</span>
+      @php
+        use Illuminate\Support\Str;
+        $statusName = $order->orderStatus->order_status_name ?? 'Pending';
+        $item = $order->orderItems->first();
+        $boosterName = $item?->service?->booster?->user?->user_name ?? ($item?->service?->booster?->booster_desc ?? 'Booster');
+        $thumb = $item?->service?->game ? asset('assets/' . Str::slug($item->service->game->game_name) . '.png') : asset('assets/enkanomiya.png');
+        $payment = $order->payments->first();
+        $paymentMethod = $payment?->paymentMethod?->method_name ?? 'Not specified';
+        $subtotal = $order->subtotal_amount ?? 0;
+        $discount = $order->discount_amount ?? 0;
+        $total = $order->total_amount ?? 0;
+      @endphp
 
-      <div class="mt-3 title-md">Order ID: <span class="fw-bold">#12356</span>
+      <span class="badge-chip badge-pend">{{ $statusName }}</span>
+
+      <div class="mt-3 title-md">Order ID: <span class="fw-bold">#{{ $order->order_id }}</span>
         <svg width="16" height="16" viewBox="0 0 24 24" class="ms-1"><rect x="4" y="4" width="12" height="14" rx="2" stroke="#444" stroke-width="1.8"/><path d="M8 2h8a2 2 0 012 2v14a2 2 0 01-2 2H8" stroke="#444" stroke-width="1.8"/></svg>
       </div>
-      <div class="text-decoration-underline mt-2 mb-2 muted">17 June 2025, 9:41 WIB</div>
+      <div class="text-decoration-underline mt-2 mb-2 muted">{{ optional($order->order_date)->format('d F Y, H:i') }}</div>
       <div class="hr-soft"></div>
 
       <div class="card-soft booster-row">
-        <img src="{{ asset('assets/Images/sealw.jpg') }}" class="avatar" alt="">
-        <div class="name">SealW</div>
+        <img src="{{ asset('assets/sealw.jpg') }}" class="avatar" alt="">
+        <div class="name">{{ $boosterName }}</div>
         <button class="msg-btn" title="Message">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 8a6 6 0 016-6h4a6 6 0 016 6v2a6 6 0 01-6 6h-3l-4 3v-3H10a6 6 0 01-6-6V8z" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -46,28 +59,31 @@
 
       <div class="card-soft">
         <div class="d-flex align-items-center gap-2">
-          <img src="{{ asset('assets/Images/enkanomiya.png') }}" class="thumb" alt="">
+          <img src="{{ $thumb }}" class="thumb" alt="">
           <div>
-            <div class="fw-bold">Enkanomiya Exploration 100%</div>
-            <small class="muted">Variant: Floor 9, Floor 10, Floor 12</small>
+            <div class="fw-bold">{{ $item?->service?->service_desc ?? ($item?->service?->game?->game_name ?? 'Service') }}</div>
+            <small class="muted">{{ $item?->service?->service_desc ?? '' }}</small>
           </div>
         </div>
       </div>
 
       <div class="card-soft">
         <div class="fw-bold mb-2">Payment Detail:</div>
-        <div class="kv"><small>Payment Method</small><small>VISA/MasterCard</small></div>
-        <div class="kv"><small>Subtotal</small><small>Rp130.000</small></div>
-        <div class="kv"><small>Discount</small><small>-Rp10.000</small></div>
-        <div class="kv"><small>Tax & Services</small><small>Rp5.000</small></div>
-        <div class="kv"><b>Total</b><b>Rp120.000</b></div>
+        <div class="kv"><small>Payment Method</small><small>{{ $paymentMethod }}</small></div>
+        <div class="kv"><small>Subtotal</small><small>Rp{{ number_format($subtotal,0,',','.') }}</small></div>
+        <div class="kv"><small>Discount</small><small>-Rp{{ number_format($discount,0,',','.') }}</small></div>
+        <div class="kv"><b>Total</b><b>Rp{{ number_format($total,0,',','.') }}</b></div>
       </div>
     </div>
 
     <div class="action-bar">
       <div class="d-flex gap-2">
-        <button class="btn btn-red btn-pill w-50">Track Order</button>
-        <button class="btn btn-gray btn-pill w-50" disabled>Complete Order</button>
+        <a href="{{ route('orders.show', $order->order_id) }}" class="btn btn-red btn-pill w-50">Track Order</a>
+        <form method="post" action="{{ route('orders.update.status', $order->order_id) }}" class="w-50">
+          @csrf
+          <input type="hidden" name="status" value="Completed">
+          <button type="submit" class="btn btn-gray btn-pill w-100">Mark Complete</button>
+        </form>
       </div>
     </div>
   </section>

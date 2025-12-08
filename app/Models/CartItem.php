@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class CartItem extends Model
 {
-    use HasUuids;
-
     protected $table = 'cart_items';
     public $timestamps = false;
+    protected $primaryKey = null;
+    public $incrementing = false;
 
     protected $fillable = [
         'cart_id',
