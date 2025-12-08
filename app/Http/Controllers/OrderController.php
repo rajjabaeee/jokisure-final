@@ -8,6 +8,10 @@ use App\Models\WorkOrder;
 use App\Models\Buyer;
 use App\Models\WorkOrderEvent;
 use App\Models\OrderStatus;
+use App\Models\OrderItem;
+use App\Models\Payment;
+use App\Models\CartItem;
+use App\Models\BoostPriority;
 
 class OrderController extends Controller
 {
@@ -169,6 +173,106 @@ class OrderController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Event added');
+    }
+
+    /**
+     * Create new order from boost request and payment data
+     */
+    public function createOrder(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        $buyer = $user->buyer()->first();
+        if (!$buyer) {
+            return back()->with('error', 'Buyer profile not found.');
+        }
+
+        // Get data from session
+        $boostData = session('boost_request');
+        $paymentData = session('payment_data');
+
+        if (!$boostData || !$paymentData) {
+            return redirect()->route('boost.request')->with('error', 'Missing order data. Please start again.');
+        }
+
+        // Get boost priority by name
+        $boostPriority = BoostPriority::where('boost_priority_name', $boostData['priority'])->first();
+        if (!$boostPriority) {
+            return back()->with('error', 'Invalid boost priority selected.');
+        }
+
+        // Get order status "Pending"
+        $orderStatus = OrderStatus::where('order_status_name', 'Pending')->first();
+        if (!$orderStatus) {
+            return back()->with('error', 'Order status not configured. Please contact support.');
+        }
+
+        // Get cart items
+        $cartItems = CartItem::where('cart_id', $buyer->cart_id)
+            ->with('service')
+            ->get();
+
+        if ($cartItems->isEmpty()) {
+            return back()->with('error', 'Your cart is empty.');
+        }
+
+        // Create work order
+        $workOrder = WorkOrder::create([
+            'boost_priority_id' => $boostPriority->boost_priority_id,
+            'order_date' => now(),
+            'order_status_id' => $orderStatus->order_status_id,
+            'subtotal_amount' => $paymentData['subtotal'],
+            'discount_id' => $paymentData['voucher_id'],
+            'discount_amount' => $paymentData['discount'],
+            'total_amount' => $paymentData['total']
+        ]);
+
+        // Create order items from cart
+        foreach ($cartItems as $cartItem) {
+            OrderItem::create([
+                'order_id' => $workOrder->order_id,
+                'buyer_id' => $buyer->buyer_id,
+                'service_id' => $cartItem->service_id,
+                'quantity' => 1,
+                'item_subtotal' => $cartItem->service->service_price,
+                'game_username' => $boostData['username'],
+                'game_password_encrypt' => encrypt($boostData['password']),
+                'contact_name' => $boostData['name'],
+                'contact_email' => $boostData['email'],
+                'contact_phone' => $boostData['phone']
+            ]);
+        }
+
+        // Create payment record
+        Payment::create([
+            'order_id' => $workOrder->order_id,
+            'buyer_id' => $buyer->buyer_id,
+            'method_id' => $paymentData['method_id'],
+            'payment_status_id' => $orderStatus->order_status_id, // Same as order status for now
+            'gateway_reference' => null, // Will be updated by payment gateway callback
+            'latest_update' => now()
+        ]);
+
+        // Delete cart items
+        CartItem::where('cart_id', $buyer->cart_id)->delete();
+
+        // Store order info for success page
+        session([
+            'order_created' => [
+                'order_id' => $workOrder->order_id,
+                'total' => $paymentData['total'],
+                'payment_method' => $paymentData['method_name']
+            ]
+        ]);
+
+        // Clear boost request and payment data from session
+        session()->forget(['boost_request', 'payment_data']);
+
+        // Redirect to payment success
+        return redirect()->route('payment.success');
     }
 
     /**
