@@ -8,6 +8,7 @@ use App\Http\Controllers\BoosterController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -50,7 +51,7 @@ Route::middleware('auth')->group(function () {
 	Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 	// MARKETPLACE ROUTES
-	Route::get('/home', [UiController::class, 'home'])->name('home');
+	Route::get('/home', [HomepageController::class, 'index'])->name('home');
 	Route::get('/games', [GameController::class, 'index'])->name('games.index');
 	Route::get('/games/{game}', [GameController::class, 'show'])->name('games.show');
 	Route::get('/boosters', [UiController::class, 'boosters'])->name('boosters');
@@ -59,6 +60,10 @@ Route::middleware('auth')->group(function () {
 	Route::post('/cart/remove/{item}', [CartController::class, 'remove'])->name('cart.remove');
 	Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
 	Route::view('/game-detail', 'marketplace.game-detail');
+
+	// API Routes for Homepage Data
+	Route::get('/api/games', [HomepageController::class, 'getGamesByGenre'])->name('api.games');
+	Route::get('/api/featured-boosters', [HomepageController::class, 'getFeaturedBoosters'])->name('api.featured.boosters');
 
 	// SERVICE DETAIL
 	Route::get('/service/detail', [UiController::class,'serviceDetailConfirm'])->name('service.detail.confirm');

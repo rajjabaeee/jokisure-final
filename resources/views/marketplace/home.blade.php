@@ -1,84 +1,141 @@
-@extends('layouts.app')
+@extends('layouts.home-app')
 
 @section('title', 'Home')
 
 @section('content')
-    <!-- APP BAR -->
-    <div class="appbar d-flex align-items-center justify-content-between px-3">
-      <div class="fw-semibold">JokiSure</div>
-      <a href="#" class="icon-btn">
-        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </a>
-    </div>
-
     <!-- BODY -->
-    <div class="px-3 pb-5">
+    <div class="px-2 pb-5">
 
-      <!-- Banner -->
-      <div class="card-block p-0 overflow-hidden mt-3 mb-3">
-        <img src="{{ asset('assets/banner-naruto.jpg') }}" class="w-100" alt="Banner" style="height: 140px; object-fit: cover; border-radius: 14px;">
-      </div>
-
-      <!-- Boost Games Section -->
-      <div style="font-weight: 600; font-size: 16px; margin: 16px 0 12px 0;">Boost Games</div>
-      <div style="overflow-x: auto; white-space: nowrap; padding-bottom: 8px; margin-left: -12px; margin-right: -12px; padding-left: 12px; padding-right: 12px;">
-        @foreach (['Genshin Impact', 'Roblox', 'Mobile Legends', 'Honkai Star Rail', 'Free Fire', 'VALORANT'] as $game)
-          <a href="#" style="display: inline-flex; flex-direction: column; width: 100px; margin-right: 12px; border-radius: 12px; overflow: hidden; background: #fff; border: 1px solid #e9e9e9; text-decoration: none; color: #0a0a0a; flex-shrink: 0;">
-            <img src="{{ asset('assets/' . str()->slug($game) . '.jpg') }}" alt="{{ $game }}" style="width: 100%; height: 100px; object-fit: cover;">
-            <div style="padding: 8px; text-align: center; font-size: 12px; font-weight: 500;">{{ $game }}</div>
-          </a>
-        @endforeach
-      </div>
-
-      <!-- Featured Boosters -->
-      <div style="font-weight: 600; font-size: 16px; margin: 16px 0 12px 0;">Featured Boosters</div>
-      <div style="overflow-x: auto; white-space: nowrap; padding-bottom: 8px; margin-left: -12px; margin-right: -12px; padding-left: 12px; padding-right: 12px;">
-        @php
-          $boosters = [
-            ['tier'=>'Gold Booster', 'name'=>'SealW', 'games'=>'Mobile Legends, VALORANT', 'img'=>'sealw.jpg'],
-            ['tier'=>'Diamond Booster', 'name'=>'BangBoost', 'games'=>'Genshin Impact, Zenless Zone', 'img'=>'bangboost.jpg', 'tag'=>'Best Seller'],
-            ['tier'=>'Diamond Booster', 'name'=>'MOBALovers', 'games'=>'Mobile Legends, DOTA', 'img'=>'mobalovers.jpg'],
-          ];
-        @endphp
-
-        @foreach ($boosters as $b)
-          <a href="{{ route('booster.profile', 1) }}" style="display: inline-flex; width: 280px; background: #fff; border: 1px solid #e9e9e9; border-radius: 16px; padding: 12px; margin-right: 12px; gap: 12px; flex-shrink: 0; text-decoration: none; color: #0a0a0a; align-items: center;">
-            <img src="{{ asset('assets/' . $b['img']) }}" alt="{{ $b['name'] }}" style="width: 80px; height: 80px; border-radius: 12px; object-fit: cover; flex-shrink: 0;">
-            <div style="flex: 1; min-width: 0;">
-              <div style="margin-bottom: 4px;">
-                <span style="font-size: 10px; padding: 3px 8px; background: #ffc107; color: #000; border-radius: 4px; margin-right: 6px; display: inline-block;">{{ $b['tier'] }}</span>
-                @if(isset($b['tag']))
-                  <span style="font-size: 10px; padding: 3px 8px; background: #0066cc; color: #fff; border-radius: 4px; display: inline-block;">{{ $b['tag'] }}</span>
-                @endif
-              </div>
-              <div style="font-weight: 600; font-size: 14px; margin: 4px 0; display: flex; align-items: center; gap: 4px;">
-                {{ $b['name'] }}
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#0066cc"><path d="M10.5 1.5H4.605c-.606 0-1.122.233-1.5.612-.389.378-.605.894-.605 1.5v16.776c0 .606.233 1.122.612 1.5.378.389.894.605 1.5.605h14.776c.606 0 1.122-.233 1.5-.612.389-.378.605-.894.605-1.5V11.5M10.5 1.5v8m0-8L21 10.5m-10.5-9h8.25"/></svg>
-              </div>
-              <div style="font-size: 11px; color: #666; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $b['games'] }}</div>
+      <!-- Banner Slider -->
+      <div style="position: relative; margin-top: 12px; margin-bottom: 16px;">
+        <div class="banner-slider" style="overflow: hidden; border-radius: 14px; position: relative; width: 100%; height: 140px;" id="bannerSlider">
+          <div class="banner-track" style="display: flex; transition: transform 0.5s ease-in-out; width: 100%; height: 100%;" id="bannerTrack">
+            <div style="min-width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+              <img src="{{ asset('assets/hsrnewver.jpg') }}" class="w-100 h-100" alt="Banner 1" style="object-fit: cover;">
             </div>
-          </a>
-        @endforeach
+            <div style="min-width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+              <img src="{{ asset('assets/akevent.jpg') }}" class="w-100 h-100" alt="Banner 2" style="object-fit: cover; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" onerror="this.style.display='none'">
+            </div>
+            <div style="min-width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+              <img src="{{ asset('assets/genshinevent.jpg') }}" class="w-100 h-100" alt="Banner 3" style="object-fit: cover; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" onerror="this.style.display='none'">
+            </div>
+          </div>
+
+          <!-- Banner Navigation Buttons -->
+          <button onclick="slideBanner('left')" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.7); border: none; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; padding: 0; transition: background 0.3s;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          <button onclick="slideBanner('right')" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.7); border: none; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; padding: 0; transition: background 0.3s;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 19l7-7-7-7"/></svg>
+          </button>
+
+          <!-- Banner Indicators -->
+          <div style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 10;">
+            <span class="banner-indicator" data-index="0" style="width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.8); cursor: pointer; transition: all 0.3s;" onclick="goToBanner(0)"></span>
+            <span class="banner-indicator" data-index="1" style="width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.3s;" onclick="goToBanner(1)"></span>
+            <span class="banner-indicator" data-index="2" style="width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.3s;" onclick="goToBanner(2)"></span>
+          </div>
+        </div>
       </div>
 
-      <!-- For You Section -->
-      <div style="font-weight: 600; font-size: 16px; margin: 16px 0 12px 0;">For You</div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
-        @for ($i = 0; $i < 6; $i++)
-          <a href="{{ route('service.detail.confirm') }}" style="background: #fff; border: 1px solid #e9e9e9; border-radius: 12px; overflow: hidden; text-decoration: none; color: #0a0a0a; display: flex; flex-direction: column;">
-            <img src="{{ asset('assets/abyss.jpg') }}" alt="Service" style="width: 100%; height: 120px; object-fit: cover;">
-            <div style="padding: 12px; flex: 1; display: flex; flex-direction: column;">
-              <span style="font-size: 10px; padding: 2px 6px; background: #0066cc; color: #fff; display: inline-block; width: fit-content; margin-bottom: 6px; border-radius: 4px;">Open</span>
-              <div style="font-weight: 600; font-size: 13px; margin-bottom: 4px;">Genshin | Abyss</div>
-              <div style="font-size: 11px; color: #666; margin-bottom: 8px;">Floor 9–12</div>
-              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-top: auto;">
-                <span style="font-size: 12px;">BangBoost</span>
-                <span style="font-weight: 600;">Rp60K+</span>
-              </div>
-              <div style="font-size: 11px; color: #666; margin-top: 4px;">★ 4.8 (120)</div>
-            </div>
+      <!-- Boost Games Section - GRID 3x2 -->
+      <div style="background: #fff; border-radius: 16px; padding: 16px; margin-bottom: 16px; border: 1px solid #e9e9e9;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <div style="font-weight: 600; font-size: 16px;">Boost Games</div>
+          <a href="{{ route('games.index') }}" style="display: flex; align-items: center; gap: 4px; text-decoration: none; color: #0066cc; font-size: 12px; font-weight: 500;">
+             
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
           </a>
-        @endfor
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+        @if($games->count() > 0)
+          @foreach ($games->take(6) as $game)
+            <a href="{{ route('games.show', $game->game_id) }}" style="display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; background: #fff; border: 1px solid #e9e9e9; text-decoration: none; color: #0a0a0a; transition: all 0.3s ease;">
+              <div style="width: 100%; height: 100px; overflow: hidden; background: #f5f5f5;">
+                <img src="{{ asset('assets/' . str()->slug($game->game_name) . '.jpg') }}" alt="{{ $game->game_name }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='{{ asset('assets/games-placeholder.jpg') }}'">
+              </div>
+              <div style="padding: 10px; text-align: center; flex: 1; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 13px; font-weight: 600; line-height: 1.3;">{{ $game->game_name }}</span>
+              </div>
+            </a>
+          @endforeach
+        @else
+          <p style="color: #999; grid-column: 1 / -1;">Tidak ada games tersedia</p>
+        @endif
+        </div>
+      </div>
+
+      <!-- Featured Boosters - GRID 3x1 -->
+      <div style="background: #fff; border-radius: 16px; padding: 16px; margin-bottom: 16px; border: 1px solid #e9e9e9;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <div style="font-weight: 600; font-size: 16px;">Featured Boosters</div>
+          <a href="{{ route('boosters') }}" style="display: flex; align-items: center; gap: 4px; text-decoration: none; color: #0066cc; font-size: 12px; font-weight: 500;">
+             
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+        @if($featuredBoosters->count() > 0)
+          @foreach ($featuredBoosters->take(3) as $b)
+            <a href="{{ route('booster.profile', $b->user_id) }}" style="display: flex; background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.3) 100%), url('{{ asset('assets/' . str()->slug($b->user_name) . '-bg.jpg') }}') center/cover; border: 1px solid #e9e9e9; border-radius: 16px; padding: 12px; gap: 12px; text-decoration: none; color: #0a0a0a; align-items: center; transition: all 0.3s ease;">
+              <img src="{{ asset('assets/' . str()->slug($b->user_name) . '.jpg') }}" alt="{{ $b->user_name }}" style="width: 80px; height: 80px; border-radius: 12px; object-fit: cover; flex-shrink: 0;" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">>
+              <div style="flex: 1; min-width: 0;">
+                <div style="margin-bottom: 4px;">
+                  @if($b->user_rating >= 4.5)
+                    <span style="font-size: 10px; padding: 3px 8px; background: #ffc107; color: #000; border-radius: 4px; margin-right: 6px; display: inline-block;">Diamond Booster</span>
+                  @elseif($b->user_rating >= 3.5)
+                    <span style="font-size: 10px; padding: 3px 8px; background: #c0c0c0; color: #000; border-radius: 4px; margin-right: 6px; display: inline-block;">Gold Booster</span>
+                  @else
+                    <span style="font-size: 10px; padding: 3px 8px; background: #cd7f32; color: #fff; border-radius: 4px; margin-right: 6px; display: inline-block;">Silver Booster</span>
+                  @endif
+                  @if($b->user_rating >= 4.8)
+                    <span style="font-size: 10px; padding: 3px 8px; background: #0066cc; color: #fff; border-radius: 4px; display: inline-block;">Best Seller</span>
+                  @endif
+                </div>
+                <div style="font-weight: 600; font-size: 14px; margin: 4px 0; display: flex; align-items: center; gap: 4px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                  {{ $b->user_name }}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#0066cc"><path d="M10.5 1.5H4.605c-.606 0-1.122.233-1.5.612-.389.378-.605.894-.605 1.5v16.776c0 .606.233 1.122.612 1.5.378.389.894.605 1.5.605h14.776c.606 0 1.122-.233 1.5-.612.389-.378.605-.894.605-1.5V11.5M10.5 1.5v8m0-8L21 10.5m-10.5-9h8.25"/></svg>
+                </div>
+                <div style="font-size: 11px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">★ {{ number_format($b->user_rating, 1) }}</div>
+              </div>
+            </a>
+          @endforeach
+        @else
+          <p style="color: #999;">Tidak ada booster tersedia</p>
+        @endif
+        </div>
+      </div>
+
+      <!-- For You Section - Grid 2 Kolom -->
+      <div style="background: #fff; border-radius: 16px; padding: 16px; margin-bottom: 16px; border: 1px solid #e9e9e9;">
+        <div style="font-weight: 600; font-size: 16px; margin-bottom: 12px;">For You</div>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+        @if($services->count() > 0)
+          @foreach ($services as $service)
+            <a href="{{ route('service.detail.confirm') }}" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e9e9e9; border-radius: 12px; overflow: hidden; text-decoration: none; color: #0a0a0a; transition: all 0.3s ease;">
+              <div style="position: relative; width: 100%; height: 120px; overflow: hidden; background: #f5f5f5;">
+                <img src="{{ asset('assets/' . str()->slug($service->game_name) . '.jpg') }}" alt="{{ $service->game_name }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='{{ asset('assets/abyss.jpg') }}'">
+                <span style="position: absolute; top: 6px; right: 6px; font-size: 9px; padding: 2px 6px; background: #0066cc; color: #fff; border-radius: 4px; font-weight: 500;">Open</span>
+              </div>
+              <div style="padding: 10px; flex: 1; display: flex; flex-direction: column;">
+                <div style="font-weight: 600; font-size: 11px; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: normal; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;">{{ $service->game_name }}</div>
+                <div style="font-size: 9px; color: #666; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $service->service_desc ?? 'Service' }}</div>
+                <div style="font-size: 9px; color: #999; margin-bottom: 4px;">Est. {{ $service->est_time }}</div>
+                <div style="display: flex; align-items: center; gap: 6px; font-size: 9px; color: #666; margin-bottom: 4px;">
+                  <img src="{{ asset('assets/' . str()->slug($service->booster_name) . '.jpg') }}" alt="{{ $service->booster_name }}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; flex-shrink: 0;" onerror="this.src='{{ asset('assets/pp.jpg') }}'">
+                  <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $service->booster_name }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
+                  <div style="font-size: 9px; color: #ffc107;">★ {{ number_format($service->service_rating, 1) }}</div>
+                  <span style="font-weight: 700; font-size: 10px; color: #0066cc;">Rp{{ number_format($service->service_price, 0, ',', '.') }}</span>
+                </div>
+              </div>
+            </a>
+          @endforeach
+        @else
+          <p style="color: #999; grid-column: 1 / -1;">Tidak ada layanan tersedia</p>
+        @endif
+        </div>
       </div>
 
     </div>
@@ -110,5 +167,71 @@
       <span>Profile</span>
     </a>
   </nav>
+
+  <script>
+    // Banner Slider Functions
+    let bannerCurrentIndex = 0;
+    const bannerTotal = 3;
+    let bannerAutoplay = true;
+    let bannerAutoplayTimer = null;
+
+    function updateBannerSlide(index) {
+      const track = document.getElementById('bannerTrack');
+      const offset = -index * 100;
+      track.style.transform = `translateX(${offset}%)`;
+      
+      // Update indicators
+      document.querySelectorAll('.banner-indicator').forEach((indicator, i) => {
+        if (i === index) {
+          indicator.style.background = 'rgba(255,255,255,0.9)';
+          indicator.style.width = '24px';
+        } else {
+          indicator.style.background = 'rgba(255,255,255,0.4)';
+          indicator.style.width = '8px';
+        }
+      });
+      
+      bannerCurrentIndex = index;
+      resetBannerAutoplay();
+    }
+
+    function slideBanner(direction) {
+      let newIndex = bannerCurrentIndex;
+      if (direction === 'left') {
+        newIndex = bannerCurrentIndex === 0 ? bannerTotal - 1 : bannerCurrentIndex - 1;
+      } else {
+        newIndex = bannerCurrentIndex === bannerTotal - 1 ? 0 : bannerCurrentIndex + 1;
+      }
+      updateBannerSlide(newIndex);
+    }
+
+    function goToBanner(index) {
+      updateBannerSlide(index);
+    }
+
+    function resetBannerAutoplay() {
+      if (bannerAutoplayTimer) {
+        clearInterval(bannerAutoplayTimer);
+      }
+      if (bannerAutoplay) {
+        bannerAutoplayTimer = setInterval(() => {
+          let nextIndex = bannerCurrentIndex === bannerTotal - 1 ? 0 : bannerCurrentIndex + 1;
+          updateBannerSlide(nextIndex);
+        }, 5000); // Auto slide every 5 seconds
+      }
+    }
+
+    // Initialize banner autoplay
+    document.addEventListener('DOMContentLoaded', () => {
+      resetBannerAutoplay();
+      // Stop autoplay on user interaction
+      document.getElementById('bannerSlider').addEventListener('mouseenter', () => {
+        if (bannerAutoplayTimer) clearInterval(bannerAutoplayTimer);
+      });
+      document.getElementById('bannerSlider').addEventListener('mouseleave', () => {
+        resetBannerAutoplay();
+      });
+    });
+  </script>
 
   @endsection
