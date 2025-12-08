@@ -89,6 +89,11 @@ Route::middleware('auth')->group(function () {
 	Route::get('/track/{order}', [OrderController::class, 'track'])->name('orders.track');
 	Route::post('/track/{order}/events', [OrderController::class, 'addEvent'])->name('orders.track.event.store');
 
+	//CHAT ROUTERS
+	Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::get('/chat/{receiverId}', [ChatController::class, 'show'])->name('chat.show');
+    Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
+
 	// USER ROUTES
 	Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
 	Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
