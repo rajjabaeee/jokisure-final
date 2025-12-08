@@ -99,4 +99,8 @@ class UiController extends Controller
     public function boosterProfile()    { return view('booster.profile'); }
     public function favoriteBoosters()  { return view('user.favorites-boosters'); }
     public function favoriteBoosts()    { return view('user.favorites-boosts'); }
+
+    // FOOTER PAGES
+    public function terms()             { return view('legal.terms'); }
+    public function contact()           { return view('legal.contact'); }
 }

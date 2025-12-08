@@ -97,23 +97,19 @@ Route::middleware('auth')->group(function () {
 	Route::get('/orders/create', [OrderController::class, 'createOrder'])->name('orders.create');
 	
 	// Order listing and detail (dynamic - no status-specific static routes needed)
-	Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+	Route::get('/orders', [OrderController::class, 'index'])->name('orders');
 	Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 	Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
 	Route::post('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update.status');
 	
 	// Order tracking (dynamic - returns appropriate track view based on status)
+	Route::get('/track/{order}', [OrderController::class, 'track'])->name('orders.track');
 	Route::post('/track/{order}/events', [OrderController::class, 'addEvent'])->name('orders.track.event.store');
 
 	//CHAT ROUTERS
 	Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
     Route::get('/chat/{receiverId}', [ChatController::class, 'show'])->name('chat.show');
     Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
-	
-	//Track Order
-	Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
-	Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
-	Route::get('/track/{order}', [OrderController::class, 'track'])->name('orders.track');
 
 	//Review and Rating
 	Route::get('/orders/{orderId}/review', [ReviewController::class, 'create'])->name('reviews.create');

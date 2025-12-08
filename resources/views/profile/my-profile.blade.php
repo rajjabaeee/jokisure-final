@@ -43,7 +43,7 @@
       <div class="card-block orders-card p-0 mt-3">
         <div class="orders-card-head d-flex align-items-center justify-content-between px-3 py-2">
           <div class="fw-bold orders-title">My Orders</div>
-          <a href="{{ route('orders.index')}}" class="orders-see-all text-decoration-none">
+          <a href="{{ route('orders') }}" class="orders-see-all text-decoration-none">
             <span>See all</span>
             <svg width="14" height="14" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
@@ -51,19 +51,19 @@
         <hr class="card-divider my-0">
         <div class="p-2">
           <div class="orders-grid">
-            <a class="order-chip text-decoration-none" href="{{ route('orders.index') }}">
+            <a class="order-chip text-decoration-none" href="{{ route('orders') }}">
               <div class="ico"><svg viewBox="0 0 24 24"><path d="M5 6h14v12H5zM5 10h14" stroke="#0a0a0a" stroke-width="2" fill="none"/></svg></div>
               <span class="label">Waitlist</span>
             </a>
-            <a class="order-chip text-decoration-none" href="{{ route('orders.index') }}">
+            <a class="order-chip text-decoration-none" href="{{ route('orders') }}">
               <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="#0a0a0a" stroke-width="2" fill="none"/><path d="M12 7v6l4 2" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round"/></svg></div>
               <span class="label">Pending</span>
             </a>
-            <a class="order-chip text-decoration-none" href="{{ route('orders.index') }}">
+            <a class="order-chip text-decoration-none" href="{{ route('orders') }}">
               <div class="ico"><svg viewBox="0 0 24 24"><path d="M6 19l4-10 4 6 4-12" stroke="#0a0a0a" stroke-width="2" fill="none"/></svg></div>
               <span class="label">On-Progress</span>
             </a>
-            <a class="order-chip text-decoration-none" href="{{ route('orders.index') }}">
+            <a class="order-chip text-decoration-none" href="{{ route('orders') }}">
               <div class="ico"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2" fill="none" stroke="#0a0a0a" stroke-width="2"/><path d="M9 12l2.5 2.5L15 11" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
               <span class="label">Completed</span>
             </a>

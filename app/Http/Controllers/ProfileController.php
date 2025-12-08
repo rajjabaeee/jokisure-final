@@ -77,4 +77,30 @@ class ProfileController extends Controller
 
         return redirect()->route('profile.show')->with('success', 'Profile updated successfully');
     }
+
+    /**
+     * Show the account details page.
+     */
+    public function account(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        return view('profile.account', compact('user'));
+    }
+
+    /**
+     * Show the settings page.
+     */
+    public function settings(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        return view('profile.settings', compact('user'));
+    }
 }

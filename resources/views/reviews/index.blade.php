@@ -13,7 +13,7 @@
 
     <div class="d-flex align-items-center mb-4">
         {{-- Kembali ke halaman Orders --}}
-        <a href="{{ route('orders.index') }}" class="text-dark me-3"><i class="bi bi-arrow-left fs-4"></i></a>
+        <a href="{{ route('orders') }}" class="text-dark me-3"><i class="bi bi-arrow-left fs-4"></i></a>
         <h5 class="fw-bold mb-0">Reviews</h5>
     </div>
 

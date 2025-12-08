@@ -62,42 +62,110 @@
     </nav>
 
     <!-- Overlay Menu Modal -->
-    <div id="navbarOverlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 998; display: none;" onclick="closeNavbarMenu()"></div>
+    <div id="navbarOverlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 999; display: none;" onclick="closeNavbarMenu()"></div>
+
+    <style>
+      /* Ensure sidebar stays fixed during scroll */
+      .safe-area {
+        position: relative;
+        overflow-x: hidden;
+      }
+      
+      #navbarMenu {
+        position: absolute !important;
+      }
+      
+      /* Prevent body scroll when sidebar is open */
+      body.sidebar-open {
+        overflow: hidden;
+      }
+    </style>
 
     <!-- Sidebar Menu -->
-    <div id="navbarMenu" style="position: fixed; top: 0; left: -100%; width: 70%; max-width: 300px; height: 100vh; background: #fff; z-index: 999; transition: left 0.3s ease; overflow-y: auto; box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);">
+    <div id="navbarMenu" style="position: absolute; top: 0; left: -100%; width: 260px; height: 100%; background: #fff; z-index: 1000; transition: left 0.3s ease; overflow-y: auto; border-top-right-radius: 20px; border-bottom-right-radius: 20px; box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);">
+      
       <!-- Close Button -->
-      <div style="padding: 16px; border-bottom: 1px solid #e9e9e9; display: flex; justify-content: space-between; align-items: center;">
-        <span style="font-weight: 600; font-size: 16px;">Menu</span>
-        <button type="button" onclick="closeNavbarMenu()" style="border: none; background: none; padding: 0; cursor: pointer;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div style="padding: 40px 16px 16px 16px; display: flex; justify-content: flex-end;">
+        <button type="button" onclick="closeNavbarMenu()" style="border: none; background: none; padding: 6px; cursor: pointer; color: #666;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M18 6L6 18M6 6l12 12"/>
           </svg>
         </button>
       </div>
 
-      <!-- Menu Items -->
-      <ul style="list-style: none; padding: 0; margin: 0;">
-        <li>
-          <a href="{{ route('home') }}" onclick="closeNavbarMenu()" style="display: block; padding: 16px; text-decoration: none; color: #0a0a0a; border-bottom: 1px solid #e9e9e9; font-size: 15px;">Home</a>
-        </li>
-        <li>
-          <a href="{{ route('games.index') }}" onclick="closeNavbarMenu()" style="display: block; padding: 16px; text-decoration: none; color: #0a0a0a; border-bottom: 1px solid #e9e9e9; font-size: 15px;">Explore</a>
-        </li>
-        <li>
-          <a href="{{ route('boosters') }}" onclick="closeNavbarMenu()" style="display: block; padding: 16px; text-decoration: none; color: #0a0a0a; border-bottom: 1px solid #e9e9e9; font-size: 15px;">Boosters</a>
-        </li>
-        <li>
-          <a href="{{ route('chat.index') }}" onclick="closeNavbarMenu()" style="display: block; padding: 16px; text-decoration: none; color: #0a0a0a; border-bottom: 1px solid #e9e9e9; font-size: 15px;">Messages</a>
-        </li>
-        <li>
-          <a href="{{ route('cart.index') }}" onclick="closeNavbarMenu()" style="display: block; padding: 16px; text-decoration: none; color: #0a0a0a; border-bottom: 1px solid #e9e9e9; font-size: 15px;">Cart</a>
-        </li>
-        <li>
-          <a href="{{ route('profile.show') }}" onclick="closeNavbarMenu()" style="display: block; padding: 16px; text-decoration: none; color: #0a0a0a; font-size: 15px;">Profile</a>
-        </li>
-      </ul>
+      <!-- User Profile Section -->
+      @auth
+      <div style="padding: 0 16px 20px 16px; text-align: center;">
+        <img src="{{ asset('assets/tamago.jpg') }}" alt="Profile" style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover; margin-bottom: 8px;">
+        <div style="font-size: 16px; font-weight: 700; color: #000; margin-bottom: 2px;">{{ Auth::user()->user_name ?? 'Tamago' }}</div>
+        <div style="font-size: 13px; color: #666; margin-bottom: 16px;">{{ Auth::user()->user_nametag ? '@' . Auth::user()->user_nametag : '@a599' }}</div>
+        <button onclick="handleLogout()" style="background: #ff6b6b; color: white; border: none; padding: 8px 24px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer;">
+          Log Out
+        </button>
+      </div>
+      @endauth
+
+      <!-- Main Menu Items -->
+      <div style="padding: 0 16px;">
+        <div onclick="window.location.href='{{ route('profile.show') }}'; closeNavbarMenu();" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s;">
+          <span style="font-size: 14px; font-weight: 500; color: #000;">Account</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 17L17 7M17 7H7M17 7V17"/>
+          </svg>
+        </div>
+
+        <div onclick="window.location.href='{{ route('boosters') }}'; closeNavbarMenu();" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s;">
+          <span style="font-size: 14px; font-weight: 500; color: #000;">Boosters</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 17L17 7M17 7H7M17 7V17"/>
+          </svg>
+        </div>
+
+        <div onclick="window.location.href='{{ route('games.index') }}'; closeNavbarMenu();" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s;">
+          <span style="font-size: 14px; font-weight: 500; color: #000;">Games</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 17L17 7M17 7H7M17 7V17"/>
+          </svg>
+        </div>
+
+        <div onclick="window.location.href='{{ route('orders') }}'; closeNavbarMenu();" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s;">
+          <span style="font-size: 14px; font-weight: 500; color: #000;">My Orders</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 17L17 7M17 7H7M17 7V17"/>
+          </svg>
+        </div>
+
+        <div onclick="window.location.href='{{ route('profile.edit') }}'; closeNavbarMenu();" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s;">
+          <span style="font-size: 14px; font-weight: 500; color: #000;">Settings</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 17L17 7M17 7H7M17 7V17"/>
+          </svg>
+        </div>
+
+        <div onclick="window.location.href='{{ route('notifications') }}'; closeNavbarMenu();" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s;">
+          <span style="font-size: 14px; font-weight: 500; color: #000;">Terms of Service</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 17L17 7M17 7H7M17 7V17"/>
+          </svg>
+        </div>
+
+        <div onclick="window.location.href='{{ route('chat.index') }}'; closeNavbarMenu();" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s;">
+          <span style="font-size: 14px; font-weight: 500; color: #000;">Contact Us</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 17L17 7M17 7H7M17 7V17"/>
+          </svg>
+        </div>
+      </div>
     </div>
+
+    <style>
+      /* Hover effects for menu items */
+      #navbarMenu div[onclick]:hover {
+        background: #e9ecef !important;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+      }
+    </style>
 
     <script>
       const menuToggleBtn = document.getElementById('menuToggleBtn');
@@ -108,11 +176,32 @@
         e.stopPropagation();
         navbarMenu.style.left = '0';
         navbarOverlay.style.display = 'block';
+        document.body.classList.add('sidebar-open');
       });
 
       function closeNavbarMenu() {
         navbarMenu.style.left = '-100%';
         navbarOverlay.style.display = 'none';
+        document.body.classList.remove('sidebar-open');
+      }
+
+      function handleLogout() {
+        if (confirm('Yakin ingin keluar?')) {
+          fetch('{{ route("logout") }}', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+          }).then(response => {
+            if (response.ok) {
+              window.location.href = '{{ route("login") }}';
+            }
+          }).catch(error => {
+            console.error('Error:', error);
+            window.location.href = '{{ route("login") }}';
+          });
+        }
       }
 
       // Close menu when pressing Escape key

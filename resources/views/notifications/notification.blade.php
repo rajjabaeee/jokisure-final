@@ -41,9 +41,9 @@
     @endforeach
   </div>
 
-  <!-- Order Status Section -->
-  <div class="order-status-section">
-    <a href="{{ route('orders.index') }}" class="section-header-link">
+    <!-- Order Status Section -->
+    <div class="order-status-section">
+    <a href="{{ route('orders') }}" class="section-header-link">
       <div class="section-header">
         <span class="section-title">Order Status</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -61,7 +61,7 @@
         <div class="order-status-message">{{ $orderStatus['message'] }}</div>
         <div class="order-action">
           <span class="action-text">{{ $orderStatus['action_text'] }}</span>
-          <a href="{{ route('orders.index') }}" class="review-btn">{{ $orderStatus['action_button'] }}</a>
+          <a href="{{ route('orders') }}" class="review-btn">{{ $orderStatus['action_button'] }}</a>
         </div>
       </div>
     </div>

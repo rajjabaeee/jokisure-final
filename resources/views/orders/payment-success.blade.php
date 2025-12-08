@@ -61,7 +61,7 @@
 
       <div class="d-flex gap-3 w-100 justify-content-center">
         <a href="{{ route('home') }}" class="btn btn-back w-50">Back to Homepage</a>
-        <a href="{{ route('orders.index', ['order' => $orderData['order_id']]) }}" class="btn btn-cta w-50">View Order</a>
+        <a href="{{ route('orders') }}" class="btn btn-cta w-50">View Order</a>
       </div>
     </div>
   </section>

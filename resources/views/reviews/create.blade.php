@@ -127,7 +127,7 @@
     <div class="mobile-container">
 
         <div class="header-wrap">
-            <a href="{{ route('orders.index') }}" class="text-dark me-3 text-decoration-none">
+            <a href="{{ route('orders') }}" class="text-dark me-3 text-decoration-none">
                 <i class="bi bi-arrow-left fs-4"></i>
             </a>
             <h5 class="mb-0 fw-bold flex-grow-1">Order Detail</h5>
