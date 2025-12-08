@@ -43,12 +43,12 @@
 
       <div class="mb-3">
         <label class="form-label required">Name</label>
-        <input type="text" class="form-control input-lg" name="name" placeholder="Name / Nickname" required>
+        <input type="text" class="form-control input-lg" name="name" value="{{ $userName }}" placeholder="Name / Nickname" required>
       </div>
 
       <div class="mb-3">
         <label class="form-label required">Contact Details</label>
-        <input type="email" class="form-control input-lg" name="email" id="emailInput" placeholder="Enter your email" required>
+        <input type="email" class="form-control input-lg" name="email" id="emailInput" value="{{ $userEmail }}" placeholder="Enter your email" required>
         <div class="invalid-feedback-custom" id="emailError" style="display:none;">
           Please enter a valid email address with '@'
         </div>
@@ -56,7 +56,7 @@
 
       <div class="mb-3">
         <label class="form-label required">Phone Number</label>
-        <input type="tel" class="form-control input-lg" name="phone" placeholder="Enter your phone number" required>
+        <input type="tel" class="form-control input-lg" name="phone" value="{{ $userPhone }}" placeholder="Enter your phone number" required>
       </div>
 
       <h2 class="section-head mt-4">Game Details</h2>
