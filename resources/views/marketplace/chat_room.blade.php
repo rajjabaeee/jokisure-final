@@ -12,7 +12,7 @@
                 <a href="{{ route('chat.index') }}" class="text-dark text-decoration-none me-3" style="font-size: 1.5rem; line-height: 1;">
                     &larr;
                 </a>
-                <img src="/images/avatar1.png" alt="{{ $receiver->user_name }}" class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                <img src="{{ asset('assets/' . str()->slug($receiver->user_name) . '.jpg') }}" alt="{{ $receiver->user_name }}" class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">
                 <div>
                     <h6 class="fw-bold mb-0" style="font-size: 0.95rem;">{{ $receiver->user_name }}</h6>
                 </div>

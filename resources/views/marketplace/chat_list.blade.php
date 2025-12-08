@@ -29,10 +29,15 @@
     {{-- Messages List --}}
     <div class="flex-grow-1 overflow-auto" style="background: #ffffff;">
         @forelse($users as $user)
+            @php
+              // Skip users without profile pictures (like aisya, account baru, Mochi)
+              $hasProfilePic = in_array(str()->slug($user->user_name), ['bangboost', 'sealw', 'monkeyd']);
+            @endphp
+            @if($hasProfilePic)
             <a href="{{ route('chat.show', $user->user_id) }}" class="d-flex align-items-center px-4 py-3 text-decoration-none text-dark" style="border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.15s;">
                 
                 {{-- Avatar --}}
-                <img src="/images/avatar1.png" alt="{{ $user->user_name }}" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover; flex-shrink: 0;">
+                <img src="{{ asset('assets/' . str()->slug($user->user_name) . '.jpg') }}" alt="{{ $user->user_name }}" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover; flex-shrink: 0;" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">
                 
                 {{-- Message Info --}}
                 <div class="flex-grow-1 min-width-0">
@@ -44,6 +49,7 @@
                 </div>
 
             </a>
+            @endif
         @empty
             <div class="d-flex align-items-center justify-content-center flex-column" style="height: 100%; color: #999;">
                 <p style="font-size: 0.95rem;">Belum ada pengguna lain.</p>

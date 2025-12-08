@@ -293,7 +293,7 @@ $item = $order->orderItems->first();
 
     <div class="custom-card p-0 overflow-hidden">
         <div class="p-3 d-flex align-items-center">
-            <img src="{{ asset('images/avatar1.png') }}" class="rounded me-3" width="45" height="45" style="object-fit:cover; border-radius: 10px;">
+            <img src="{{ asset('assets/' . str()->slug($item->service->booster->user->user_name) . '.jpg') }}" class="rounded me-3" width="45" height="45" style="object-fit:cover; border-radius: 10px;" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">
             <div class="flex-grow-1">
                 <div class="fw-bold fs-6">{{ $item->service->booster->user->user_name }}</div>
             </div>
