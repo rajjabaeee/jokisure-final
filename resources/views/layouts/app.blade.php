@@ -10,6 +10,9 @@
 
   <!-- Page CSS -->
   <link href="{{ asset('css/my-profile.css') }}" rel="stylesheet">
+
+  {{-- Extra styles per-page --}}
+  @stack('styles')
 </head>
 
 <body class="preview-center">
@@ -37,7 +40,6 @@
         <circle cx="11" cy="11" r="10" stroke="#000" stroke-width="2"/>
         <text x="11" y="15" text-anchor="middle" font-size="10" font-family="Inter, sans-serif" fill="#000">?</text>
       </svg>
-        <!-- <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> -->
       </a>
     </div>
 
