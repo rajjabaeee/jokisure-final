@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Service;
 use Illuminate\Http\Request;
 
 class UiController extends Controller
@@ -30,7 +31,10 @@ class UiController extends Controller
     public function home()              { return view('marketplace.home'); }
 
     // ORDERS & TRANSACTIONS
-    public function serviceDetailConfirm() { return view('orders.service-detail'); }
+    public function serviceDetailConfirm(Service $service = null) 
+    { 
+        return view('orders.service-detail', compact('service')); 
+    }
     
     public function boostRequest()      { return view('orders.boost-request'); }
     
