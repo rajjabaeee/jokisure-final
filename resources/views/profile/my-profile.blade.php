@@ -26,10 +26,10 @@
 
       <!-- Profile -->
       <div class="card-block p-3 d-flex align-items-center gap-3 mt-2">
-        <img src="{{ asset('assets/Tamago.jpg') }}" class="avatar" alt="avatar" style="width: 60px; height: 60px;">
+        <img src="{{ $user->user_profile_pic ? asset('storage/' . $user->user_profile_pic) : asset('assets/Tamago.jpg') }}" class="avatar" alt="avatar" style="width: 60px; height: 60px;">
         <div class="flex-grow-1">
-          <div class="fw-semibold">Tamago</div>
-          <div class="text-muted small">@dppgroup2</div>
+          <div class="fw-semibold">{{ $user->user_name ?? 'User' }}</div>
+          <div class="text-muted small">{{ $user->user_email ?? 'user@example.com' }}</div>
         </div>
         <button class="edit-btn" onclick="window.location.href='{{ route('profile.edit') }}'">
           <svg viewBox="0 0 24 24" aria-hidden="true">
