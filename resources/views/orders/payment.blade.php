@@ -44,19 +44,36 @@
       <h1 class="display-6 title">Your Order</h1>
 
       {{-- ORDER CARD --}}
-      <div class="order-card p-3 rounded-3 mb-3">
-        <div class="small fw-bold mb-1">Pack 1</div>
-        <div class="row">
-          <div class="col">
-            <div class="small text-muted">
-              Genshin Impact | Abyss<br>
-              Variant: Floor 9, Floor 10,<br>
-              Floor 12
+      @if($cartItems->isNotEmpty())
+        @foreach($cartItems as $index => $item)
+          <div class="order-card p-3 rounded-3 mb-3">
+            <div class="small fw-bold mb-1">Pack {{ $index + 1 }}</div>
+            <div class="row">
+              <div class="col">
+                <div class="small text-muted">
+                  {{ $item->service->game->game_name }} | {{ $item->service->service_name }}
+                </div>
+              </div>
+              <div class="col-auto align-self-start fw-semibold">Rp {{ number_format($item->service->service_price, 0, ',', '.') }}</div>
             </div>
           </div>
-          <div class="col-auto align-self-start fw-semibold">Rp 60.000</div>
+        @endforeach
+      @else
+        {{-- Fallback if cart is empty --}}
+        <div class="order-card p-3 rounded-3 mb-3">
+          <div class="small fw-bold mb-1">Pack 1</div>
+          <div class="row">
+            <div class="col">
+              <div class="small text-muted">
+                Genshin Impact | Abyss<br>
+                Variant: Floor 9, Floor 10,<br>
+                Floor 12
+              </div>
+            </div>
+            <div class="col-auto align-self-start fw-semibold">Rp 60.000</div>
+          </div>
         </div>
-      </div>
+      @endif
 
       {{-- VOUCHER --}}
       <a class="voucher-row mb-3 d-flex align-items-center justify-content-between rounded-2 px-3 py-3 text-decoration-none"
@@ -79,20 +96,20 @@
         <input type="hidden" name="voucher_id" id="selectedVoucherId" value="">
         <input type="hidden" name="discount_amount" id="selectedDiscountAmount" value="0">
 
-        <select name="method" class="form-select form-select-dark mb-3" required>
+        <select name="method_id" id="paymentMethodSelect" class="form-select form-select-dark mb-3" required>
           <option disabled selected>Select your payment</option>
-          <option value="gopay">Gopay</option>
-          <option value="ovo">OVO</option>
-          <option value="dana">DANA</option>
-          <option value="shopee">ShopeePay</option>
-          <option value="card">VISA/Mastercard</option>
+          @foreach($paymentMethods as $method)
+            <option value="{{ $method->method_id }}" data-admin-fee="{{ $method->admin_fee }}">
+              {{ $method->method_name }}
+            </option>
+          @endforeach
         </select>
 
         <hr class="my-3">
 
         <div class="price-row">
           <span>Pack Price</span>
-          <span class="fw-semibold">Rp 60.000</span>
+          <span class="fw-semibold" id="packPrice">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
         </div>
 
         <div class="price-row">
@@ -101,13 +118,13 @@
         </div>
 
         <div class="price-row mb-2">
-          <span>Tax & Services</span>
-          <span>Rp 5.000</span>
+          <span>Services & Taxes</span>
+          <span id="adminFeeAmount">Rp 0</span>
         </div>
 
         <div class="d-flex align-items-center justify-content-between mt-1">
           <div class="fw-bold">Total Price</div>
-          <span class="total-chip" id="totalPrice">Rp 65.000</span>
+          <span class="total-chip" id="totalPrice">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
         </div>
 
         <hr class="my-3">
@@ -152,8 +169,27 @@
 <script>
   let selectedVoucher = null;
   let availableVouchers = [];
-  const basePrice = 60000;
-  const tax = 5000;
+  const basePrice = {{ $subtotal }};
+  let currentAdminFee = 0;
+
+  // Update total when payment method changes
+  document.getElementById('paymentMethodSelect').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    currentAdminFee = parseInt(selectedOption.getAttribute('data-admin-fee')) || 0;
+    
+    // Update admin fee display
+    document.getElementById('adminFeeAmount').innerText = 'Rp ' + currentAdminFee.toLocaleString();
+    
+    // Recalculate total
+    updateTotal();
+  });
+
+  // Update total price calculation
+  function updateTotal() {
+    const discountAmount = parseInt(document.getElementById('selectedDiscountAmount').value) || 0;
+    const total = basePrice - discountAmount + currentAdminFee;
+    document.getElementById('totalPrice').innerText = 'Rp ' + total.toLocaleString();
+  }
 
   // Load vouchers when modal is opened
   document.getElementById('voucherModal').addEventListener('show.bs.modal', function () {
@@ -244,15 +280,16 @@
     }
 
     const discountAmount = (basePrice * selectedVoucher.discount_value) / 100;
-    const total = basePrice - discountAmount + tax;
 
     // Update display
     document.getElementById("discountAmount").innerText = "-Rp " + discountAmount.toLocaleString();
-    document.getElementById("totalPrice").innerText = "Rp " + total.toLocaleString();
 
     // Set hidden inputs for form submission
     document.getElementById("selectedVoucherId").value = selectedVoucher.discount_id;
     document.getElementById("selectedDiscountAmount").value = discountAmount;
+
+    // Recalculate total
+    updateTotal();
 
     // Close modal
     let modal = bootstrap.Modal.getInstance(document.getElementById('voucherModal'));

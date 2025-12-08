@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class OrderItem extends Model
 {
-    use HasUuids;
-
     protected $table = 'order_items';
     public $timestamps = false;
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'order_id',
@@ -21,7 +20,10 @@ class OrderItem extends Model
         'quantity',
         'item_subtotal',
         'game_username',
-        'game_password_encrypt'
+        'game_password_encrypt',
+        'contact_name',
+        'contact_email',
+        'contact_phone'
     ];
 
     protected function casts(): array

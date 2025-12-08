@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UiController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BoosterController;
 use App\Http\Controllers\GameController;
@@ -80,9 +81,14 @@ Route::middleware('auth')->group(function () {
 	// ORDERS & TRANSACTIONS (Dynamic via OrderController)
 	Route::get('/boost/request', [UiController::class,'boostRequest'])->name('boost.request');
 	Route::post('/boost/request', [UiController::class,'storeBoostRequest'])->name('boost.request.store');
-	Route::get('/payment', [UiController::class,'payment'])->name('payment');
-	Route::post('/payment', [UiController::class,'processPayment'])->name('payment.process');
-	Route::get('/payment/success', [UiController::class,'paymentSuccess'])->name('payment.success');
+	
+	// PAYMENT ROUTES (PaymentController)
+	Route::get('/payment', [PaymentController::class,'index'])->name('payment');
+	Route::post('/payment', [PaymentController::class,'process'])->name('payment.process');
+	Route::get('/payment/success', [PaymentController::class,'success'])->name('payment.success');
+	
+	// ORDER CREATION
+	Route::get('/orders/create', [OrderController::class, 'createOrder'])->name('orders.create');
 	
 	// Order listing and detail (dynamic - no status-specific static routes needed)
 	Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
