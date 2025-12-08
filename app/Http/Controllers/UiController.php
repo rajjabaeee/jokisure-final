@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Service;
 use Illuminate\Http\Request;
 
 class UiController extends Controller
@@ -30,9 +31,35 @@ class UiController extends Controller
     public function home()              { return view('marketplace.home'); }
 
     // ORDERS & TRANSACTIONS
-    public function serviceDetailConfirm() { return view('orders.service-detail'); }
+    public function serviceDetailConfirm(Service $service = null) 
+    { 
+        return view('orders.service-detail', compact('service')); 
+    }
     
-    public function boostRequest()      { return view('orders.boost-request'); }
+    public function boostRequest(Request $request) { 
+        $user = auth()->user();
+        
+        // Detect order source from query parameters
+        if ($request->has('services')) {
+            // From cart - multiple items
+            session([
+                'order_source' => 'cart',
+                'selected_services' => $request->input('services', [])
+            ]);
+        } elseif ($request->has('service_id')) {
+            // Direct purchase - single item
+            session([
+                'order_source' => 'direct',
+                'service_id' => $request->input('service_id')
+            ]);
+        }
+        
+        return view('orders.boost-request', [
+            'userName' => $user->user_name ?? '',
+            'userEmail' => $user->user_email ?? '',
+            'userPhone' => $user->user_number ?? ''
+        ]);
+    }
     
     public function storeBoostRequest(Request $request) {
         // Validate incoming data
@@ -42,7 +69,7 @@ class UiController extends Controller
             'phone' => 'required|string|max:20',
             'username' => 'required|string|max:255',
             'password' => 'required|string',
-            'priority' => 'required|in:vip_plus,vip,same_day,regular'
+            'priority' => 'required|string'
         ]);
 
         // Store boost request data in session
@@ -54,55 +81,6 @@ class UiController extends Controller
         return redirect()->route('payment');
     }
     
-    public function payment(Request $r) { return view('orders.payment'); }
-    
-    public function processPayment(Request $request) {
-        // Validate payment method
-        $validated = $request->validate([
-            'method' => 'required|string',
-            'voucher_id' => 'nullable|string',
-            'discount_amount' => 'nullable|numeric'
-        ]);
-
-        // Get boost request data from session
-        $boostData = session('boost_request');
-        
-        if (!$boostData) {
-            return redirect()->route('boost.request')->with('error', 'Please fill the boost request form first');
-        }
-
-        // Calculate pricing (hardcoded for now)
-        $subtotal = 60000;
-        $tax = 5000;
-        $discount = $validated['discount_amount'] ?? 0;
-        $total = $subtotal - $discount + $tax;
-
-        // Store payment result in session
-        session([
-            'payment_result' => [
-                'total' => $total,
-                'subtotal' => $subtotal,
-                'discount' => $discount,
-                'tax' => $tax,
-                'voucher_id' => $validated['voucher_id'] ?? null,
-                'payment_method' => $validated['method'],
-                'order_id' => 'ORD-' . strtoupper(uniqid()) // Temporary mock order ID
-            ]
-        ]);
-
-        // Redirect to success page
-        return redirect()->route('payment.success');
-    }
-    
-    public function paymentSuccess(Request $r) { 
-        $paymentResult = session('payment_result');
-        
-        if (!$paymentResult) {
-            return redirect()->route('home')->with('error', 'No payment data found');
-        }
-        
-        return view('orders.payment-success', compact('paymentResult')); 
-    }
     public function myOrders()          { return view('orders.my-orders'); }
     public function orderPending()      { return view('orders.order-pending'); }
     public function orderProgress()     { return view('orders.order-progress'); }

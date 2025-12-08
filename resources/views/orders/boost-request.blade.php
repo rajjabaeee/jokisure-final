@@ -43,17 +43,20 @@
 
       <div class="mb-3">
         <label class="form-label required">Name</label>
-        <input type="text" class="form-control input-lg" name="name" placeholder="Name / Nickname" required>
+        <input type="text" class="form-control input-lg" name="name" value="{{ $userName }}" placeholder="Name / Nickname" required>
       </div>
 
       <div class="mb-3">
         <label class="form-label required">Contact Details</label>
-        <input type="email" class="form-control input-lg" name="email" placeholder="Enter your email" required>
+        <input type="email" class="form-control input-lg" name="email" id="emailInput" value="{{ $userEmail }}" placeholder="Enter your email" required>
+        <div class="invalid-feedback-custom" id="emailError" style="display:none;">
+          Please enter a valid email address with '@'
+        </div>
       </div>
 
       <div class="mb-3">
         <label class="form-label required">Phone Number</label>
-        <input type="tel" class="form-control input-lg" name="phone" placeholder="Enter your phone number" required>
+        <input type="tel" class="form-control input-lg" name="phone" value="{{ $userPhone }}" placeholder="Enter your phone number" required>
       </div>
 
       <h2 class="section-head mt-4">Game Details</h2>
@@ -74,22 +77,22 @@
         <label class="form-label required d-block">Boost Priority</label>
 
         <div class="form-check rb">
-          <input class="form-check-input" type="radio" name="priority" id="p1" value="vip_plus">
+          <input class="form-check-input" type="radio" name="priority" id="p1" value="VIP+ (>6 hours)">
           <label class="form-check-label" for="p1">VIP+ (&gt;6 Hours)</label>
         </div>
 
         <div class="form-check rb">
-          <input class="form-check-input" type="radio" name="priority" id="p2" value="vip">
+          <input class="form-check-input" type="radio" name="priority" id="p2" value="VIP (<6 hours)">
           <label class="form-check-label" for="p2">VIP (&lt;6 Hours)</label>
         </div>
 
         <div class="form-check rb">
-          <input class="form-check-input" type="radio" name="priority" id="p3" value="same_day">
+          <input class="form-check-input" type="radio" name="priority" id="p3" value="Same Day (1 day)">
           <label class="form-check-label" for="p3">Same Day (1 Day)</label>
         </div>
 
         <div class="form-check rb mb-2">
-          <input class="form-check-input" type="radio" name="priority" id="p4" value="regular">
+          <input class="form-check-input" type="radio" name="priority" id="p4" value="Regular (1 - 2 day)">
           <label class="form-check-label" for="p4">Regular (1–2 Day)</label>
         </div>
       </div>
@@ -114,13 +117,44 @@
   const form      = document.getElementById('boostForm');
   const submitBtn = document.getElementById('submitBtn');
   const consent   = document.getElementById('consent');
+  const emailInput = document.getElementById('emailInput');
+  const emailError = document.getElementById('emailError');
 
   const reqNames = ['name','email','phone','username','password'];
+
+  // Email validation - real-time
+  emailInput.addEventListener('input', function() {
+    const email = this.value.trim();
+    
+    if (email.length > 0 && !email.includes('@')) {
+      // Show error
+      this.classList.add('is-invalid-custom');
+      emailError.style.display = 'block';
+    } else if (email.length > 0 && email.includes('@') && !isValidEmail(email)) {
+      // Has @ but still invalid format
+      this.classList.add('is-invalid-custom');
+      emailError.style.display = 'block';
+      emailError.textContent = 'Please enter a valid email format (example@email.com)';
+    } else {
+      // Valid or empty
+      this.classList.remove('is-invalid-custom');
+      emailError.style.display = 'none';
+      emailError.textContent = "Please enter a valid email address with '@'";
+    }
+    
+    syncBtn();
+  });
+
+  function isValidEmail(email) {
+    // Simple email regex
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
 
   function isValid() {
     const filled = reqNames.every(n => (form.elements[n]?.value || '').trim().length > 0);
     const chosen = [...form.querySelectorAll('input[name="priority"]')].some(r => r.checked);
-    return filled && chosen && consent.checked;
+    const emailValid = isValidEmail(emailInput.value.trim());
+    return filled && chosen && consent.checked && emailValid;
   }
 
   function syncBtn(){

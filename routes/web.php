@@ -3,15 +3,18 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UiController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BoosterController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ChatController;
-use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\VoucherController;
+use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Controllers\ReviewController;
 
@@ -44,7 +47,10 @@ Route::get('/otp/verify-demo', function (\Illuminate\Http\Request $request) {
     $request->session()->put('signup.otp_verified', true);
     return redirect()->route('signup')->with('status', 'Phone verified (demo). Please complete sign up.');
 })->name('otp.demo.verify')->withoutMiddleware([RedirectIfAuthenticated::class]);
-Route::get('/reset-password', [UiController::class, 'reset'])->name('reset');
+
+// Password Reset Routes
+Route::get('/reset-password', [ResetPasswordController::class, 'showResetForm'])->name('reset');
+Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.reset.perform');
 
 // Protected routes (requires auth)
 Route::middleware('auth')->group(function () {
@@ -55,10 +61,10 @@ Route::middleware('auth')->group(function () {
 	Route::get('/home', [HomepageController::class, 'index'])->name('home');
 	Route::get('/games', [GameController::class, 'index'])->name('games.index');
 	Route::get('/games/{game}', [GameController::class, 'show'])->name('games.show');
-	Route::get('/boosters', [UiController::class, 'boosters'])->name('boosters');
+	Route::get('/boosters', [BoosterController::class, 'index'])->name('boosters');
 	Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 	Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-	Route::post('/cart/remove/{item}', [CartController::class, 'remove'])->name('cart.remove');
+	Route::post('/cart/remove/{cartId}/{serviceId}', [CartController::class, 'remove'])->name('cart.remove');
 	Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
 	Route::view('/game-detail', 'marketplace.game-detail');
 
@@ -67,18 +73,27 @@ Route::middleware('auth')->group(function () {
 	Route::get('/api/featured-boosters', [HomepageController::class, 'getFeaturedBoosters'])->name('api.featured.boosters');
 
 	// SERVICE DETAIL
-	Route::get('/service/detail', [UiController::class,'serviceDetailConfirm'])->name('service.detail.confirm');
+	Route::get('/service/detail/{service?}', [UiController::class,'serviceDetailConfirm'])->name('service.detail.confirm');
 
 	// VOUCHER / DISCOUNT API
 	Route::get('/api/vouchers/available', [VoucherController::class, 'getAvailable'])->name('vouchers.available');
 	Route::post('/api/vouchers/validate', [VoucherController::class, 'validateVoucher'])->name('vouchers.validate');
 
+	// CHECKOUT (from cart)
+	Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+	Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
 	// ORDERS & TRANSACTIONS (Dynamic via OrderController)
 	Route::get('/boost/request', [UiController::class,'boostRequest'])->name('boost.request');
 	Route::post('/boost/request', [UiController::class,'storeBoostRequest'])->name('boost.request.store');
-	Route::get('/payment', [UiController::class,'payment'])->name('payment');
-	Route::post('/payment', [UiController::class,'processPayment'])->name('payment.process');
-	Route::get('/payment/success', [UiController::class,'paymentSuccess'])->name('payment.success');
+	
+	// PAYMENT ROUTES (PaymentController)
+	Route::get('/payment', [PaymentController::class,'index'])->name('payment');
+	Route::post('/payment', [PaymentController::class,'process'])->name('payment.process');
+	Route::get('/payment/success', [PaymentController::class,'success'])->name('payment.success');
+	
+	// ORDER CREATION
+	Route::get('/orders/create', [OrderController::class, 'createOrder'])->name('orders.create');
 	
 	// Order listing and detail (dynamic - no status-specific static routes needed)
 	Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
@@ -108,7 +123,7 @@ Route::middleware('auth')->group(function () {
 	Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
 	Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
 	Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update.mock');
-	Route::get('/booster/profile/{booster}', [BoosterController::class, 'show'])->name('booster.profile');
+	Route::get('/booster/profile/{booster:booster_id}', [BoosterController::class, 'show'])->name('booster.profile');
 	Route::get('/favorites/boosters', [UiController::class, 'favoriteBoosters'])->name('favorite.boosters');
 	Route::get('/favorites/boosts', [UiController::class, 'favoriteBoosts'])->name('favorite.boosts');
 

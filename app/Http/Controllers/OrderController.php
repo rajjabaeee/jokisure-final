@@ -8,6 +8,10 @@ use App\Models\WorkOrder;
 use App\Models\Buyer;
 use App\Models\WorkOrderEvent;
 use App\Models\OrderStatus;
+use App\Models\OrderItem;
+use App\Models\Payment;
+use App\Models\CartItem;
+use App\Models\BoostPriority;
 
 class OrderController extends Controller
 {
@@ -213,6 +217,145 @@ class OrderController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Event added');
+    }
+
+    /**
+     * Create new order from boost request and payment data
+     */
+    public function createOrder(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        $buyer = $user->buyer()->first();
+        if (!$buyer) {
+            return back()->with('error', 'Buyer profile not found.');
+        }
+
+        // Get data from session
+        $boostData = session('boost_request');
+        $paymentData = session('payment_data');
+        $orderSource = session('order_source', 'cart');
+
+        if (!$boostData || !$paymentData) {
+            return redirect()->route('boost.request')->with('error', 'Missing order data. Please start again.');
+        }
+
+        // Get boost priority by name
+        $boostPriority = BoostPriority::where('boost_priority_name', $boostData['priority'])->first();
+        if (!$boostPriority) {
+            return back()->with('error', 'Invalid boost priority selected.');
+        }
+
+        // Get order status "Pending"
+        $orderStatus = OrderStatus::where('order_status_name', 'Pending')->first();
+        if (!$orderStatus) {
+            return back()->with('error', 'Order status not configured. Please contact support.');
+        }
+
+        // Get items based on order source
+        $items = collect();
+        
+        if ($orderSource === 'cart') {
+            // From cart - get selected items only
+            $selectedServices = session('selected_services', []);
+            
+            if (empty($selectedServices)) {
+                return back()->with('error', 'No items selected.');
+            }
+            
+            $items = CartItem::where('cart_id', $buyer->cart_id)
+                ->whereIn('service_id', $selectedServices)
+                ->with('service')
+                ->get();
+                
+            if ($items->isEmpty()) {
+                return back()->with('error', 'Selected items not found in cart.');
+            }
+        } else {
+            // Direct purchase - get single service
+            $serviceId = session('service_id');
+            
+            if (!$serviceId) {
+                return back()->with('error', 'Service not found.');
+            }
+            
+            $service = \App\Models\Service::find($serviceId);
+            
+            if (!$service) {
+                return back()->with('error', 'Service not found.');
+            }
+            
+            // Wrap service as cart item for unified processing
+            $items = collect([
+                (object)[
+                    'service_id' => $service->service_id,
+                    'service' => $service
+                ]
+            ]);
+        }
+
+        // Create work order
+        $workOrder = WorkOrder::create([
+            'boost_priority_id' => $boostPriority->boost_priority_id,
+            'order_date' => now(),
+            'order_status_id' => $orderStatus->order_status_id,
+            'subtotal_amount' => $paymentData['subtotal'],
+            'discount_id' => $paymentData['voucher_id'],
+            'discount_amount' => $paymentData['discount'],
+            'total_amount' => $paymentData['total']
+        ]);
+
+        // Create order items
+        foreach ($items as $item) {
+            OrderItem::create([
+                'order_id' => $workOrder->order_id,
+                'buyer_id' => $buyer->buyer_id,
+                'service_id' => $item->service_id,
+                'quantity' => 1,
+                'item_subtotal' => $item->service->service_price,
+                'game_username' => $boostData['username'],
+                'game_password_encrypt' => encrypt($boostData['password']),
+                'contact_name' => $boostData['name'],
+                'contact_email' => $boostData['email'],
+                'contact_phone' => $boostData['phone']
+            ]);
+        }
+
+        // Create payment record
+        Payment::create([
+            'order_id' => $workOrder->order_id,
+            'buyer_id' => $buyer->buyer_id,
+            'method_id' => $paymentData['method_id'],
+            'payment_status_id' => $orderStatus->order_status_id,
+            'gateway_reference' => null,
+            'latest_update' => now()
+        ]);
+
+        // Delete cart items only if order source is cart
+        if ($orderSource === 'cart') {
+            $selectedServices = session('selected_services', []);
+            CartItem::where('cart_id', $buyer->cart_id)
+                ->whereIn('service_id', $selectedServices)
+                ->delete();
+        }
+
+        // Store order info for success page
+        session([
+            'order_created' => [
+                'order_id' => $workOrder->order_id,
+                'total' => $paymentData['total'],
+                'payment_method' => $paymentData['method_name']
+            ]
+        ]);
+
+        // Clear session data
+        session()->forget(['boost_request', 'payment_data', 'order_source', 'selected_services', 'service_id']);
+
+        // Redirect to payment success
+        return redirect()->route('payment.success');
     }
 
     public function store(Request $request)

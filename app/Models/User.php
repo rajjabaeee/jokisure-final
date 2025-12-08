@@ -44,6 +44,14 @@ class User extends Authenticatable
         return $this->user_password_hash;
     }
 
+    /**
+     * Get the buyer profile associated with this user
+     */
+    public function buyer()
+    {
+        return $this->hasOne(Buyer::class, 'user_id', 'user_id');
+    }
+
     public function login(Request $request)
     {
         $request->validate([

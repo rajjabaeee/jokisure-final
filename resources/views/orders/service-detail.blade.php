@@ -114,12 +114,20 @@
         <div class="right-col">
           <div class="price-box p-2 rounded-3">
             <div class="tiny-label">Price:</div>
-            <div class="price-pill mb-2">Rp 60.000</div>
+            <div class="price-pill mb-2">Rp {{ number_format($service->service_price ?? 70000, 0, ',', '.') }}</div>
             <div class="tiny-label">Estimated Time:</div>
-            <div class="price-pill">1 Day</div>
+            <div class="price-pill">{{ $service->est_time ?? '1 Day' }}</div>
           </div>
 
-          <a href="/cart" class="btn addtocart-btn w-100 mt-2 fw-semibold text-decoration-none">Add To Cart</a>
+          @if($service)
+            <form action="{{ route('cart.add') }}" method="POST" class="mt-2">
+              @csrf
+              <input type="hidden" name="service_id" value="{{ $service->service_id }}">
+              <button type="submit" class="btn addtocart-btn w-100 fw-semibold">Add To Cart</button>
+            </form>
+          @else
+            <a href="/cart" class="btn addtocart-btn w-100 mt-2 fw-semibold text-decoration-none">Add To Cart</a>
+          @endif
         </div>
       </div>
 
@@ -199,7 +207,7 @@
 
   proceedBtn.addEventListener('click', ()=>{
     if (proceedBtn.classList.contains('enabled')) {
-      window.location.href = "{{ route('boost.request') }}";
+      window.location.href = "{{ route('boost.request') }}?service_id={{ $service->service_id ?? '' }}";
     }
   });
 

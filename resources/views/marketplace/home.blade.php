@@ -42,7 +42,7 @@
       <div style="background: #fff; border-radius: 16px; padding: 16px; margin-bottom: 16px; border: 1px solid #e9e9e9;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
           <div style="font-weight: 600; font-size: 16px;">Boost Games</div>
-          <a href="{{ route('games.index') }}" style="display: flex; align-items: center; gap: 4px; text-decoration: none; color: #0066cc; font-size: 12px; font-weight: 500;">
+          <a href="{{ route('games.index') }}" style="display: flex; align-items: center; gap: 4px; text-decoration: none; color: #000000; font-size: 12px; font-weight: 500;">
              
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
           </a>
@@ -69,7 +69,7 @@
       <div style="background: #fff; border-radius: 16px; padding: 16px; margin-bottom: 16px; border: 1px solid #e9e9e9;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
           <div style="font-weight: 600; font-size: 16px;">Featured Boosters</div>
-          <a href="{{ route('boosters') }}" style="display: flex; align-items: center; gap: 4px; text-decoration: none; color: #0066cc; font-size: 12px; font-weight: 500;">
+          <a href="{{ route('boosters') }}" style="display: flex; align-items: center; gap: 4px; text-decoration: none; color: #000000; font-size: 12px; font-weight: 500;">
              
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
           </a>
@@ -77,7 +77,7 @@
         <div style="display: flex; flex-direction: column; gap: 12px;">
         @if($featuredBoosters->count() > 0)
           @foreach ($featuredBoosters->take(3) as $b)
-            <a href="{{ route('booster.profile', $b->user_id) }}" style="display: flex; background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.3) 100%), url('{{ asset('assets/' . str()->slug($b->user_name) . '-bg.jpg') }}') center/cover; border: 1px solid #e9e9e9; border-radius: 16px; padding: 12px; gap: 12px; text-decoration: none; color: #0a0a0a; align-items: center; transition: all 0.3s ease;">
+            <a href="{{ route('booster.profile', $b->booster_id) }}" style="display: flex; background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.3) 100%), url('{{ asset('assets/' . str()->slug($b->user_name) . '-bg.jpg') }}') center/cover; border: 1px solid #e9e9e9; border-radius: 16px; padding: 12px; gap: 12px; text-decoration: none; color: #0a0a0a; align-items: center; transition: all 0.3s ease;">
               <img src="{{ asset('assets/' . str()->slug($b->user_name) . '.jpg') }}" alt="{{ $b->user_name }}" style="width: 80px; height: 80px; border-radius: 12px; object-fit: cover; flex-shrink: 0;" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">>
               <div style="flex: 1; min-width: 0;">
                 <div style="margin-bottom: 4px;">
@@ -112,7 +112,7 @@
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
         @if($services->count() > 0)
           @foreach ($services as $service)
-            <a href="{{ route('service.detail.confirm') }}" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e9e9e9; border-radius: 12px; overflow: hidden; text-decoration: none; color: #0a0a0a; transition: all 0.3s ease;">
+            <a href="{{ route('service.detail.confirm', $service->service_id) }}" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e9e9e9; border-radius: 12px; overflow: hidden; text-decoration: none; color: #0a0a0a; transition: all 0.3s ease;">
               <div style="position: relative; width: 100%; height: 120px; overflow: hidden; background: #f5f5f5;">
                 <img src="{{ asset('assets/' . str()->slug($service->game_name) . '.jpg') }}" alt="{{ $service->game_name }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='{{ asset('assets/abyss.jpg') }}'">
                 <span style="position: absolute; top: 6px; right: 6px; font-size: 9px; padding: 2px 6px; background: #0066cc; color: #fff; border-radius: 4px; font-weight: 500;">Open</span>
