@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Buyer;
+use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
@@ -76,13 +78,19 @@ class RegisterController extends Controller
         $baseNametag = strtolower(str_replace(' ', '', $signupData['name']));
         $nametag = $baseNametag . rand(100, 999);
         
-        User::create([
+        $user = User::create([
             'user_name' => $signupData['name'],
             'user_nametag' => $nametag,
             'user_email' => $signupData['email'],
             'user_password_hash' => Hash::make($signupData['password']),
             'user_number' => $signupData['phone'],
             'created_at' => now(),
+        ]);
+
+        // Automatically create buyer profile with cart_id for new user
+        Buyer::create([
+            'user_id' => $user->user_id,
+            'cart_id' => (string) Str::uuid(),
         ]);
 
         $request->session()->forget('signup.data');
