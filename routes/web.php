@@ -8,11 +8,11 @@ use App\Http\Controllers\BoosterController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ChatController;
-<<<<<<< HEAD
-use App\Http\Controllers\HomepageController;
-=======
+<<<<<<<<< Temporary merge branch 1
 use App\Http\Controllers\VoucherController;
->>>>>>> 8162ddcc100b3bc6b3a62fda1e190b3f8c7ce449
+=========
+use App\Http\Controllers\HomepageController;
+>>>>>>>>> Temporary merge branch 2
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Middleware\RedirectIfAuthenticated;
