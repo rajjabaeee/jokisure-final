@@ -77,6 +77,11 @@
         <div style="display: flex; flex-direction: column; gap: 12px;">
         @if($featuredBoosters->count() > 0)
           @foreach ($featuredBoosters->take(3) as $b)
+            @php
+              // Skip boosters without profile pictures (like aisya, account baru, Mochi)
+              $hasProfilePic = in_array(str()->slug($b->user_name), ['bangboost', 'sealw', 'monkeyd']);
+            @endphp
+            @if($hasProfilePic)
             <a href="{{ route('booster.profile', $b->booster_id) }}" style="display: flex; background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.3) 100%), url('{{ asset('assets/' . str()->slug($b->user_name) . '-bg.jpg') }}') center/cover; border: 1px solid #e9e9e9; border-radius: 16px; padding: 12px; gap: 12px; text-decoration: none; color: #0a0a0a; align-items: center; transition: all 0.3s ease;">
               <img src="{{ asset('assets/' . str()->slug($b->user_name) . '.jpg') }}" alt="{{ $b->user_name }}" style="width: 80px; height: 80px; border-radius: 12px; object-fit: cover; flex-shrink: 0;" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">>
               <div style="flex: 1; min-width: 0;">
@@ -99,6 +104,7 @@
                 <div style="font-size: 11px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">★ {{ number_format($b->user_rating, 1) }}</div>
               </div>
             </a>
+            @endif
           @endforeach
         @else
           <p style="color: #999;">Tidak ada booster tersedia</p>
