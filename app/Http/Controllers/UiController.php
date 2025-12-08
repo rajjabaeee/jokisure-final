@@ -36,8 +36,23 @@ class UiController extends Controller
         return view('orders.service-detail', compact('service')); 
     }
     
-    public function boostRequest() { 
+    public function boostRequest(Request $request) { 
         $user = auth()->user();
+        
+        // Detect order source from query parameters
+        if ($request->has('services')) {
+            // From cart - multiple items
+            session([
+                'order_source' => 'cart',
+                'selected_services' => $request->input('services', [])
+            ]);
+        } elseif ($request->has('service_id')) {
+            // Direct purchase - single item
+            session([
+                'order_source' => 'direct',
+                'service_id' => $request->input('service_id')
+            ]);
+        }
         
         return view('orders.boost-request', [
             'userName' => $user->user_name ?? '',
