@@ -112,7 +112,7 @@
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
         @if($services->count() > 0)
           @foreach ($services as $service)
-            <a href="{{ route('service.detail.confirm') }}" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e9e9e9; border-radius: 12px; overflow: hidden; text-decoration: none; color: #0a0a0a; transition: all 0.3s ease;">
+            <a href="{{ route('service.detail.confirm', $service->service_id) }}" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e9e9e9; border-radius: 12px; overflow: hidden; text-decoration: none; color: #0a0a0a; transition: all 0.3s ease;">
               <div style="position: relative; width: 100%; height: 120px; overflow: hidden; background: #f5f5f5;">
                 <img src="{{ asset('assets/' . str()->slug($service->game_name) . '.jpg') }}" alt="{{ $service->game_name }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='{{ asset('assets/abyss.jpg') }}'">
                 <span style="position: absolute; top: 6px; right: 6px; font-size: 9px; padding: 2px 6px; background: #0066cc; color: #fff; border-radius: 4px; font-weight: 500;">Open</span>

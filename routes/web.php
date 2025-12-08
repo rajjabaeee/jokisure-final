@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UiController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BoosterController;
 use App\Http\Controllers\GameController;
@@ -57,7 +58,7 @@ Route::middleware('auth')->group(function () {
 	Route::get('/boosters', [UiController::class, 'boosters'])->name('boosters');
 	Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 	Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-	Route::post('/cart/remove/{item}', [CartController::class, 'remove'])->name('cart.remove');
+	Route::post('/cart/remove/{cartId}/{serviceId}', [CartController::class, 'remove'])->name('cart.remove');
 	Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
 	Route::view('/game-detail', 'marketplace.game-detail');
 
@@ -66,11 +67,15 @@ Route::middleware('auth')->group(function () {
 	Route::get('/api/featured-boosters', [HomepageController::class, 'getFeaturedBoosters'])->name('api.featured.boosters');
 
 	// SERVICE DETAIL
-	Route::get('/service/detail', [UiController::class,'serviceDetailConfirm'])->name('service.detail.confirm');
+	Route::get('/service/detail/{service?}', [UiController::class,'serviceDetailConfirm'])->name('service.detail.confirm');
 
 	// VOUCHER / DISCOUNT API
 	Route::get('/api/vouchers/available', [VoucherController::class, 'getAvailable'])->name('vouchers.available');
 	Route::post('/api/vouchers/validate', [VoucherController::class, 'validateVoucher'])->name('vouchers.validate');
+
+	// CHECKOUT (from cart)
+	Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+	Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
 	// ORDERS & TRANSACTIONS (Dynamic via OrderController)
 	Route::get('/boost/request', [UiController::class,'boostRequest'])->name('boost.request');
