@@ -9,8 +9,8 @@ use App\Http\Controllers\BoosterController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ChatController;
-use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\VoucherController;
+use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Middleware\RedirectIfAuthenticated;
@@ -55,7 +55,7 @@ Route::middleware('auth')->group(function () {
 	Route::get('/home', [HomepageController::class, 'index'])->name('home');
 	Route::get('/games', [GameController::class, 'index'])->name('games.index');
 	Route::get('/games/{game}', [GameController::class, 'show'])->name('games.show');
-	Route::get('/boosters', [UiController::class, 'boosters'])->name('boosters');
+	Route::get('/boosters', [BoosterController::class, 'index'])->name('boosters');
 	Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 	Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 	Route::post('/cart/remove/{cartId}/{serviceId}', [CartController::class, 'remove'])->name('cart.remove');
@@ -103,7 +103,7 @@ Route::middleware('auth')->group(function () {
 	Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
 	Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
 	Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update.mock');
-	Route::get('/booster/profile/{booster}', [BoosterController::class, 'show'])->name('booster.profile');
+	Route::get('/booster/profile/{booster:booster_id}', [BoosterController::class, 'show'])->name('booster.profile');
 	Route::get('/favorites/boosters', [UiController::class, 'favoriteBoosters'])->name('favorite.boosters');
 	Route::get('/favorites/boosts', [UiController::class, 'favoriteBoosts'])->name('favorite.boosts');
 
