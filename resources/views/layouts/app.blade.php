@@ -30,16 +30,39 @@
 
     <!-- APP BAR -->
     <div class="appbar d-flex align-items-center justify-content-between px-3">
-      <a href="javascript:history.back()" class="back-btn" style="color: #0a0a0a; text-decoration: none; font-size: 24px;">←</a>
-      <div class="fw-semibold">@yield('appbar-title', 'JokiSure')</div>
-      <a href="#" class="icon-btn">
-      <svg width="22" height="22" fill="none" aria-hidden="true">
-        <circle cx="11" cy="11" r="10" stroke="#000" stroke-width="2"/>
-        <text x="11" y="15" text-anchor="middle" font-size="10" font-family="Inter, sans-serif" fill="#000">?</text>
-      </svg>
-        <!-- <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> -->
+      <a href="{{ route('home') }}" class="icon-btn" aria-label="Back">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 12h12M10 8l-4 4 4 4" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
+      <div class="fw-semibold">@yield('title', 'JokiSure')</div>
+      <button type="button" class="icon-btn" aria-label="Help" onclick="openHelpOverlay()" style="border: none; background: none; padding: 0; cursor: pointer;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+        </svg>
+      </button>
     </div>
+
+    <!-- Help Overlay -->
+    <div id="helpOverlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1000; display: none; align-items: center; justify-content: center;" onclick="closeHelpOverlay(event)">
+      <div style="background: #fff; width: 90%; max-width: 500px; border-radius: 16px; padding: 20px; max-height: 70vh; overflow-y: auto;" onclick="event.stopPropagation()">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h5 style="margin: 0; font-weight: 600;">About</h5>
+          <button type="button" onclick="closeHelpOverlay()" style="border: none; background: none; padding: 0; cursor: pointer; font-size: 20px;">×</button>
+        </div>
+        @yield('help-content')
+      </div>
+    </div>
+
+    <script>
+      function openHelpOverlay() {
+        document.getElementById('helpOverlay').style.display = 'flex';
+      }
+      
+      function closeHelpOverlay(event) {
+        if (!event || event.target.id === 'helpOverlay') {
+          document.getElementById('helpOverlay').style.display = 'none';
+        }
+      }
+    </script>
 
     <!-- BODY -->
     <div class="container px-3 pb-5">
@@ -55,7 +78,7 @@
       <span>Home</span>
     </a>
     <a class="tab{{ Route::currentRouteName() === 'cart.index' ? ' active' : '' }}" href="{{ route('cart.index') }}">
-      <svg viewBox="0 0 24 24"><path d="M6 7h12l-1 11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 7Z" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 7V5a3 3 0 0 1 6 0v2" fill="none"/></svg>
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1" fill="none"/><circle cx="20" cy="21" r="1" fill="none"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" fill="none"/></svg>
       <span>Cart</span>
     </a>
     <a class="tab{{ Route::currentRouteName() === 'chat.index' ? ' active' : '' }}" href="{{ route('chat.index') }}">

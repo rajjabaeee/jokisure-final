@@ -42,7 +42,7 @@
       <div style="background: #fff; border-radius: 16px; padding: 16px; margin-bottom: 16px; border: 1px solid #e9e9e9;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
           <div style="font-weight: 600; font-size: 16px;">Boost Games</div>
-          <a href="{{ route('games.index') }}" style="display: flex; align-items: center; gap: 4px; text-decoration: none; color: #0066cc; font-size: 12px; font-weight: 500;">
+          <a href="{{ route('games.index') }}" style="display: flex; align-items: center; gap: 4px; text-decoration: none; color: #000000; font-size: 12px; font-weight: 500;">
              
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
           </a>
@@ -69,7 +69,7 @@
       <div style="background: #fff; border-radius: 16px; padding: 16px; margin-bottom: 16px; border: 1px solid #e9e9e9;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
           <div style="font-weight: 600; font-size: 16px;">Featured Boosters</div>
-          <a href="{{ route('boosters') }}" style="display: flex; align-items: center; gap: 4px; text-decoration: none; color: #0066cc; font-size: 12px; font-weight: 500;">
+          <a href="{{ route('boosters') }}" style="display: flex; align-items: center; gap: 4px; text-decoration: none; color: #000000; font-size: 12px; font-weight: 500;">
              
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
           </a>
@@ -77,7 +77,7 @@
         <div style="display: flex; flex-direction: column; gap: 12px;">
         @if($featuredBoosters->count() > 0)
           @foreach ($featuredBoosters->take(3) as $b)
-            <a href="{{ route('booster.profile', $b->user_id) }}" style="display: flex; background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.3) 100%), url('{{ asset('assets/' . str()->slug($b->user_name) . '-bg.jpg') }}') center/cover; border: 1px solid #e9e9e9; border-radius: 16px; padding: 12px; gap: 12px; text-decoration: none; color: #0a0a0a; align-items: center; transition: all 0.3s ease;">
+            <a href="{{ route('booster.profile', $b->booster_id) }}" style="display: flex; background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.3) 100%), url('{{ asset('assets/' . str()->slug($b->user_name) . '-bg.jpg') }}') center/cover; border: 1px solid #e9e9e9; border-radius: 16px; padding: 12px; gap: 12px; text-decoration: none; color: #0a0a0a; align-items: center; transition: all 0.3s ease;">
               <img src="{{ asset('assets/' . str()->slug($b->user_name) . '.jpg') }}" alt="{{ $b->user_name }}" style="width: 80px; height: 80px; border-radius: 12px; object-fit: cover; flex-shrink: 0;" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">>
               <div style="flex: 1; min-width: 0;">
                 <div style="margin-bottom: 4px;">
