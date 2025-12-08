@@ -14,10 +14,10 @@
               <img src="{{ asset('assets/hsrnewver.jpg') }}" class="w-100 h-100" alt="Banner 1" style="object-fit: cover;">
             </div>
             <div style="min-width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-              <img src="{{ asset('assets/akevent.jpg') }}" class="w-100 h-100" alt="Banner 2" style="object-fit: cover; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" onerror="this.style.display='none'">
+              <img src="{{ asset('assets/pgrdmccollab.jpg') }}" class="w-100 h-100" alt="Banner 2" style="object-fit: cover; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" onerror="this.style.display='none'">
             </div>
             <div style="min-width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-              <img src="{{ asset('assets/genshinevent.jpg') }}" class="w-100 h-100" alt="Banner 3" style="object-fit: cover; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" onerror="this.style.display='none'">
+              <img src="{{ asset('assets/akevent.jpg') }}" class="w-100 h-100" alt="Banner 3" style="object-fit: cover; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" onerror="this.style.display='none'">
             </div>
           </div>
 

@@ -151,7 +151,7 @@
       <h3 class="h6 fw-bold mb-2">Booster Games</h3>
       <div class="games-scroll">
         @foreach($games as $g)
-          <a class="game-card" href="#">
+          <a class="game-card" href="{{ route('games.show', $g['game_id']) }}">
             <img src="{{ $g['poster'] }}" alt="{{ $g['game_name'] }}">
             <span class="game-title">{!! str_replace(' ', '<br>', e($g['game_name'])) !!}</span>
           </a>

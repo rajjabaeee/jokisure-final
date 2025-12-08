@@ -104,6 +104,7 @@ class BoosterController extends Controller
             ->unique('game_id')
             ->map(function($game) {
                 return [
+                    'game_id' => $game->game_id,
                     'game_name' => $game->game_name,
                     'poster' => asset('assets/' . str()->slug($game->game_name) . '.jpg'),
                 ];
