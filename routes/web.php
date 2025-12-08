@@ -17,6 +17,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\NotificationController;
 
 // Show splash at root (public)
 Route::get('/', [UiController::class, 'splash'])->name('welcome');
@@ -118,6 +119,11 @@ Route::middleware('auth')->group(function () {
 	Route::get('/orders/{orderId}/review', [ReviewController::class, 'create'])->name('reviews.create');
 	Route::post('/orders/{orderId}/review', [ReviewController::class, 'store'])->name('reviews.store');
 	Route::get('/service/{serviceId}/reviews', [ReviewController::class, 'index'])->name('reviews.index');
+
+	// NOTIFICATION ROUTES
+	Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
+	Route::post('/notifications/{id}/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
+	Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
 
 	// USER ROUTES
 	Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');

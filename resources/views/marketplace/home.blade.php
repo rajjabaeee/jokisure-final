@@ -112,9 +112,42 @@
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
         @if($services->count() > 0)
           @foreach ($services as $service)
+            @php
+              // Function to match service description with appropriate image
+              $serviceImage = 'genshin-impact.jpg'; // default
+              $description = strtolower($service->service_desc ?? '');
+              
+              // Match keywords in description with available images
+              if (str_contains($description, 'mondstadt')) {
+                $serviceImage = 'Monstandt.png';
+              } elseif (str_contains($description, 'liyue')) {
+                $serviceImage = 'liyue.png';
+              } elseif (str_contains($description, 'inazuma')) {
+                $serviceImage = 'Inazuma.png';
+              } elseif (str_contains($description, 'sumeru')) {
+                $serviceImage = 'Sumeru.png';
+              } elseif (str_contains($description, 'fontaine')) {
+                $serviceImage = 'fontaine.png';
+              } elseif (str_contains($description, 'natlan')) {
+                $serviceImage = 'Natlan.png';
+              } elseif (str_contains($description, 'dragonspine')) {
+                $serviceImage = 'Dragonspine.png';
+              } elseif (str_contains($description, 'enkanomiya')) {
+                $serviceImage = 'enkanomiya.png';
+              } elseif (str_contains($description, 'chasm')) {
+                $serviceImage = 'Chasm.png';
+              } elseif (str_contains($description, 'abyss')) {
+                $serviceImage = 'abyss.jpg';
+              } elseif (str_contains($description, 'childe')) {
+                $serviceImage = 'childe.jpg';
+              } else {
+                // Use game-specific image as fallback
+                $serviceImage = str()->slug($service->game_name) . '.jpg';
+              }
+            @endphp
             <a href="{{ route('service.detail.confirm', $service->service_id) }}" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e9e9e9; border-radius: 12px; overflow: hidden; text-decoration: none; color: #0a0a0a; transition: all 0.3s ease;">
               <div style="position: relative; width: 100%; height: 120px; overflow: hidden; background: #f5f5f5;">
-                <img src="{{ asset('assets/' . str()->slug($service->game_name) . '.jpg') }}" alt="{{ $service->game_name }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='{{ asset('assets/abyss.jpg') }}'">
+                <img src="{{ asset('assets/' . $serviceImage) }}" alt="{{ $service->service_desc }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='{{ asset('assets/' . str()->slug($service->game_name) . '.jpg') }}'">
                 <span style="position: absolute; top: 6px; right: 6px; font-size: 9px; padding: 2px 6px; background: #0066cc; color: #fff; border-radius: 4px; font-weight: 500;">Open</span>
               </div>
               <div style="padding: 10px; flex: 1; display: flex; flex-direction: column;">
@@ -122,7 +155,28 @@
                 <div style="font-size: 9px; color: #666; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $service->service_desc ?? 'Service' }}</div>
                 <div style="font-size: 9px; color: #999; margin-bottom: 4px;">Est. {{ $service->est_time }}</div>
                 <div style="display: flex; align-items: center; gap: 6px; font-size: 9px; color: #666; margin-bottom: 4px;">
-                  <img src="{{ asset('assets/' . str()->slug($service->booster_name) . '.jpg') }}" alt="{{ $service->booster_name }}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; flex-shrink: 0;" onerror="this.src='{{ asset('assets/pp.jpg') }}'">
+                  @php
+                    // Match booster name with available profile pictures
+                    $boosterImage = 'Tamago.jpg'; // default
+                    $boosterName = strtolower($service->booster_name ?? '');
+                    
+                    if (str_contains($boosterName, 'monkeyd')) {
+                      $boosterImage = 'monkeyd.jpg';
+                    } elseif (str_contains($boosterName, 'skullface')) {
+                      $boosterImage = 'skullface.jpg';
+                    } elseif (str_contains($boosterName, 'nagaaaaa')) {
+                      $boosterImage = 'nagaaaaa.jpg';
+                    } elseif (str_contains($boosterName, 'bangboost')) {
+                      $boosterImage = 'bangboost.jpg';
+                    } elseif (str_contains($boosterName, 'mobalovers')) {
+                      $boosterImage = 'mobalovers.jpg';
+                    } elseif (str_contains($boosterName, 'emo')) {
+                      $boosterImage = 'emo.jpg';
+                    } elseif (str_contains($boosterName, 'sealw')) {
+                      $boosterImage = 'sealw.jpg';
+                    }
+                  @endphp
+                  <img src="{{ asset('assets/' . $boosterImage) }}" alt="{{ $service->booster_name }}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; flex-shrink: 0;" onerror="this.src='{{ asset('assets/Tamago.jpg') }}'">
                   <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $service->booster_name }}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">

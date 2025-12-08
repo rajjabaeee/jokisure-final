@@ -94,7 +94,7 @@
       <svg viewBox="0 0 24 24"><path d="M21 12a8.5 8.5 0 1 1-17 0 8.5 8.5 0 0 1 17 0Zm-8.5-5v5l3 2" fill="none"/></svg>
       <span>Message</span>
     </a>
-    <a class="tab{{ Route::currentRouteName() === 'notification' ? ' active' : '' }}" href="#notification">
+    <a class="tab{{ Route::currentRouteName() === 'notifications' ? ' active' : '' }}" href="{{ route('notifications') }}">
       <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v5l1.5 1.5a1 1 0 0 1-.7 1.7H5.2a1 1 0 0 1-.7-1.7L6 14V9Z" fill="none"/><path d="M10 19a2 2 0 1 0 4 0" fill="none"/></svg>
       <span>Notification</span>
     </a>
