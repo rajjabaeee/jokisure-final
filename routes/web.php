@@ -9,6 +9,7 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\HomepageController;
+use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Middleware\RedirectIfAuthenticated;
@@ -67,10 +68,16 @@ Route::middleware('auth')->group(function () {
 	// SERVICE DETAIL
 	Route::get('/service/detail', [UiController::class,'serviceDetailConfirm'])->name('service.detail.confirm');
 
+	// VOUCHER / DISCOUNT API
+	Route::get('/api/vouchers/available', [VoucherController::class, 'getAvailable'])->name('vouchers.available');
+	Route::post('/api/vouchers/validate', [VoucherController::class, 'validateVoucher'])->name('vouchers.validate');
+
 	// ORDERS & TRANSACTIONS (Dynamic via OrderController)
 	Route::get('/boost/request', [UiController::class,'boostRequest'])->name('boost.request');
-	Route::match(['get','post'],'/payment', [UiController::class,'payment'])->name('payment');
-	Route::match(['get','post'],'/payment/success', [UiController::class,'paymentSuccess'])->name('payment.success');
+	Route::post('/boost/request', [UiController::class,'storeBoostRequest'])->name('boost.request.store');
+	Route::get('/payment', [UiController::class,'payment'])->name('payment');
+	Route::post('/payment', [UiController::class,'processPayment'])->name('payment.process');
+	Route::get('/payment/success', [UiController::class,'paymentSuccess'])->name('payment.success');
 	
 	// Order listing and detail (dynamic - no status-specific static routes needed)
 	Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
