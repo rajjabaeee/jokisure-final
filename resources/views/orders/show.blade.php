@@ -163,7 +163,7 @@
             <div class="section-divider"></div>
 
             <div class="booster-row">
-                <img src="{{ asset('images/avatar1.png') }}" class="rounded-circle me-3" width="40" height="40" style="background:#eee; object-fit: cover;">
+                <img src="{{ asset('assets/' . str()->slug($item->service->booster->user->user_name) . '.jpg') }}" class="rounded-circle me-3" width="40" height="40" style="background:#eee; object-fit: cover;" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">
                 <div class="flex-grow-1">
                     <div class="fw-bold text-dark">{{ $item->service->booster->user->user_name }}</div>
                 </div>
@@ -173,7 +173,7 @@
             <div class="section-divider"></div>
 
             <div class="service-row">
-                <img src="{{ asset('assets/default-thumb.png') }}" class="thumb-img">
+                <img src="{{ asset('assets/' . str()->slug($item->service->game->game_name) . '.jpg') }}" class="thumb-img" onerror="this.src='{{ asset('assets/default-thumb.png') }}'">
                 <div>
                     <div class="fw-bold text-dark">{{ $item->service->game->game_name }}</div>
                     <div class="fw-bold text-dark" style="font-size: 0.85rem;">{{ $item->service->service_desc }}</div>

@@ -207,9 +207,12 @@
 
                     <div class="order-card-new">
                         <div class="card-header-row">
-                            <div>
-                                <div class="booster-name">{{ $boosterName }}</div>
-                                <div class="order-date">{{ $date }}</div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <img src="{{ asset('assets/' . str()->slug($boosterName) . '.jpg') }}" alt="{{ $boosterName }}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">
+                                <div>
+                                    <div class="booster-name">{{ $boosterName }}</div>
+                                    <div class="order-date">{{ $date }}</div>
+                                </div>
                             </div>
                             <div class="d-flex align-items-center">
                                 <span class="badge-status {{ $statusClass }}">
@@ -224,7 +227,7 @@
                         <div class="card-divider"></div>
 
                         <div class="card-body-row">
-                            <img src="{{ $thumb }}" class="game-thumb" alt="Game">
+                            <img src="{{ asset('assets/' . str()->slug($gameName) . '.jpg') }}" class="game-thumb" alt="{{ $gameName }}" onerror="this.src='{{ asset('assets/default-thumb.png') }}'">
                             <div class="service-title">
                                 {{ $fullTitle }}
                             </div>
