@@ -149,13 +149,15 @@
         gap: 12px;
         align-items: center;
         position: fixed;
-        bottom: 160px;
+        bottom: 84px; /* Height of tabbar */
         left: 50%;
         transform: translateX(-50%);
         width: calc(100% - 32px);
         max-width: 375px;
         box-sizing: border-box;
         z-index: 100;
+        border-radius: 16px 16px 0 0;
+        box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
       }
 
       .coupon-btn {
@@ -218,10 +220,22 @@
         from { transform: translate(-50%, -100%); opacity: 0; }
         to { transform: translate(-50%, 0); opacity: 1; }
       }
+
+      /* Mobile responsive adjustments */
+      @media (max-width: 576px) {
+        .bottom-section {
+          left: 0;
+          transform: none;
+          width: 100%;
+          max-width: none;
+          border-radius: 0;
+          bottom: 84px; /* Ensure it stays above the navbar on mobile too */
+        }
+      }
     </style>
 
     <!-- BODY -->
-    <div class="px-3 mt-3" style="overflow: hidden; height: calc(100% - 50px - 16px);">
+    <div class="px-3 mt-3" style="overflow: hidden; height: calc(100% - 50px - 16px); padding-bottom: 120px;">
 
       @if(session('success'))
         <div class="toast-message">{{ session('success') }}</div>
