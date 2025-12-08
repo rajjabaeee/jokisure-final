@@ -80,28 +80,28 @@
         
         <!-- Pagination -->
         @if($boosters->hasPages())
-          <div style="margin-top: 20px; display: flex; justify-content: center; gap: 8px;">
+          <div style="margin-top: 12px; display: flex; justify-content: center; gap: 4px;">
             {{-- Previous Page Link --}}
             @if ($boosters->onFirstPage())
-              <span style="padding: 8px 12px; color: #ccc; border: 1px solid #e9e9e9; border-radius: 6px; background: #f9f9f9;">← Previous</span>
+              <span style="padding: 4px 8px; color: #ccc; border: 1px solid #e9e9e9; border-radius: 4px; background: #f9f9f9; font-size: 12px;">←</span>
             @else
-              <a href="{{ $boosters->previousPageUrl() }}" style="padding: 8px 12px; text-decoration: none; color: #0066cc; border: 1px solid #0066cc; border-radius: 6px; background: #fff; transition: all 0.3s;">← Previous</a>
+              <a href="{{ $boosters->previousPageUrl() }}&search={{ request('search') }}&rating={{ request('rating') }}&sort={{ request('sort') }}" style="padding: 4px 8px; text-decoration: none; color: #0066cc; border: 1px solid #0066cc; border-radius: 4px; background: #fff; transition: all 0.3s; font-size: 12px;">←</a>
             @endif
 
             {{-- Pagination Elements --}}
             @foreach ($boosters->getUrlRange(1, $boosters->lastPage()) as $page => $url)
               @if ($page == $boosters->currentPage())
-                <span style="padding: 8px 12px; background: #0066cc; color: #fff; border: 1px solid #0066cc; border-radius: 6px; font-weight: 600;">{{ $page }}</span>
+                <span style="padding: 4px 8px; background: #0066cc; color: #fff; border: 1px solid #0066cc; border-radius: 4px; font-weight: 600; font-size: 12px;">{{ $page }}</span>
               @else
-                <a href="{{ $url }}" style="padding: 8px 12px; text-decoration: none; color: #0066cc; border: 1px solid #e9e9e9; border-radius: 6px; background: #fff; transition: all 0.3s;">{{ $page }}</a>
+                <a href="{{ $url }}&search={{ request('search') }}&rating={{ request('rating') }}&sort={{ request('sort') }}" style="padding: 4px 8px; text-decoration: none; color: #0066cc; border: 1px solid #e9e9e9; border-radius: 4px; background: #fff; transition: all 0.3s; font-size: 12px;">{{ $page }}</a>
               @endif
             @endforeach
 
             {{-- Next Page Link --}}
             @if ($boosters->hasMorePages())
-              <a href="{{ $boosters->nextPageUrl() }}" style="padding: 8px 12px; text-decoration: none; color: #0066cc; border: 1px solid #0066cc; border-radius: 6px; background: #fff; transition: all 0.3s;">Next →</a>
+              <a href="{{ $boosters->nextPageUrl() }}&search={{ request('search') }}&rating={{ request('rating') }}&sort={{ request('sort') }}" style="padding: 4px 8px; text-decoration: none; color: #0066cc; border: 1px solid #0066cc; border-radius: 4px; background: #fff; transition: all 0.3s; font-size: 12px;">→</a>
             @else
-              <span style="padding: 8px 12px; color: #ccc; border: 1px solid #e9e9e9; border-radius: 6px; background: #f9f9f9;">Next →</span>
+              <span style="padding: 4px 8px; color: #ccc; border: 1px solid #e9e9e9; border-radius: 4px; background: #f9f9f9; font-size: 12px;">→</span>
             @endif
           </div>
         @endif
