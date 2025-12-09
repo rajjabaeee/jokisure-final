@@ -1,4 +1,5 @@
 <!-- 5026231002 | Aisya Candra Kirana Dewi (Velyven) -->
+<!-- 5026231003 | Kanayya Shafa Amelia (kanayya shafa) -->
 
 @extends('layouts.home-app')
 
