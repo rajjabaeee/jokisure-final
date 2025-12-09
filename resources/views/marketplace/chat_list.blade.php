@@ -1,11 +1,9 @@
 @extends('layouts.app')
 
+@section('hide-appbar', true) {{-- matikan appbar "JokiSure" di halaman ini --}}
+
 @push('styles')
 <style>
-    .app-header {
-        display: none !important;
-    }
-
     html, body {
         height: 100%;
         margin: 0;
@@ -15,12 +13,12 @@
     .messages-container {
         display: flex;
         flex-direction: column;
-        height: calc(100vh - 84px);
+        height: 100vh;
         background: #ffffff;
     }
 
     .messages-header {
-        padding: 12px 16px;
+        padding: 12px 16px 10px;
         background: #ffffff;
         border-bottom: 1px solid #f0f0f0;
     }
@@ -30,6 +28,16 @@
         align-items: center;
         justify-content: space-between;
         margin-bottom: 12px;
+    }
+
+    .messages-header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .messages-header-back {
+        cursor: pointer;
     }
 
     .messages-header-top h5 {
@@ -50,7 +58,7 @@
 
     .search-box svg {
         position: absolute;
-        top: 12px;
+        top: 11px;
         left: 12px;
         color: #999;
         flex-shrink: 0;
@@ -58,7 +66,7 @@
 
     .search-box input {
         width: 100%;
-        padding: 10px 16px 10px 40px;
+        padding: 9px 16px 9px 40px;
         background: #f5f5f5;
         border: none;
         border-radius: 20px;
@@ -77,7 +85,7 @@
 
     .messages-list {
         flex: 1;
-        overflow: hidden;
+        overflow-y: auto;
         background: #ffffff;
     }
 
@@ -85,7 +93,7 @@
         display: flex;
         align-items: center;
         padding: 12px 16px;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid #f5f5f5;
         text-decoration: none;
         color: #000;
         transition: background 0.15s ease;
@@ -101,9 +109,9 @@
     }
 
     .message-avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
         object-fit: cover;
         flex-shrink: 0;
         margin-right: 12px;
@@ -132,6 +140,7 @@
     .message-time {
         font-size: 0.8rem;
         color: #999;
+        white-space: nowrap;
     }
 
     .message-preview {
@@ -164,36 +173,79 @@
 <div class="messages-container">
     {{-- Header --}}
     <div class="messages-header">
-    
+        <div class="messages-header-top">
+            <div class="messages-header-left">
+                {{-- back arrow --}}
+                <a href="{{ url()->previous() }}" class="messages-header-back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6" />
+                    </svg>
+                </a>
+                <h5>Messages</h5>
+            </div>
+
+            {{-- question mark icon --}}
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2"
+                 class="messages-header-icon">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"></path>
+                <line x1="12" y1="17" x2="12" y2="17"></line>
+            </svg>
+        </div>
+
         {{-- Search Bar --}}
         <div class="search-box">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2">
                 <circle cx="11" cy="11" r="8"></circle>
                 <path d="m21 21-4.35-4.35"></path>
             </svg>
-            <input type="text" class="search-input" placeholder="Search" id="searchInput" onkeyup="filterMessages()">
+            <input type="text"
+                   class="search-input"
+                   placeholder="Search"
+                   id="searchInput"
+                   onkeyup="filterMessages()">
         </div>
     </div>
 
     {{-- Messages List --}}
     <div class="messages-list" id="messagesList">
         @if($users->count() > 0)
-            @forelse($users as $user)
+            @foreach($users as $user)
                 @php
-                  $hasProfilePic = in_array(str()->slug($user->user_name), ['bangboost', 'sealw', 'monkeyd', 'emo', 'nagaaaa']);
+                    $lastChat = $user->last_chat ?? null;
+
+                    $lastText = $lastChat?->chat_msg ?? 'Click to start the chat';
+
+                    $lastTime = $lastChat?->created_at
+                        ? $lastChat->created_at->format('g:ia')
+                        : '';
+
+                    $hasProfilePic = in_array(str()->slug($user->user_name), [
+                        'bangboost', 'sealw', 'monkeyd', 'emo', 'nagaaaaa'
+                    ]);
                 @endphp
+
                 @if($hasProfilePic)
-                <a href="{{ route('chat.show', $user->user_id) }}" class="message-item" data-username="{{ strtolower($user->user_name) }}">
-                    <img src="{{ asset('assets/' . str()->slug($user->user_name) . '.jpg') }}" alt="{{ $user->user_name }}" class="message-avatar" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">
-                    
-                    <div class="message-content">
-                        <div class="message-header">
-                            <h6 class="message-name">{{ $user->user_name }}</h6>
-                            <span class="message-time">{{ now()->format('H:i a') }}</span>
+                    <a href="{{ route('chat.show', $user->user_id) }}"
+                       class="message-item"
+                       data-username="{{ strtolower($user->user_name) }}">
+                        <img src="{{ asset('assets/' . str()->slug($user->user_name) . '.jpg') }}"
+                             alt="{{ $user->user_name }}"
+                             class="message-avatar"
+                             onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">
+
+                        <div class="message-content">
+                            <div class="message-header">
+                                <h6 class="message-name">{{ $user->user_name }}</h6>
+                                <span class="message-time">{{ $lastTime }}</span>
+                            </div>
+                            <p class="message-preview">{{ $lastText }}</p>
                         </div>
-                        <p class="message-preview">{{ $user->user_email ?? 'Klik untuk mulai chat' }}</p>
-                    </div>
-                </a>
+                    </a>
                 @endif
             @endforeach
         @else
@@ -202,7 +254,6 @@
             </div>
         @endif
     </div>
-
 </div>
 
 <script>
@@ -210,14 +261,10 @@
         const input = document.getElementById('searchInput');
         const filter = input.value.toLowerCase();
         const items = document.querySelectorAll('.message-item');
-        
+
         items.forEach(item => {
             const username = item.getAttribute('data-username');
-            if (username.includes(filter)) {
-                item.style.display = 'flex';
-            } else {
-                item.style.display = 'none';
-            }
+            item.style.display = username.includes(filter) ? 'flex' : 'none';
         });
     }
 </script>
