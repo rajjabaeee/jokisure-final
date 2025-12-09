@@ -1,3 +1,5 @@
+<!-- 5026231002 | Aisya Candra Kirana Dewi (Velyven) -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -186,37 +188,6 @@
             opacity: 0.7;
         }
 
-        .suggestion-pills {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 12px;
-        }
-
-        .suggestion-pill {
-            background: #f5f5f5;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 16px;
-            font-size: 0.85rem;
-            color: #333;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .suggestion-pill:hover {
-            background: #efefef;
-        }
-
-        .empty-chat {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #999;
-        }
-
         .chat-input-area {
             padding: 12px 16px;
             background: #ffffff;
@@ -275,26 +246,8 @@
 
     <!-- BODY -->
     <div class="chat-container">
-        {{-- Chat Header (Hidden, using appbar instead) --}}
-        <div class="chat-header" style="display: none;">
-            <div class="chat-header-left">
-                <button class="chat-header-back" onclick="window.location.href='{{ route('chat.index') }}'">
-                    ←
-                </button>
-                <h6 class="chat-header-title">{{ $receiver->user_name }}</h6>
-            </div>
-                <div class="chat-header-right">
-                    <button class="chat-header-icon" title="Help">
-                        ⓘ
-                    </button>
-                    <button class="chat-header-icon" title="More">
-                        ⋮
-                    </button>
-                </div>
-            </div>
-
-            {{-- Chat Messages Area --}}
-            <div class="chat-messages" id="chat-box">
+        {{-- Chat Messages Area --}}
+        <div class="chat-messages" id="chat-box">
                 {{-- Auto message from booster (always shown first) --}}
                 <div class="date-divider">{{ \Carbon\Carbon::now()->format('d M Y') }}</div>
                 <div class="message-row">

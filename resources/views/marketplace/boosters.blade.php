@@ -1,3 +1,5 @@
+<!-- 5026231002 | Aisya Candra Kirana Dewi (Velyven) -->
+
 @extends('layouts.app')
 
 @section('title', 'Boosters')
@@ -145,7 +147,7 @@ function filterBoosters() {
         const boosterTags = booster.getAttribute('data-booster-tags').toLowerCase();
         
         if (boosterName.includes(filter) || boosterTags.includes(filter) || filter === '') {
-            booster.style.display = '';
+            booster.style.display = 'flex';
         } else {
             booster.style.display = 'none';
         }

@@ -1,3 +1,5 @@
+<!-- 5026231002 | Aisya Candra Kirana Dewi (Velyven) -->
+
 @extends('layouts.app')
 
 @section('hide-appbar', true) {{-- matikan appbar "JokiSure" di halaman ini --}}
@@ -243,13 +245,14 @@
                         </div>
                         <span class="message-time">{{ $user->latest_message_date ? $user->latest_message_date->format('H:i a') : now()->format('H:i a') }}</span>
                     </div>
-                    <p class="message-preview">{{ $user->latest_message ?? 'Mulai percakapan' }}</p>
+                    <p class="message-preview">{{ $user->latest_message ?? 'Start a conversation' }}</p>
                 </div>
             </a>
             @endif
         @empty
             <div class="empty-messages">
-                <p style="font-size: 0.95rem;">Belum ada pengguna lain.</p>
+                <p style="font-size: 0.95rem; font-weight: 500;">Your conversations are empty</p>
+                <p style="font-size: 0.85rem; margin: 8px 16px 0; text-align: center;">Browse boosters and send them a message to get started</p>
             </div>
         @endforelse
     </div>

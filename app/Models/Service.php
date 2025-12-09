@@ -18,6 +18,7 @@ class Service extends Model
     protected $fillable = [
         'booster_id',
         'game_id',
+        'service_name',
         'service_price',
         'service_desc',
         'est_time',

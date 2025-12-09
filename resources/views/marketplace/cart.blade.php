@@ -289,7 +289,8 @@
                 <input type="checkbox" class="cart-item-checkbox" checked data-item-id="{{ $cartItem->service_id }}">
                 <img src="{{ asset('assets/' . $imageName) }}" class="cart-item-image" alt="{{ $cartItem->service->game->game_name ?? 'Service' }}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2270%22 height=%2270%22%3E%3Crect fill=%22%23f0f0f0%22 width=%2270%22 height=%2270%22/%3E%3C/svg%3E'">
                 <div class="cart-item-details">
-                  <div class="cart-item-title">{{ $cartItem->service->game->game_name ?? 'Service' }}</div>
+                  <div class="cart-item-title">{{ $cartItem->service->service_name ?? 'Service' }}</div>
+                  <div class="cart-item-variant">{{ $cartItem->service->game->game_name ?? 'Unknown Game' }}</div>
                   <div class="cart-item-variant">Variant: {{ $cartItem->service->service_desc ?? 'Standard' }}</div>
                   <div class="cart-item-price">Rp {{ number_format($cartItem->service->service_price, 0, ',', '.') }}</div>
                   <div class="cart-item-actions">

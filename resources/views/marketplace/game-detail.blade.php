@@ -1,3 +1,5 @@
+<!-- 5026231002 | Aisya Candra Kirana Dewi (Velyven) -->
+
 @extends('layouts.app')
 
 @section('title', $game->game_name)
@@ -256,7 +258,7 @@ function filterBoosters() {
         const boosterName = booster.getAttribute('data-booster-name').toLowerCase();
         
         if (boosterName.includes(filter) || filter === '') {
-            booster.style.display = '';
+            booster.style.display = 'flex';
         } else {
             booster.style.display = 'none';
         }
