@@ -221,9 +221,29 @@
                             @endfor
                         </div>
 
-                        <!-- Action Buttons -->
+                        <!-- Review Content or Action Buttons -->
                         <div style="margin-top: 8px;">
-                            @if($order->orderStatus->order_status_name === 'Completed')
+                            @if(isset($order->review) && $order->review)
+                                <!-- Display Submitted Review -->
+                                <div style="background: #f0f8ff; padding: 12px; border-radius: 8px; border-left: 4px solid #007aff;">
+                                    <div style="display: flex; gap: 6px; margin-bottom: 6px;">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            @if($i <= $order->review->user_rating)
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="#FFD700" stroke="none">
+                                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                                </svg>
+                                            @else
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="#e0e0e0" stroke="none">
+                                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                                </svg>
+                                            @endif
+                                        @endfor
+                                        <span style="font-size: 10px; color: #666; margin-left: 4px;">{{ $order->review->user_rating }}/5</span>
+                                    </div>
+                                    <p style="font-size: 12px; color: #333; margin: 0; line-height: 1.4;">"{{ $order->review->user_review }}"</p>
+                                    <div style="font-size: 10px; color: #999; margin-top: 6px;">{{ $order->review->created_at->diffForHumans() }}</div>
+                                </div>
+                            @elseif($order->orderStatus->order_status_name === 'Completed')
                                 <!-- Write Review Button -->
                                 <a href="{{ route('reviews.create', $order->order_id) }}" class="review-btn">Write Review</a>
                             @else

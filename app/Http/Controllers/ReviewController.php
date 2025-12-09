@@ -52,7 +52,18 @@ class ReviewController extends Controller
             })
             ->with(['orderItems.service.game', 'orderStatus'])
             ->orderBy('order_date', 'desc')
-            ->get();
+            ->get()
+            ->map(function ($order) {
+                // Get review for this order if it exists
+                $item = $order->orderItems->first();
+                if ($item) {
+                    $review = Review::where('service_id', $item->service->service_id)
+                        ->where('buyer_id', $item->buyer_id)
+                        ->first();
+                    $order->review = $review;
+                }
+                return $order;
+            });
         }
 
         return view('reviews.review-list', compact('completedOrders'));
