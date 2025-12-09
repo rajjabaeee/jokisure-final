@@ -56,7 +56,7 @@
             Order ID: #{{ str_replace('ORD-', '', $order->order_id) }}
         </div>
         <div style="font-size: 14px; color: #666;">
-            {{ $order->created_at->format('d F Y, H:i') }} WIB
+            {{ $order->created_at ? $order->created_at->format('d F Y, H:i') : $order->order_date->format('d F Y, H:i') }} WIB
         </div>
     </div>
     
@@ -127,7 +127,7 @@
                 <div style="width: 24px; height: 24px; border-radius: 50%; background: #22c55e; flex-shrink: 0; z-index: 2; position: relative;"></div>
                 <div style="flex: 1; min-width: 0;">
                     <div style="font-size: 14px; color: #666; margin-bottom: 4px;">
-                        {{ $order->created_at->format('d F Y') }}
+                        {{ $order->created_at ? $order->created_at->format('d F Y') : $order->order_date->format('d F Y') }}
                     </div>
                     <div style="font-size: 14px; font-weight: 500; color: #000;">
                         Order placed & Payment verified
@@ -383,7 +383,7 @@ $item = $order->orderItems->first();
             <i class="bi bi-files ms-2 text-dark" style="font-size:0.8em; cursor:pointer;"></i>
         </div>
         <div class="text-muted small">
-            {{ \Carbon\Carbon::parse($order->created_at)->format('d F Y, H:i') }} WIB
+            {{ $order->created_at ? \Carbon\Carbon::parse($order->created_at)->format('d F Y, H:i') : \Carbon\Carbon::parse($order->order_date)->format('d F Y, H:i') }} WIB
         </div>
     </div>
 
@@ -447,7 +447,7 @@ $item = $order->orderItems->first();
 
                 <div class="timeline-item">
                     <div class="bullet-point"></div>
-                    <div class="tl-date">{{ \Carbon\Carbon::parse($order->created_at)->format('d F Y') }}</div>
+                    <div class="tl-date">{{ $order->created_at ? \Carbon\Carbon::parse($order->created_at)->format('d F Y') : \Carbon\Carbon::parse($order->order_date)->format('d F Y') }}</div>
                     <div class="tl-desc">Order placed & Payment verified</div>
                 </div>
 

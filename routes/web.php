@@ -104,7 +104,7 @@ Route::middleware('auth')->group(function () {
 	Route::post('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update.status');
 	
 	// Order tracking (dynamic - returns appropriate track view based on status)
-	Route::get('/track/{order}', [OrderController::class, 'track'])->name('orders.track');
+	Route::get('/track/{order}', [TrackOrderController::class, 'track'])->name('orders.track');
 	Route::post('/track/{order}/events', [OrderController::class, 'addEvent'])->name('orders.track.event.store');
 
 	//CHAT ROUTERS
