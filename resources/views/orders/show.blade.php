@@ -12,7 +12,7 @@
             max-width: 480px;
             margin: 0 auto;
             background: #fff;
-            min-height: 100vh;
+            min-height: auto;
             display: flex;
             flex-direction: column;
             box-shadow: 0 0 15px rgba(0,0,0,0.05);
@@ -44,7 +44,7 @@
 
 
         .content-padding {
-            padding: 0 20px;
+            padding: 20px 20px 0 20px;
         }
 
         .section-divider {
@@ -90,8 +90,8 @@
         }
 
         .bottom-action-bar {
-            margin-top: auto;
-            padding: 15px 20px;
+            margin-top: 20px;
+            padding: 12px 20px;
             display: flex;
             gap: 12px;
             background: #fff;
@@ -99,7 +99,7 @@
 
         .btn-custom {
             flex: 1;
-            padding: 14px;
+            padding: 10px 12px;
             border-radius: 12px;
             font-weight: 600;
             font-size: 0.9rem;
@@ -120,9 +120,29 @@
         .btn-yellow:hover { background-color: #e6b800; }
 
     </style>
+    <script>
+        function copyOrderId(orderId) {
+            // Copy to clipboard
+            navigator.clipboard.writeText(orderId).then(function() {
+                // Show success feedback
+                alert('Order ID copied: ' + orderId);
+            }).catch(function(err) {
+                console.error('Failed to copy: ', err);
+            });
+        }
+    </script>
 @endpush
 
-@section('title', 'Order Detail')
+@section('appbar-title', '')
+
+@section('appbar-left')
+    <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="{{ route('orders') }}" class="text-dark text-decoration-none">
+            <i class="bi bi-arrow-left fs-4"></i>
+        </a>
+        <h5 class="mb-0 fw-bold">Order Detail</h5>
+    </div>
+@endsection
 
 @section('content')
     @php
@@ -138,14 +158,6 @@
 
     <div class="mobile-container mt-1">
 
-        <div class="header-wrap">
-            <a href="{{ route('orders') }}" class="text-dark me-3 text-decoration-none">
-                <i class="bi bi-arrow-left fs-4"></i>
-            </a>
-            <h5 class="mb-0 fw-bold flex-grow-1">Order Detail</h5>
-            <i class="bi bi-question-circle fs-5 text-dark"></i>
-        </div>
-
         <div class="content-padding">
             <div>
                 <span class="badge-status {{ $statusClass }}">
@@ -155,11 +167,11 @@
 
             <div class="mb-2">
                 <div class="fw-bold fs-5 mb-1">
-                    Order ID: #{{ str_replace('ORD-', '', $order->order_id) }}
-                    <i class="bi bi-copy text-muted ms-2" style="font-size:0.7em; cursor:pointer;"></i>
+                    Order ID: #{{ Str::substr($order->order_id, 0, 8) }}
+                    <i class="bi bi-copy text-muted ms-2" style="font-size:0.7em; cursor:pointer;" onclick="copyOrderId('{{ $order->order_id }}')"></i>
                 </div>
                 <div class="text-muted small">
-                    {{ \Carbon\Carbon::parse($order->created_at)->format('d F Y, H:i') }} WIB
+                    {{ \Carbon\Carbon::parse($order->order_date)->format('d F Y, H:i') }} WIB
                 </div>
             </div>
 
@@ -170,7 +182,9 @@
                 <div class="flex-grow-1">
                     <div class="fw-bold text-dark">{{ $item->service->booster->user->user_name }}</div>
                 </div>
-                <i class="bi bi-chat-dots fs-4 text-dark"></i>
+                <a href="{{ route('chat.show', $item->service->booster->user->user_id) }}" class="text-decoration-none">
+                    <i class="bi bi-chat-dots fs-4 text-dark"></i>
+                </a>
             </div>
 
             <div class="section-divider"></div>
@@ -183,31 +197,33 @@
                     if (str_contains($serviceContent, 'abyss')) {
                         $imageName = 'abyss.jpg';
                     } elseif (str_contains($serviceContent, 'natlan')) {
-                        $imageName = 'natlan.jpg';
+                        $imageName = 'Natlan.png';
                     } elseif (str_contains($serviceContent, 'inazuma')) {
-                        $imageName = 'inazuma.jpg';
+                        $imageName = 'Inazuma.png';
                     } elseif (str_contains($serviceContent, 'liyue')) {
-                        $imageName = 'liyue.jpg';
+                        $imageName = 'liyue.png';
                     } elseif (str_contains($serviceContent, 'mondstadt')) {
                         $imageName = 'Monstandt.png';
                     } elseif (str_contains($serviceContent, 'fontaine')) {
-                        $imageName = 'fontaine.jpg';
+                        $imageName = 'fontaine.png';
                     } elseif (str_contains($serviceContent, 'sumeru')) {
-                        $imageName = 'sumeru.jpg';
+                        $imageName = 'Sumeru.png';
                     } elseif (str_contains($serviceContent, 'enkanomiya')) {
-                        $imageName = 'enkanomiya.jpg';
+                        $imageName = 'enkanomiya.png';
                     } elseif (str_contains($serviceContent, 'dragonspine')) {
-                        $imageName = 'dragonspine.jpg';
+                        $imageName = 'Dragonspine.png';
                     } elseif (str_contains($serviceContent, 'chasm')) {
-                        $imageName = 'chasm.jpg';
+                        $imageName = 'Chasm.png';
+                    } elseif (str_contains($serviceContent, 'weekly') || str_contains($serviceContent, 'boss')) {
+                        $imageName = 'genshin boss.png';
                     } else {
-                        $imageName = str()->slug($item->service->game->game_name) . '.jpg';
+                        $imageName = 'genshin-impact.jpg';
                     }
                 @endphp
                 <img src="{{ asset('assets/' . $imageName) }}" class="thumb-img" onerror="this.src='{{ asset('assets/default-thumb.png') }}'">
                 <div>
                     <div class="fw-bold text-dark">{{ $item->service->game->game_name }}</div>
-                    <div class="fw-bold text-dark" style="font-size: 0.85rem;">{{ $item->service->service_desc }}</div>
+                    <div class="text-dark" style="font-size: 0.8rem;">{{ $item->service->service_desc }}</div>
                     <div class="text-small-grey mt-1">Variant: Floor 9, Floor 10, Floor 12</div>
                 </div>
             </div>
