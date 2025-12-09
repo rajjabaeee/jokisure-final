@@ -122,7 +122,7 @@
     </style>
 @endpush
 
-@section('appbar-title', 'Order Detail')
+@section('title', 'Order Detail')
 
 @section('content')
     @php

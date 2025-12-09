@@ -36,7 +36,7 @@
 
     <!-- APP BAR -->
     @unless (View::hasSection('hide-appbar'))
-      <div class="appbar d-flex align-items-center justify-content-between px-3">
+      <div class="appbar d-flex align-items-center justify-content-between px-3" style="padding: 12px 16px 10px;">
         {{-- Back button --}}
         @php
           $backUrl = 'javascript:history.back()'; // Default behavior
@@ -44,15 +44,21 @@
             $backUrl = route('home'); // For boosters page, go to home
           }
         @endphp
-        <a href="{{ $backUrl }}" class="back-btn" style="color: #0a0a0a; text-decoration: none; font-size: 24px;">←</a>
+        <a href="{{ $backUrl }}" class="back-btn" style="text-decoration: none; color: #000000; display: flex; align-items: center;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </a>
 
         {{-- Title (pakai appbar-title biar konsisten dengan halaman lain) --}}
-        <div class="fw-semibold">@yield('appbar-title', 'JokiSure')</div>
+        <div style="flex: 1; font-weight: 700; font-size: 1.25rem; margin-left: 12px;">@yield('title', 'JokiSure')</div>
 
         {{-- Help button (buka overlay) --}}
-        <button type="button" class="icon-btn" aria-label="Help" onclick="openHelpOverlay()" style="border: none; background: none; padding: 0; cursor: pointer;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+        <button type="button" class="icon-btn" aria-label="Help" onclick="openHelpOverlay()" style="border: none; background: none; padding: 0; cursor: pointer; color: #999; flex-shrink: 0;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"></path>
+            <line x1="12" y1="17" x2="12" y2="17"></line>
           </svg>
         </button>
       </div>

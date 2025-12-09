@@ -244,7 +244,11 @@
 
     <!-- APP BAR -->
     <div class="appbar d-flex align-items-center justify-content-between px-3">
-      <a href="{{ route('chat.index') }}" class="back-btn" style="color: #0a0a0a; text-decoration: none; font-size: 24px;">←</a>
+      <a href="{{ route('chat.index') }}" class="back-btn" style="text-decoration: none; color: #000000;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </a>
       <div class="fw-semibold">{{ $receiver->user_name }}</div>
       <button type="button" class="icon-btn" aria-label="Help" style="border: none; background: none; padding: 0; cursor: pointer;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

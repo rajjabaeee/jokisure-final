@@ -333,7 +333,7 @@
     </style>
 @endpush
 
-@section('appbar-title', 'Track Order')
+@section('title', 'Track Order')
 
 @section('content')
 @php

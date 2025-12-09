@@ -13,14 +13,22 @@
     .messages-container {
         display: flex;
         flex-direction: column;
-        height: 100vh;
+        height: 100%;
         background: #ffffff;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: 0;
+        padding: 0;
     }
 
     .messages-header {
         padding: 12px 16px 10px;
         background: #ffffff;
         border-bottom: 1px solid #f0f0f0;
+        flex-shrink: 0;
     }
 
     .messages-header-top {
@@ -178,7 +186,7 @@
                 {{-- back arrow --}}
                 <a href="{{ url()->previous() }}" class="messages-header-back">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2"
+                         stroke="#000000" stroke-width="2"
                          stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="15 18 9 12 15 6" />
                     </svg>
