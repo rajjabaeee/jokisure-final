@@ -226,10 +226,95 @@
 
   {{-- Overlays --}}
   <div id="work-queue-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1000; padding: 16px;">
-    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 16px; padding: 24px; max-width: 90%; width: 340px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 16px; padding: 24px; max-width: 90%; width: 340px; max-height: 80vh; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); overflow-y: auto;">
       <button onclick="closeOverlay('work-queue')" style="position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 24px; cursor: pointer; color: #999;">&times;</button>
       <h2 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 700; color: #0a0a0a;">Work Queue</h2>
-      <p style="margin: 0; font-size: 14px; color: #666; line-height: 1.5;">No work queue content available yet.</p>
+      
+      @php
+        $statusCounts = [
+          'all' => $workQueueOrders->count(),
+          'waitlist' => $workQueueOrders->filter(function($o) { return strtolower(str_replace(' ', '-', $o->orderStatus->order_status_name)) === 'waitlist'; })->count(),
+          'pending' => $workQueueOrders->filter(function($o) { return strtolower(str_replace(' ', '-', $o->orderStatus->order_status_name)) === 'pending'; })->count(),
+          'on-progress' => $workQueueOrders->filter(function($o) { return strtolower(str_replace(' ', '-', $o->orderStatus->order_status_name)) === 'on-progress'; })->count(),
+          'completed' => $workQueueOrders->filter(function($o) { return strtolower(str_replace(' ', '-', $o->orderStatus->order_status_name)) === 'completed'; })->count(),
+        ];
+      @endphp
+      
+      <!-- Filter Bar -->
+      <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+        <select id="statusFilter" onchange="filterByStatus()" style="padding: 8px 16px; background: #e3f2fd; color: #1976d2; border: none; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer;">
+          <option value="all">All</option>
+          <option value="waitlist">Waitlist</option>
+          <option value="pending">Pending</option>
+          <option value="on-progress">On Progress</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+
+      <!-- Status Summary Bars -->
+      @php
+        $statusLabels = [
+          'waitlist' => 'Waitlist',
+          'pending' => 'Pending',
+          'on-progress' => 'On Progress',
+          'completed' => 'Completed'
+        ];
+        $statusColors = [
+          'waitlist' => '#d8b4fe',
+          'pending' => '#ffa500',
+          'on-progress' => '#336791',
+          'completed' => '#32cd32'
+        ];
+      @endphp
+
+      @foreach($statusLabels as $statusKey => $statusLabel)
+        @if($statusCounts[$statusKey] > 0)
+          <div style="margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+              <span style="font-size: 13px; font-weight: 600; color: #333;">{{ $statusLabel }}</span>
+              <span style="font-size: 12px; color: #999;">{{ $statusCounts[$statusKey] }}</span>
+            </div>
+            <div style="height: 10px; background: #f0f0f0; border-radius: 5px; overflow: hidden;">
+              <div style="height: 100%; background: {{ $statusColors[$statusKey] }}; width: {{ ($statusCounts[$statusKey] / $statusCounts['all']) * 100 }}%; transition: width 0.3s ease;"></div>
+            </div>
+          </div>
+        @endif
+      @endforeach
+
+      <div style="height: 1px; background: #e9e9e9; margin: 16px 0;"></div>
+      
+      @if($workQueueOrders && $workQueueOrders->count() > 0)
+        @foreach($workQueueOrders as $order)
+          @php
+            $item = $order->orderItems->first();
+            $gameName = $item->service->game->game_name ?? 'Unknown Game';
+            $serviceName = $item->service->service_desc ?? 'Service';
+            $fullTitle = $gameName . ' - ' . $serviceName;
+            $buyerName = $item->buyer->user->user_name ?? 'Buyer';
+            $rawStatus = $order->orderStatus->order_status_name ?? 'Unknown';
+            $statusClass = strtolower(str_replace(' ', '-', $rawStatus));
+            $date = \Carbon\Carbon::parse($order->order_date)->format('d F Y');
+          @endphp
+          <div class="work-queue-item" data-status="{{ $statusClass }}" style="background: #f9f9f9; border-radius: 12px; padding: 12px; margin-bottom: 12px; border: 1px solid #e9e9e9;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+              <div>
+                <div style="font-weight: 700; font-size: 14px; color: #0a0a0a;">{{ $buyerName }}</div>
+                <div style="font-size: 12px; color: #888;">{{ $date }}</div>
+              </div>
+              <span style="padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; color: #fff; background-color: {{ $statusClass === 'waitlist' ? '#d8b4fe' : ($statusClass === 'pending' ? '#ffa500' : ($statusClass === 'on-progress' ? '#336791' : '#32cd32')) }};">
+                {{ $rawStatus }}
+              </span>
+            </div>
+            <div style="font-size: 13px; color: #333; margin-bottom: 8px;">{{ $fullTitle }}</div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="font-size: 13px; color: #0a0a0a; font-weight: 600;">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</div>
+              <a href="{{ route('orders.show', $order->order_id) }}" style="font-size: 12px; color: #0066cc; text-decoration: none; font-weight: 600;">View Details →</a>
+            </div>
+          </div>
+        @endforeach
+      @else
+        <p style="color: #999; text-align: center; padding: 20px 0;">No work queue items available.</p>
+      @endif
     </div>
   </div>
 
@@ -339,6 +424,24 @@ function closeOverlay(overlayId) {
     overlay.style.display = 'none';
     document.body.style.overflow = 'auto'; // Restore background scroll
   }
+}
+
+function filterByStatus() {
+  const filterValue = document.getElementById('statusFilter').value;
+  const workQueueItems = document.querySelectorAll('.work-queue-item');
+  
+  workQueueItems.forEach(item => {
+    if (filterValue === 'all') {
+      item.style.display = 'block';
+    } else {
+      const status = item.getAttribute('data-status');
+      if (status === filterValue) {
+        item.style.display = 'block';
+      } else {
+        item.style.display = 'none';
+      }
+    }
+  });
 }
 
 function filterReviews() {
