@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @push('styles')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
         body {
             background-color: #f5f5f5;
@@ -15,11 +16,12 @@
             display: flex;
             flex-direction: column;
             box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            padding-bottom: 20px;
         }
 
 
         .header-wrap {
-            padding: 20px 20px 10px 20px;
+            padding: 15px 20px 10px 20px;
             display: flex;
             align-items: center;
         }
@@ -31,11 +33,11 @@
             font-size: 0.75rem;
             color: #fff;
             display: inline-block;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             text-transform: capitalize;
         }
 
-        .st-waitlist { background-color: #a855f7; }
+        .st-waitlist, .st-waitlisted { background-color: #9747FF; }
         .st-pending { background-color: #ff6b6b; }
         .st-progress { background-color: #0ea5e9; }
         .st-completed { background-color: #22c55e; }
@@ -48,20 +50,20 @@
         .section-divider {
             height: 1px;
             background-color: #eee;
-            margin: 15px 0;
+            margin: 12px 0;
         }
 
 
         .booster-row {
             display: flex;
             align-items: center;
-            padding: 10px 0;
+            padding: 8px 0;
         }
 
         .service-row {
             display: flex;
             align-items: flex-start;
-            padding: 10px 0;
+            padding: 8px 0;
         }
 
         .thumb-img {
@@ -89,7 +91,7 @@
 
         .bottom-action-bar {
             margin-top: auto;
-            padding: 20px;
+            padding: 15px 20px;
             display: flex;
             gap: 12px;
             background: #fff;
@@ -125,7 +127,8 @@
 @section('content')
     @php
         $rawStatus = strtolower($order->orderStatus->order_status_name);
-        $statusClass = 'st-waitlist';
+        $statusClass = 'st-waitlisted';
+        if (str_contains($rawStatus, 'waitlisted')) $statusClass = 'st-waitlisted';
         if (str_contains($rawStatus, 'pending')) $statusClass = 'st-pending';
         if (str_contains($rawStatus, 'progress')) $statusClass = 'st-progress';
         if (str_contains($rawStatus, 'completed')) $statusClass = 'st-completed';
@@ -219,29 +222,29 @@
                 </ul>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-2">
                 <div class="fw-bold small text-dark mb-2">Payment Detail:</div>
 
                 <div class="d-flex justify-content-between mb-1">
                     <span class="text-small-grey">Payment Method</span>
-                    <span class="text-small-grey text-end">VISA/MasterCard</span>
+                    <span class="text-small-grey text-end">{{ $order->payments->first()->paymentMethod->method_name }}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-1">
                     <span class="text-small-grey">Subtotal</span>
-                    <span class="text-small-grey">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</span>
+                    <span class="text-small-grey">Rp{{ number_format($order->subtotal_amount, 0, ',', '.') }}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-1">
                     <span class="text-small-grey">Discount</span>
-                    <span class="text-small-grey text-danger">-Rp10.000</span>
+                    <span class="text-small-grey text-danger">-Rp{{ number_format($order->discount_amount, 0, ',', '.') }}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-1">
                     <span class="text-small-grey">Tax & Services</span>
-                    <span class="text-small-grey">Rp5.000</span>
+                    <span class="text-small-grey">Rp{{ number_format($order->payments->first()->paymentMethod->admin_fee, 0, ',', '.') }}</span>
                 </div>
 
                 <div class="d-flex justify-content-between mt-2">
                     <span class="fw-bold text-dark">Total</span>
-                    <span class="fw-bold text-dark">Rp{{ number_format($order->total_amount - 5000, 0, ',', '.') }}</span>
+                    <span class="fw-bold text-dark">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</span>
                 </div>
             </div>
         </div>
@@ -257,7 +260,10 @@
 
             @elseif(str_contains($rawStatus, 'progress'))
                 <a href="{{ route('orders.track', $order->order_id) }}" class="btn-custom btn-pink">Track Order</a>
-                <button class="btn-custom btn-blue">Complete Order</button>
+                <form action="{{ route('orders.complete', $order->order_id) }}" method="POST" style="flex: 1;">
+                    @csrf
+                    <button type="submit" class="btn-custom btn-blue w-100">Complete Order</button>
+                </form>
 
             @elseif(str_contains($rawStatus, 'completed'))
                 <a href="{{ route('orders.track', $order->order_id) }}" class="btn-custom btn-pink">Track Order</a>
