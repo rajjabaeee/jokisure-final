@@ -65,19 +65,53 @@
     <div id="navbarOverlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 999; display: none;" onclick="closeNavbarMenu()"></div>
 
     <style>
-      /* Ensure sidebar stays fixed during scroll */
-      .safe-area {
-        position: relative;
-        overflow-x: hidden;
+      /* Reset and fix mobile layout structure */
+      .device-frame {
+        overflow: hidden !important;
+        position: relative !important;
       }
       
+      .safe-area {
+        position: absolute !important;
+        top: var(--status) !important;
+        bottom: 84px !important;
+        left: 0 !important;
+        right: 0 !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        background: #f2f2f2 !important;
+      }
+      
+      /* Navbar fixed at bottom */
+      .tabbar {
+        position: absolute !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 100 !important;
+      }
+      
+      /* Home indicator */
+      .home-indicator {
+        position: absolute !important;
+        bottom: -20px !important;
+        z-index: 101 !important;
+      }
+      
+      /* Sidebar fixed within mobile frame */
       #navbarMenu {
         position: absolute !important;
+        z-index: 1000 !important;
       }
       
-      /* Prevent body scroll when sidebar is open */
-      body.sidebar-open {
-        overflow: hidden;
+      #navbarOverlay {
+        position: absolute !important;
+        z-index: 999 !important;
+      }
+      
+      /* Content area scrollable */
+      .container {
+        padding-bottom: 20px !important;
       }
     </style>
 
@@ -97,8 +131,8 @@
       @auth
       <div style="padding: 0 16px 20px 16px; text-align: center;">
         <img src="{{ asset('assets/tamago.jpg') }}" alt="Profile" style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover; margin-bottom: 8px;">
-        <div style="font-size: 16px; font-weight: 700; color: #000; margin-bottom: 2px;">{{ Auth::user()->user_name ?? 'Tamago' }}</div>
-        <div style="font-size: 13px; color: #666; margin-bottom: 16px;">{{ Auth::user()->user_nametag ? '@' . Auth::user()->user_nametag : '@a599' }}</div>
+        <div style="font-size: 16px; font-weight: 700; color: #000; margin-bottom: 2px;">{{ Auth::user()->user_name ?? 'User' }}</div>
+        <div style="font-size: 13px; color: #666; margin-bottom: 16px;">{{ Auth::user()->user_email ?? 'user@example.com' }}</div>
         <button onclick="handleLogout()" style="background: #ff6b6b; color: white; border: none; padding: 8px 24px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer;">
           Log Out
         </button>
@@ -176,13 +210,11 @@
         e.stopPropagation();
         navbarMenu.style.left = '0';
         navbarOverlay.style.display = 'block';
-        document.body.classList.add('sidebar-open');
       });
 
       function closeNavbarMenu() {
         navbarMenu.style.left = '-100%';
         navbarOverlay.style.display = 'none';
-        document.body.classList.remove('sidebar-open');
       }
 
       function handleLogout() {
