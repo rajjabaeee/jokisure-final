@@ -251,7 +251,7 @@
             
             // Determine service image
             $serviceImage = 'genshin boss.png';
-            $serviceName = strtolower($service->service_desc);
+            $serviceName = strtolower($service->service_desc ?? '');
             
             if (str_contains($serviceName, 'natlan')) {
                 $serviceImage = 'Natlan.png';

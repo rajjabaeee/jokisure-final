@@ -11,14 +11,38 @@ use App\Models\Service;
 
 class ReviewController extends Controller
 {
-    public function listCompletedOrders()
+    /**
+     * Verify user authentication
+     */
+    private function verifyAuth()
     {
-        // Get all orders for the authenticated user (including incomplete ones for demo)
         $user = Auth::user();
         if (!$user) {
-            return redirect()->route('login');
+            redirect()->route('login')->send();
+            exit;
         }
+        return $user;
+    }
 
+    /**
+     * Verify buyer authorization for order
+     */
+    private function verifyBuyerAccess($order)
+    {
+        $user = $this->verifyAuth();
+        $buyer = $user->buyer()->first();
+        
+        if (!$buyer || !$order->orderItems->contains('buyer_id', $buyer->buyer_id)) {
+            abort(403, 'Unauthorized access to order');
+        }
+        
+        return $buyer;
+    }
+
+    public function listCompletedOrders()
+    {
+        $user = $this->verifyAuth();
+        
         $buyer = $user->buyer()->first();
         if (!$buyer) {
             $completedOrders = collect();
@@ -26,7 +50,7 @@ class ReviewController extends Controller
             $completedOrders = WorkOrder::whereHas('orderItems', function ($q) use ($buyer) {
                 $q->where('buyer_id', $buyer->buyer_id);
             })
-            ->with(['orderItems.service.game', 'orderItems.service.booster.user', 'orderStatus'])
+            ->with(['orderItems.service.game', 'orderStatus'])
             ->orderBy('order_date', 'desc')
             ->get();
         }
@@ -36,55 +60,44 @@ class ReviewController extends Controller
 
     public function create($orderId)
     {
-        $user = Auth::user();
-        if (!$user) {
-            return redirect()->route('login');
-        }
-
-        $buyer = $user->buyer()->first();
-        $order = WorkOrder::with(['orderItems.service.game', 'orderItems.service.booster.user', 'orderStatus'])
+        $order = WorkOrder::with(['orderItems.service.game', 'orderStatus'])
             ->where('order_id', $orderId)
             ->firstOrFail();
 
-        // Ensure this order belongs to the authenticated buyer and is completed
-        if (!$buyer || !$order->orderItems->contains('buyer_id', $buyer->buyer_id)) {
-            abort(403, 'Unauthorized access to order');
-        }
+        $this->verifyBuyerAccess($order);
 
         if ($order->orderStatus->order_status_name !== 'Completed') {
             return redirect()->back()->with('error', 'You can only review completed orders.');
         }
 
         $item = $order->orderItems->first();
+        if (!$item) {
+            abort(404, 'Order item not found');
+        }
 
         return view('reviews.create-review', compact('order', 'item'));
     }
 
     public function store(Request $request, $orderId)
     {
-        $user = Auth::user();
-        if (!$user) {
-            return redirect()->route('login');
-        }
-
         $request->validate([
             'user_rating' => 'required|integer|min:1|max:5',
             'user_review' => 'required|string|max:500',
         ]);
 
-        $buyer = $user->buyer()->first();
         $order = WorkOrder::with(['orderItems.service'])
             ->where('order_id', $orderId)
             ->firstOrFail();
 
-        if (!$buyer || !$order->orderItems->contains('buyer_id', $buyer->buyer_id)) {
-            abort(403, 'Unauthorized access to order');
-        }
+        $buyer = $this->verifyBuyerAccess($order);
 
         $item = $order->orderItems->first();
+        if (!$item) {
+            abort(404, 'Order item not found');
+        }
+        
         $service = $item->service;
 
-        // Create review in database
         Review::create([
             'service_id' => $service->service_id,
             'buyer_id' => $buyer->buyer_id,
@@ -98,7 +111,6 @@ class ReviewController extends Controller
 
     public function index($serviceId)
     {
-        // Get reviews from database with buyer information
         $reviews = Review::where('service_id', $serviceId)
             ->with('buyer.user')
             ->orderBy('created_at', 'desc')
@@ -112,7 +124,6 @@ class ReviewController extends Controller
                 ];
             });
 
-        // Get service information with game
         $service = Service::with('game')->find($serviceId);
         if (!$service) {
             abort(404, 'Service not found');
@@ -126,23 +137,15 @@ class ReviewController extends Controller
      */
     public function markAsComplete($orderId)
     {
-        $user = Auth::user();
-        if (!$user) {
-            return redirect()->route('login');
-        }
-
-        $buyer = $user->buyer()->first();
         $order = WorkOrder::where('order_id', $orderId)->firstOrFail();
+        $this->verifyBuyerAccess($order);
 
-        if (!$buyer || !$order->orderItems->contains('buyer_id', $buyer->buyer_id)) {
-            abort(403, 'Unauthorized access to order');
-        }
-
-        // Get the "Completed" status
         $completedStatus = OrderStatus::where('order_status_name', 'Completed')->first();
-        if ($completedStatus) {
-            $order->update(['order_status_id' => $completedStatus->order_status_id]);
+        if (!$completedStatus) {
+            return redirect()->route('reviews')->with('error', 'Completed status not found');
         }
+
+        $order->update(['order_status_id' => $completedStatus->order_status_id]);
 
         return redirect()->route('reviews')->with('success', 'Order marked as completed (Demo).');
     }

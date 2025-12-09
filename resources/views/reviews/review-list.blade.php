@@ -169,13 +169,14 @@
             @foreach($completedOrders as $order)
                 @php
                     $item = $order->orderItems->first();
+                    if (!$item) continue;
+                    
                     $service = $item->service;
                     $game = $service->game;
-                    $booster = $service->booster;
                     
                     // Determine service image based on service description
-                    $serviceImage = 'genshin boss.png'; // default for Genshin services
-                    $serviceName = strtolower($service->service_desc);
+                    $serviceImage = 'genshin boss.png'; // default
+                    $serviceName = strtolower($service->service_desc ?? '');
                     
                     if (str_contains($serviceName, 'natlan')) {
                         $serviceImage = 'Natlan.png';
