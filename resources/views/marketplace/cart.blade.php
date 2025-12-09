@@ -1,4 +1,7 @@
 
+{{-- Author: Razza Ibrahmwibowo Muktiadi/5026231224 --}}
+{{-- Feature: Add to Cart, View Cart --}}
+
 @extends('layouts.app')
 
 @section('title', 'Cart')

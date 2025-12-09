@@ -1,3 +1,5 @@
+{{-- Author: Razza Ibrahmwibowo Muktiadi/5026231224 --}}
+{{-- Feature: Add to Cart, View Cart, Checkout Order (Service Detail Connection) --}}
 {{-- resources/views/orders/service-detail.blade.php --}}
 <!doctype html>
 <html lang="en">
