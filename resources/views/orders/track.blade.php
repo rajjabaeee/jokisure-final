@@ -59,6 +59,11 @@
             transition: all 0.4s ease;
         }
 
+        .stepper-track-fill.waitlisted {
+            width: 0%;
+            background: transparent;
+        }
+
         .stepper-track-fill.pending {
             width: 0%;
             background: #3b82f6;
@@ -215,11 +220,17 @@
 @section('content')
 @php
 $rawStatus = strtolower($order->orderStatus->order_status_name);
-$statusClass = 'pending';
+$statusClass = 'waitlisted';
 $s1 = 'step-inactive';
 $s2 = 'step-inactive';
 $s3 = 'step-inactive';
 
+if(str_contains($rawStatus, 'waitlisted')) {
+    $statusClass = 'waitlisted';
+    $s1 = 'step-inactive';
+    $s2 = 'step-inactive';
+    $s3 = 'step-inactive';
+}
 if(str_contains($rawStatus, 'pending')) {
     $statusClass = 'pending';
     $s1 = 'step-active-blue';
@@ -300,6 +311,7 @@ $item = $order->orderItems->first();
             <i class="bi bi-chat-dots fs-4 text-dark"></i>
         </div>
 
+        @if(!str_contains($rawStatus, 'waitlisted'))
         <div class="divider m-0"></div>
 
         <div class="p-4 pt-3">
@@ -323,6 +335,7 @@ $item = $order->orderItems->first();
 
             </div>
         </div>
+        @endif
     </div>
 </div>
 @endsection
