@@ -29,6 +29,7 @@
 
     {{-- Services by Type (Filter by service_name) --}}
     <div style="background: #fff; border-bottom: 1px solid #e9e9e9; padding: 16px; margin-left: -16px; margin-right: -16px; border-radius: 16px; margin-bottom: 16px;">
+        <h3 style="font-weight: 600; font-size: 16px; margin: 0 0 16px 0; padding-bottom: 16px; border-bottom: 1px solid #e9e9e9;">Browse Services</h3>
         {{-- Tab Headers --}}
         <div style="display: flex; gap: 20px; margin-bottom: 16px; border-bottom: 2px solid #e9e9e9; padding-bottom: 12px;">
             <button onclick="showTab('by-booster')" id="by-booster-tab" style="background: none; border: none; padding: 0; font-weight: 600; font-size: 15px; color: #0a0a0a; cursor: pointer; position: relative;">
@@ -133,10 +134,7 @@
         <div id="by-booster" style="display: block;">
             {{-- Search Bar --}}
             <div style="margin-bottom: 12px;">
-                <form method="GET" action="{{ route('games.show', $game->game_id) }}" style="display: flex; gap: 6px;">
-                    <input type="text" name="search" placeholder="Search..." value="{{ request('search') }}" style="flex: 1; padding: 4px 12px; border: 2px solid #d4e4f7; border-radius: 20px; font-size: 12px; outline: none; transition: all 0.3s;">
-                    <button type="submit" style="display: none;">Search</button>
-                </form>
+                <input type="text" id="boosterSearch" placeholder="Search booster..." style="flex: 1; width: 100%; padding: 4px 12px; border: 2px solid #d4e4f7; border-radius: 20px; font-size: 12px; outline: none; transition: all 0.3s;" oninput="filterBoosters()">
             </div>
 
             {{-- Filter and Sort --}}
@@ -165,7 +163,7 @@
             @if($filteredBoosters->count() > 0)
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                     @foreach($filteredBoosters as $booster)
-                        <a href="{{ route('booster.profile', ['booster' => $booster->booster_id, 'referrer' => 'game']) }}" style="display: flex; background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.3) 100%), url('{{ asset('assets/' . str()->slug($booster->user->user_name) . '-bg.jpg') }}') center/cover; border: 1px solid #e9e9e9; border-radius: 16px; padding: 12px; gap: 12px; text-decoration: none; color: #0a0a0a; align-items: center; transition: all 0.3s ease;">
+                        <a href="{{ route('booster.profile', ['booster' => $booster->booster_id, 'referrer' => 'game']) }}" data-booster-name="{{ $booster->user->user_name }}" style="display: flex; background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.3) 100%), url('{{ asset('assets/' . str()->slug($booster->user->user_name) . '-bg.jpg') }}') center/cover; border: 1px solid #e9e9e9; border-radius: 16px; padding: 12px; gap: 12px; text-decoration: none; color: #0a0a0a; align-items: center; transition: all 0.3s ease;">
                             <img src="{{ asset('assets/' . str()->slug($booster->user->user_name) . '.jpg') }}" alt="{{ $booster->user->user_name }}" style="width: 80px; height: 80px; border-radius: 12px; object-fit: cover; flex-shrink: 0;" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">
                             <div style="flex: 1; min-width: 0;">
                                 <div style="margin-bottom: 4px;">
@@ -183,7 +181,10 @@
                                 <div style="font-weight: 600; font-size: 14px; margin: 4px 0; display: flex; align-items: center; gap: 4px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
                                     {{ $booster->user->user_name }}
                                     @if($booster->verified)
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#0066cc"><path d="M10.5 1.5H4.605c-.606 0-1.122.233-1.5.612-.389.378-.605.894-.605 1.5v16.776c0 .606.233 1.122.612 1.5.378.389.894.605 1.5.605h14.776c.606 0 1.122-.233 1.5-.612.389-.378.605-.894.605-1.5V11.5M10.5 1.5v8m0-8L21 10.5m-10.5-9h8.25"/></svg>
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" title="Verified">
+                                          <circle cx="12" cy="12" r="10" fill="#1DA1F2"/>
+                                          <path d="M7 12.5l3 3 7-7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
                                     @endif
                                 </div>
                                 <div style="font-size: 11px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">★ {{ number_format($booster->booster_rating, 1) }}</div>
@@ -241,6 +242,23 @@ function filterServices() {
             service.style.display = '';
         } else {
             service.style.display = 'none';
+        }
+    });
+}
+
+// Filter boosters in real-time
+function filterBoosters() {
+    const searchInput = document.getElementById('boosterSearch');
+    const filter = searchInput.value.toLowerCase().trim();
+    const boosters = document.querySelectorAll('[data-booster-name]');
+    
+    boosters.forEach(booster => {
+        const boosterName = booster.getAttribute('data-booster-name').toLowerCase();
+        
+        if (boosterName.includes(filter) || filter === '') {
+            booster.style.display = '';
+        } else {
+            booster.style.display = 'none';
         }
     });
 }

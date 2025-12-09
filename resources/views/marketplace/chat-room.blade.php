@@ -244,14 +244,30 @@
 
     <!-- APP BAR -->
     <div class="appbar d-flex align-items-center justify-content-between px-3">
-      <a href="{{ route('chat.index') }}" class="back-btn" style="text-decoration: none; color: #000000;">
+      <a href="{{ route('chat.index') }}" class="back-btn" style="text-decoration: none; color: #000000; flex-shrink: 0;">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="15 18 9 12 15 6"></polyline>
         </svg>
       </a>
-      <div class="fw-semibold">{{ $receiver->user_name }}</div>
-      <button type="button" class="icon-btn" aria-label="Help" style="border: none; background: none; padding: 0; cursor: pointer;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div style="display: flex; align-items: center; gap: 12px; flex: 1; margin-left: 12px;">
+        <img src="{{ asset('assets/' . str()->slug($receiver->user_name) . '.jpg') }}" alt="{{ $receiver->user_name }}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0;" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <div style="font-weight: 700; font-size: 1.25rem; color: #0a0a0a;">{{ $receiver->user_name }}</div>
+          @php
+            $booster = \App\Models\Booster::where('user_id', $receiver->user_id)->first();
+          @endphp
+          @if($booster)
+            @if($booster->verified)
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" title="Verified">
+                <circle cx="12" cy="12" r="10" fill="#1DA1F2"/>
+                <path d="M7 12.5l3 3 7-7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            @endif
+          @endif
+        </div>
+      </div>
+      <button type="button" class="icon-btn" aria-label="Help" style="border: none; background: none; padding: 0; cursor: pointer; flex-shrink: 0;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
           <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
         </svg>
       </button>

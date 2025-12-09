@@ -60,7 +60,7 @@
             </a>
           @endforeach
         @else
-          <p style="color: #999; grid-column: 1 / -1;">Tidak ada games tersedia</p>
+          <p style="color: #999; grid-column: 1 / -1;">No games available</p>
         @endif
         </div>
       </div>
@@ -87,19 +87,27 @@
               <div style="flex: 1; min-width: 0;">
                 <div style="margin-bottom: 4px;">
                   @if($b->user_rating >= 4.5)
-                    <span style="font-size: 10px; padding: 3px 8px; background: #ffc107; color: #000; border-radius: 4px; margin-right: 6px; display: inline-block;">Diamond Booster</span>
+                    <span style="font-size: 8px; padding: 2px 6px; background: #ffc107; color: #000; border-radius: 4px; margin-right: 6px; display: inline-block;">Diamond Booster</span>
                   @elseif($b->user_rating >= 3.5)
-                    <span style="font-size: 10px; padding: 3px 8px; background: #c0c0c0; color: #000; border-radius: 4px; margin-right: 6px; display: inline-block;">Gold Booster</span>
+                    <span style="font-size: 8px; padding: 2px 6px; background: #c0c0c0; color: #000; border-radius: 4px; margin-right: 6px; display: inline-block;">Gold Booster</span>
                   @else
-                    <span style="font-size: 10px; padding: 3px 8px; background: #cd7f32; color: #fff; border-radius: 4px; margin-right: 6px; display: inline-block;">Silver Booster</span>
+                    <span style="font-size: 8px; padding: 2px 6px; background: #cd7f32; color: #fff; border-radius: 4px; margin-right: 6px; display: inline-block;">Silver Booster</span>
                   @endif
                   @if($b->user_rating >= 4.8)
-                    <span style="font-size: 10px; padding: 3px 8px; background: #0066cc; color: #fff; border-radius: 4px; display: inline-block;">Best Seller</span>
+                    <span style="font-size: 8px; padding: 2px 6px; background: #0066cc; color: #fff; border-radius: 4px; display: inline-block;">Best Seller</span>
                   @endif
                 </div>
                 <div style="font-weight: 600; font-size: 14px; margin: 4px 0; display: flex; align-items: center; gap: 4px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
                   {{ $b->user_name }}
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#0066cc"><path d="M10.5 1.5H4.605c-.606 0-1.122.233-1.5.612-.389.378-.605.894-.605 1.5v16.776c0 .606.233 1.122.612 1.5.378.389.894.605 1.5.605h14.776c.606 0 1.122-.233 1.5-.612.389-.378.605-.894.605-1.5V11.5M10.5 1.5v8m0-8L21 10.5m-10.5-9h8.25"/></svg>
+                  @php
+                    $booster = \App\Models\Booster::where('booster_id', $b->booster_id)->first();
+                  @endphp
+                  @if($booster && $booster->verified)
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" title="Verified">
+                      <circle cx="12" cy="12" r="10" fill="#1DA1F2"/>
+                      <path d="M7 12.5l3 3 7-7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  @endif
                 </div>
                 <div style="font-size: 11px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">★ {{ number_format($b->user_rating, 1) }}</div>
               </div>
@@ -107,7 +115,7 @@
             @endif
           @endforeach
         @else
-          <p style="color: #999;">Tidak ada booster tersedia</p>
+          <p style="color: #999;">No boosters available</p>
         @endif
         </div>
       </div>
@@ -193,7 +201,7 @@
             </a>
           @endforeach
         @else
-          <p style="color: #999; grid-column: 1 / -1;">Tidak ada layanan tersedia</p>
+          <p style="color: #999; grid-column: 1 / -1;">No services available</p>
         @endif
         </div>
       </div>

@@ -119,7 +119,7 @@
     .message-avatar {
         width: 52px;
         height: 52px;
-        border-radius: 12px;
+        border-radius: 50%;
         object-fit: cover;
         flex-shrink: 0;
         margin-right: 12px;
@@ -227,7 +227,20 @@
                 
                 <div class="message-content">
                     <div class="message-header">
-                        <h6 class="message-name">{{ $user->user_name }}</h6>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <h6 class="message-name">{{ $user->user_name }}</h6>
+                            @php
+                              $booster = \App\Models\Booster::where('user_id', $user->user_id)->first();
+                            @endphp
+                            @if($booster)
+                              @if($booster->verified)
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" title="Verified">
+                                  <circle cx="12" cy="12" r="10" fill="#1DA1F2"/>
+                                  <path d="M7 12.5l3 3 7-7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                              @endif
+                            @endif
+                        </div>
                         <span class="message-time">{{ $user->latest_message_date ? $user->latest_message_date->format('H:i a') : now()->format('H:i a') }}</span>
                     </div>
                     <p class="message-preview">{{ $user->latest_message ?? 'Mulai percakapan' }}</p>

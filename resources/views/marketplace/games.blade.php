@@ -24,7 +24,7 @@
             </a>
           @endforeach
         @else
-          <p style="color: #999; grid-column: 1 / -1;">Tidak ada games tersedia</p>
+          <p style="color: #999; grid-column: 1 / -1;">No games available</p>
         @endif
         </div>
       </div>
@@ -74,7 +74,7 @@
             @endforeach
           </div>
         @else
-          <p style="color: #999;">Tidak ada games tersedia</p>
+          <p style="color: #999;">No games available</p>
         @endif
 
         <!-- Pagination -->
