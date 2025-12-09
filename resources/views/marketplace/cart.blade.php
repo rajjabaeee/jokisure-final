@@ -3,8 +3,6 @@
 
 @section('title', 'Cart')
 
-@section('appbar-title', 'Cart')
-
 @section('content')
     <style>
       .cart-header {

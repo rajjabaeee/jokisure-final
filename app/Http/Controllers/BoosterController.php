@@ -86,6 +86,7 @@ class BoosterController extends Controller
 
         // Format booster data for view
         $boosterData = [
+            'user_id' => $booster->user_id,
             'name' => $booster->user->user_name,
             'avatar' => asset('assets/' . str()->slug($booster->user->user_name) . '.jpg'),
             'banner' => asset('assets/' . str()->slug($booster->user->user_name) . '-bg.jpg'),
