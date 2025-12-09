@@ -62,12 +62,22 @@ class ChatController extends Controller
             'receiver_user_id' => 'required|exists:user,user_id',
         ]);
 
-        Chat::create([
+        $chat = Chat::create([
             'sender_user_id'   => Auth::user()->user_id,
             'receiver_user_id' => $request->receiver_user_id,
             'chat_msg'         => $request->message,
             'send_date'        => Carbon::now(),
         ]);
+
+        // Return JSON if AJAX request
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'chat_id' => $chat->chat_id,
+                'message' => $chat->chat_msg,
+                'sent_at' => $chat->created_at->format('H:i a'),
+            ]);
+        }
 
         return redirect()->route('chat.show', $request->receiver_user_id);
     }

@@ -10,8 +10,8 @@
             display: inline-block;
         }
 
-        .badge-status.waitlist {
-            background-color: #d8b4fe;
+        .badge-status.waitlist, .badge-status.waitlisted {
+            background-color: #9747FF;
             color: #fff;
         }
 
@@ -37,6 +37,13 @@
             margin-bottom: 16px;
             padding: 16px;
             border: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .order-card-new:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
         }
 
         .card-header-row {
@@ -163,7 +170,7 @@
 
     <div class="tabs-text px-3 overflow-auto">
         <ul class="nav nav-underline flex-nowrap" id="ordersTab" role="tablist">
-            @foreach(['all' => 'All', 'waitlist' => 'Waitlist', 'pending' => 'Pending', 'on-progress' => 'On Progress', 'completed' => 'Completed'] as $key => $label)
+            @foreach(['all' => 'All', 'waitlisted' => 'Waitlist', 'pending' => 'Pending', 'on-progress' => 'On Progress', 'completed' => 'Completed'] as $key => $label)
                 <li class="nav-item" role="presentation">
                     <button class="nav-link no-wrap {{ $key == 'all' ? 'active' : '' }}"
                             id="tab-btn-{{ $key }}"
@@ -179,7 +186,7 @@
 
     <div class="tab-content mt-3 pb-5">
 
-        @foreach(['all', 'waitlist', 'pending', 'on-progress', 'completed'] as $tabKey)
+        @foreach(['all', 'waitlisted', 'pending', 'on-progress', 'completed'] as $tabKey)
 
             <div class="tab-pane fade {{ $tabKey == 'all' ? 'show active' : '' }}" id="tab-{{ $tabKey }}" role="tabpanel">
 
@@ -205,7 +212,7 @@
                         $isCompleted = (strtolower($rawStatus) == 'completed');
                     @endphp
 
-                    <div class="order-card-new">
+                    <div class="order-card-new" onclick="window.location.href='{{ route('orders.show', $order->order_id) }}'">
                         <div class="card-header-row">
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <img src="{{ asset('assets/' . str()->slug($boosterName) . '.jpg') }}" alt="{{ $boosterName }}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">
@@ -243,10 +250,10 @@
 
                             <div class="d-flex gap-2">
                                 @if($isCompleted)
-                                    <a href="{{ url('/') }}" class="btn-track">Joki Again</a>
-                                    <a href="{{ route('reviews.create', $order->order_id) }}" class="btn-track">Review</a>
+                                    <a href="{{ url('/') }}" class="btn-track" onclick="event.stopPropagation()">Joki Again</a>
+                                    <a href="{{ route('reviews.create', $order->order_id) }}" class="btn-track" onclick="event.stopPropagation()">Review</a>
                                 @else
-                                    <a href="{{ route('orders.track', $order->order_id) }}" class="btn-track">Track Order</a>
+                                    <a href="{{ route('orders.track', $order->order_id) }}" class="btn-track" onclick="event.stopPropagation()">Track Order</a>
                                 @endif
                             </div>
                         </div>

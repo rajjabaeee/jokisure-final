@@ -34,7 +34,7 @@
   <!-- SAFE AREA -->
   <section class="safe-area">
 
-        <!-- APP BAR -->
+    <!-- APP BAR -->
     @unless (View::hasSection('hide-appbar'))
       <div class="appbar d-flex align-items-center justify-content-between px-3">
         {{-- Back button --}}
@@ -57,6 +57,7 @@
         </button>
       </div>
     @endunless
+
     <!-- Help Overlay -->
     <div id="helpOverlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1000; display: none; padding: 16px;" onclick="closeHelpOverlay(event)">
       <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 16px; padding: 24px; max-width: 90%; width: 340px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);" onclick="event.stopPropagation()">

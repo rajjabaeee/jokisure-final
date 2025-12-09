@@ -218,15 +218,12 @@
                 @php
                     $lastChat = $user->last_chat ?? null;
 
-                    // isi preview = chat_msg
-                    $lastText = $lastChat?->chat_msg ?? 'click to start chatting';
+                    $lastText = $lastChat?->chat_msg ?? 'Click to start the chat';
 
-                    // format waktu (12:02pm)
                     $lastTime = $lastChat?->created_at
                         ? $lastChat->created_at->format('g:ia')
                         : '';
 
-                    // avatar khusus booster
                     $hasProfilePic = in_array(str()->slug($user->user_name), [
                         'bangboost', 'sealw', 'monkeyd', 'emo', 'nagaaaaa'
                     ]);

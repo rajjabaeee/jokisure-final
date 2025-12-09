@@ -1,53 +1,171 @@
-@extends('layouts.app')
+@extends('layouts.home-app')
 
-@push('styles')
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Inter', sans-serif;
-        }
+@section('title', 'Track Order')
 
-        .mobile-container {
-            max-width: 480px;
-            margin: 0 auto;
-            min-height: 100vh;
-            padding-bottom: 40px;
+@section('content')
+<div style="padding: 20px 16px; background: #f8f9fa; min-height: calc(100vh - 60px); padding-bottom: 100px;">
+    
+    @php
+        $rawStatus = strtolower($order->orderStatus->order_status_name);
+        $item = $order->orderItems->first();
+        $service = $item->service;
+        $game = $service->game;
+        $booster = $service->booster;
+        
+        // Determine service image based on service description
+        $serviceImage = 'genshin boss.png'; // default for Genshin services
+        $serviceName = strtolower($service->service_desc);
+        
+        if (str_contains($serviceName, 'natlan')) {
+            $serviceImage = 'Natlan.png';
+        } elseif (str_contains($serviceName, 'inazuma')) {
+            $serviceImage = 'Inazuma.png';
+        } elseif (str_contains($serviceName, 'sumeru')) {
+            $serviceImage = 'Sumeru.png';
+        } elseif (str_contains($serviceName, 'fontaine')) {
+            $serviceImage = 'fontaine.png';
+        } elseif (str_contains($serviceName, 'liyue')) {
+            $serviceImage = 'liyue.png';
+        } elseif (str_contains($serviceName, 'mondstadt')) {
+            $serviceImage = 'Monstandt.png';
+        } elseif (str_contains($serviceName, 'dragonspine')) {
+            $serviceImage = 'Dragonspine.png';
+        } elseif (str_contains($serviceName, 'enkanomiya')) {
+            $serviceImage = 'enkanomiya.png';
+        } elseif (str_contains($serviceName, 'chasm')) {
+            $serviceImage = 'Chasm.png';
+        } elseif (str_contains($serviceName, 'weekly') || str_contains($serviceName, 'boss')) {
+            $serviceImage = 'genshin boss.png';
+        } elseif (str_contains($serviceName, 'abyss')) {
+            $serviceImage = 'abyss.jpg';
         }
+        
+        $statusBadgeColor = '#666';
+        if (str_contains($rawStatus, 'completed')) $statusBadgeColor = '#22c55e';
+        elseif (str_contains($rawStatus, 'progress')) $statusBadgeColor = '#0ea5e9';
+        elseif (str_contains($rawStatus, 'pending')) $statusBadgeColor = '#ff6b6b';
+        elseif (str_contains($rawStatus, 'waitlist')) $statusBadgeColor = '#a855f7';
+    @endphp
+    
+    <!-- Order Status Card -->
+    <div style="background: white; border-radius: 16px; margin-bottom: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <div style="font-size: 12px; padding: 4px 12px; background: {{ $statusBadgeColor }}; color: white; border-radius: 20px; display: inline-block; margin-bottom: 16px; font-weight: 600; text-transform: capitalize;">
+            {{ $order->orderStatus->order_status_name }}
+        </div>
+        <div style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">
+            Order ID: #{{ str_replace('ORD-', '', $order->order_id) }}
+        </div>
+        <div style="font-size: 14px; color: #666;">
+            {{ $order->created_at->format('d F Y, H:i') }} WIB
+        </div>
+    </div>
+    
+    <!-- Booster Info -->
+    <div style="background: white; border-radius: 16px; margin-bottom: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <img src="{{ asset('assets/' . str()->slug($booster->user->user_name) . '.jpg') }}" alt="{{ $booster->user->user_name }}" 
+                 style="width: 50px; height: 50px; border-radius: 12px; object-fit: cover;" 
+                 onerror="this.src='{{ asset('assets/Tamago.jpg') }}'">
+            <div style="flex: 1;">
+                <div style="font-size: 16px; font-weight: 600; color: #000;">{{ $booster->user->user_name }}</div>
+            </div>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2">
+                <path d="M12 2l3 6 6 1-4.5 4.5L18 20l-6-3-6 3 1.5-6.5L3 9l6-1z"/>
+            </svg>
+        </div>
+    </div>
+    
+    <!-- Service Info -->
+    <div style="background: white; border-radius: 16px; margin-bottom: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <div style="display: flex; align-items: flex-start; gap: 12px;">
+            <img src="{{ asset('assets/' . $serviceImage) }}" alt="{{ $service->service_desc }}" 
+                 style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover; flex-shrink: 0;">
+            <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 16px; font-weight: 600; color: #000; margin-bottom: 4px;">
+                    {{ $game->game_name }}
+                </div>
+                <div style="font-size: 14px; font-weight: 500; color: #000; margin-bottom: 8px;">
+                    {{ $service->service_desc }}
+                </div>
+                <div style="font-size: 12px; color: #666;">
+                    Variant: Childe, Raiden, The Knave
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Progress Tracking -->
+    <div style="background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <div style="font-size: 16px; font-weight: 600; color: #000; margin-bottom: 20px;">Order Progress</div>
+        
+        <!-- Timeline -->
+        <div style="position: relative;">
+            @foreach ($logs as $index => $log)
+                <div style="display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; position: relative;">
+                    <!-- Timeline Line -->
+                    @if(!$loop->last)
+                        <div style="position: absolute; left: 12px; top: 24px; width: 2px; height: calc(100% + 24px); background: #e5e7eb; z-index: 1;"></div>
+                    @endif
+                    
+                    <!-- Timeline Dot -->
+                    <div style="width: 24px; height: 24px; border-radius: 50%; background: {{ $loop->first ? '#22c55e' : '#e5e7eb' }}; flex-shrink: 0; z-index: 2; position: relative;"></div>
+                    
+                    <!-- Timeline Content -->
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-size: 14px; color: #666; margin-bottom: 4px;">
+                            {{ $log->date->format('d F Y') }}
+                        </div>
+                        <div style="font-size: 14px; font-weight: 500; color: #000;">
+                            {{ $log->status }}
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+            
+            <!-- Order Created -->
+            <div style="display: flex; align-items: flex-start; gap: 16px;">
+                <div style="width: 24px; height: 24px; border-radius: 50%; background: #22c55e; flex-shrink: 0; z-index: 2; position: relative;"></div>
+                <div style="flex: 1; min-width: 0;">
+                    <div style="font-size: 14px; color: #666; margin-bottom: 4px;">
+                        {{ $order->created_at->format('d F Y') }}
+                    </div>
+                    <div style="font-size: 14px; font-weight: 500; color: #000;">
+                        Order placed & Payment verified
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
 
-        .custom-card {
-            background: #fff;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-            border: 1px solid #f0f0f0;
+<style>
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+        .device-frame {
+            overflow: hidden !important;
         }
-
-        .header-wrap {
-            padding: 20px 0;
-            display: flex;
-            align-items: center;
+        
+        .safe-area {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 60px !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
         }
-
-        .stepper-container {
-            position: relative;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-top: 25px;
-            padding: 0;
+        
+        .navbar {
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            z-index: 1000 !important;
         }
-
-        .stepper-track-bg {
-            position: absolute;
-            top: 15px;
-            left: 16px;
-            right: 16px;
-            height: 3px;
-            background: #e5e7eb;
-            z-index: 0;
-            border-radius: 2px;
-        }
+    }
+</style>
+@endsection
 
         .stepper-track-fill {
             position: absolute;
@@ -57,6 +175,11 @@
             z-index: 1;
             border-radius: 2px;
             transition: all 0.4s ease;
+        }
+
+        .stepper-track-fill.waitlisted {
+            width: 0%;
+            background: transparent;
         }
 
         .stepper-track-fill.pending {
@@ -215,11 +338,17 @@
 @section('content')
 @php
 $rawStatus = strtolower($order->orderStatus->order_status_name);
-$statusClass = 'pending';
+$statusClass = 'waitlisted';
 $s1 = 'step-inactive';
 $s2 = 'step-inactive';
 $s3 = 'step-inactive';
 
+if(str_contains($rawStatus, 'waitlisted')) {
+    $statusClass = 'waitlisted';
+    $s1 = 'step-inactive';
+    $s2 = 'step-inactive';
+    $s3 = 'step-inactive';
+}
 if(str_contains($rawStatus, 'pending')) {
     $statusClass = 'pending';
     $s1 = 'step-active-blue';
@@ -300,6 +429,7 @@ $item = $order->orderItems->first();
             <i class="bi bi-chat-dots fs-4 text-dark"></i>
         </div>
 
+        @if(!str_contains($rawStatus, 'waitlisted'))
         <div class="divider m-0"></div>
 
         <div class="p-4 pt-3">
@@ -323,6 +453,7 @@ $item = $order->orderItems->first();
 
             </div>
         </div>
+        @endif
     </div>
 </div>
 @endsection

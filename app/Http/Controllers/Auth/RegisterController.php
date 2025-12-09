@@ -18,15 +18,15 @@ class RegisterController extends Controller
     public function storeDataForOTP(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
+            'username' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
             'password' => 'required|string|min:1',
             'password_confirmation' => 'required|string|same:password',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'required|string|max:20',
         ]);
 
         $request->session()->put('signup.data', [
-            'name' => $request->input('name'),
+            'username' => $request->input('username'),
             'email' => $request->input('email'),
             'password' => $request->input('password'),
             'phone' => $request->input('phone'),
@@ -74,12 +74,12 @@ class RegisterController extends Controller
         }
 
         // Use correct column names for the 'user' table
-        // Generate unique nametag from name
-        $baseNametag = strtolower(str_replace(' ', '', $signupData['name']));
+        // Generate unique nametag from username
+        $baseNametag = strtolower(str_replace(' ', '', $signupData['username']));
         $nametag = $baseNametag . rand(100, 999);
         
         $user = User::create([
-            'user_name' => $signupData['name'],
+            'user_name' => $signupData['username'],
             'user_nametag' => $nametag,
             'user_email' => $signupData['email'],
             'user_password_hash' => Hash::make($signupData['password']),

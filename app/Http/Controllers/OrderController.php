@@ -16,92 +16,16 @@ use App\Models\BoostPriority;
 class OrderController extends Controller
 {
     /**
-     * SUMBER DATA UTAMA (DUMMY)
-     * Kita taruh semua data di sini biar Index dan Show baca data yang sama.
-     */
-    private function getDummyOrders()
-    {
-        return collect([
-            (object)[
-                'order_id' => 'ORD-12356', // ID sesuai gambar yg Waitlist
-                'created_at' => now()->subDays(1),
-                'order_date' => now()->subDays(1), // Tambahan buat sort di index
-                'total_amount' => 260000,
-                'orderStatus' => (object)['order_status_name' => 'Waitlist'],
-                'orderItems' => collect([
-                    (object)[
-                        'service' => (object)[
-                            'game' => (object)['game_name' => 'Genshin Impact'],
-                            'service_desc' => 'Natlan Exploration 100%',
-                            'booster' => (object)['user' => (object)['user_name' => 'BangBoost']]
-                        ]
-                    ]
-                ])
-            ],
-            (object)[
-                'order_id' => 'ORD-12346', // ID sesuai gambar yg Pending
-                'created_at' => now()->subHours(5),
-                'order_date' => now()->subHours(5),
-                'total_amount' => 120000,
-                'orderStatus' => (object)['order_status_name' => 'Pending'],
-                'orderItems' => collect([
-                    (object)[
-                        'service' => (object)[
-                            'game' => (object)['game_name' => 'Genshin Impact'],
-                            'service_desc' => 'Enkanomiya Exploration 100%',
-                            'booster' => (object)['user' => (object)['user_name' => 'SealW']]
-                        ]
-                    ]
-                ])
-            ],
-            (object)[
-                'order_id' => 'ORD-99999', // On Progress
-                'created_at' => now()->subDays(3),
-                'order_date' => now()->subDays(3),
-                'total_amount' => 90000,
-                'orderStatus' => (object)['order_status_name' => 'On Progress'],
-                'orderItems' => collect([
-                    (object)[
-                        'service' => (object)[
-                            'game' => (object)['game_name' => 'Genshin Impact'],
-                            'service_desc' => 'Abyss Floor 12 Full Star',
-                            'booster' => (object)['user' => (object)['user_name' => 'BangBoost']]
-                        ]
-                    ]
-                ])
-            ],
-            (object)[
-                'order_id' => 'ORD-88888', // Completed
-                'created_at' => now()->subMonth(1),
-                'order_date' => now()->subMonth(1),
-                'total_amount' => 25000,
-                'orderStatus' => (object)['order_status_name' => 'Completed'],
-                'orderItems' => collect([
-                    (object)[
-                        'service' => (object)[
-                            'game' => (object)['game_name' => 'Genshin Impact'],
-                            'service_desc' => 'Weekly Boss Run',
-                            'booster' => (object)['user' => (object)['user_name' => 'MonkeyD']]
-                        ]
-                    ]
-                ])
-            ]
-        ]);
-    }
-
-    /**
      * Menampilkan List Order
      */
     public function index(Request $request)
     {
-        // 1. Cek Login
         $user = Auth::user();
         if (! $user) {
             return redirect()->route('login');
         }
 
-        // 2. LOGIC DATABASE (Saya comment dulu biar tidak error pas testing UI Dummy)
-        /*
+        // Ambil data order dari database
         $buyer = $user->buyer()->first();
         if (! $buyer) {
             $ordersnya = collect();
@@ -109,17 +33,11 @@ class OrderController extends Controller
             $ordersnya = WorkOrder::whereHas('orderItems', function ($q) use ($buyer) {
                 $q->where('buyer_id', $buyer->buyer_id);
             })
-            ->with(['orderItems.service.game', 'orderStatus'])
+            ->with(['orderItems.service.game', 'orderItems.service.booster.user', 'orderStatus'])
             ->orderBy('order_date', 'desc')
             ->get();
         }
-        */
 
-        // 3. LOGIC DUMMY (Pakai ini agar list dan detail sinkron)
-        // Kita ambil data dari function getDummyOrders()
-        $ordersnya = $this->getDummyOrders();
-
-        // Return ke view
         return view('orders.my-orders', compact('ordersnya'));
     }
 
@@ -128,13 +46,20 @@ class OrderController extends Controller
      */
     public function show($orderId)
     {
-        // Cari data di array dummy berdasarkan order_id yang dikirim dari URL
-        // Karena sumber datanya sama dengan index(), pasti ketemu.
-        $order = $this->getDummyOrders()->firstWhere('order_id', $orderId);
+        $user = Auth::user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
 
-        // Kalau iseng ngetik ID sembarangan di URL:
-        if (!$order) {
-            abort(404, 'Order not found (Dummy Check)');
+        $buyer = $user->buyer()->first();
+
+        $order = WorkOrder::with(['orderItems.service.game', 'orderItems.service.booster.user', 'orderStatus', 'payments'])
+            ->where('order_id', $orderId)
+            ->firstOrFail();
+
+        // Ensure this order belongs to the authenticated buyer
+        if (! $buyer || ! $order->orderItems->contains('buyer_id', $buyer->buyer_id)) {
+            abort(403, 'Unauthorized access to order');
         }
 
         return view('orders.show', compact('order'));
@@ -145,14 +70,21 @@ class OrderController extends Controller
      */
     public function track($orderId)
     {
-        // Cari data order
-        $order = $this->getDummyOrders()->firstWhere('order_id', $orderId);
-
-        if (!$order) {
-            abort(404);
+        $user = Auth::user();
+        if (! $user) {
+            return redirect()->route('login');
         }
 
-        // Data Log Palsu buat Timeline
+        $buyer = $user->buyer()->first();
+        $order = WorkOrder::with(['orderItems.service.game', 'orderItems.service.booster.user', 'orderStatus', 'payments.paymentMethod'])
+            ->where('order_id', $orderId)
+            ->firstOrFail();
+
+        if (! $buyer || ! $order->orderItems->contains('buyer_id', $buyer->buyer_id)) {
+            abort(403, 'Unauthorized access to order');
+        }
+
+        // Data Log Dummy buat Timeline
         $logs = collect([
             (object)['status' => 'Account logged out', 'date' => now()->subHours(2)],
             (object)['status' => 'Abyss level 12 cleared', 'date' => now()->subHours(5)],
@@ -249,8 +181,8 @@ class OrderController extends Controller
             return back()->with('error', 'Invalid boost priority selected.');
         }
 
-        // Get order status "Pending"
-        $orderStatus = OrderStatus::where('order_status_name', 'Pending')->first();
+        // Get order status "Waitlisted"
+        $orderStatus = OrderStatus::where('order_status_name', 'Waitlisted')->first();
         if (!$orderStatus) {
             return back()->with('error', 'Order status not configured. Please contact support.');
         }
