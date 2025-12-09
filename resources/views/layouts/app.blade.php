@@ -34,28 +34,29 @@
   <!-- SAFE AREA -->
   <section class="safe-area">
 
-    <!-- APP BAR -->
-    <div class="appbar d-flex align-items-center justify-content-between px-3">
-      {{-- Back button --}}
-      @php
-        $backUrl = 'javascript:history.back()'; // Default behavior
-        if (Route::currentRouteName() === 'boosters') {
-          $backUrl = route('home'); // For boosters page, go to home
-        }
-      @endphp
-      <a href="{{ $backUrl }}" class="back-btn" style="color: #0a0a0a; text-decoration: none; font-size: 24px;">←</a>
+        <!-- APP BAR -->
+    @unless (View::hasSection('hide-appbar'))
+      <div class="appbar d-flex align-items-center justify-content-between px-3">
+        {{-- Back button --}}
+        @php
+          $backUrl = 'javascript:history.back()'; // Default behavior
+          if (Route::currentRouteName() === 'boosters') {
+            $backUrl = route('home'); // For boosters page, go to home
+          }
+        @endphp
+        <a href="{{ $backUrl }}" class="back-btn" style="color: #0a0a0a; text-decoration: none; font-size: 24px;">←</a>
 
-      {{-- Title (pakai appbar-title biar konsisten dengan halaman lain) --}}
-      <div class="fw-semibold">@yield('appbar-title', 'JokiSure')</div>
+        {{-- Title (pakai appbar-title biar konsisten dengan halaman lain) --}}
+        <div class="fw-semibold">@yield('appbar-title', 'JokiSure')</div>
 
-      {{-- Help button (buka overlay) --}}
-      <button type="button" class="icon-btn" aria-label="Help" onclick="openHelpOverlay()" style="border: none; background: none; padding: 0; cursor: pointer;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
-        </svg>
-      </button>
-    </div>
-
+        {{-- Help button (buka overlay) --}}
+        <button type="button" class="icon-btn" aria-label="Help" onclick="openHelpOverlay()" style="border: none; background: none; padding: 0; cursor: pointer;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+          </svg>
+        </button>
+      </div>
+    @endunless
     <!-- Help Overlay -->
     <div id="helpOverlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1000; display: none; padding: 16px;" onclick="closeHelpOverlay(event)">
       <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 16px; padding: 24px; max-width: 90%; width: 340px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);" onclick="event.stopPropagation()">

@@ -24,16 +24,15 @@ class Chat extends Model
     ];
 
     protected $casts = [
-        'send_date' => 'datetime',
-        'receive_date' => 'datetime',
+        'send_date'   => 'datetime',
+        'receive_date'=> 'datetime',
     ];
 
-    // Supaya Blade tetap bisa pakai ->created_at
+    // Supaya Blade bisa pakai ->created_at (di-mapping ke send_date)
     protected $appends = ['created_at'];
 
     public function getCreatedAtAttribute()
     {
-        // created_at = send_date
         return $this->send_date ? Carbon::parse($this->send_date) : null;
     }
 
@@ -51,5 +50,22 @@ class Chat extends Model
     public function receiver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'receiver_user_id', 'user_id');
+    }
+
+    /**
+     * Helper: ambil last chat antara dua user
+     */
+    public static function lastBetween(string $userAId, string $userBId): ?self
+    {
+        return self::where(function ($q) use ($userAId, $userBId) {
+                    $q->where('sender_user_id', $userAId)
+                      ->where('receiver_user_id', $userBId);
+                })
+                ->orWhere(function ($q) use ($userAId, $userBId) {
+                    $q->where('sender_user_id', $userBId)
+                      ->where('receiver_user_id', $userAId);
+                })
+                ->orderByDesc('send_date')
+                ->first();
     }
 }

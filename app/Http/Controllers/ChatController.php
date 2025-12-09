@@ -11,13 +11,19 @@ use Carbon\Carbon;
 class ChatController extends Controller
 {
     /**
-     * List all users except current logged user
+     * List all users except current logged-in user
      */
     public function index()
     {
         $myId = Auth::user()->user_id;
 
+        // Ambil semua user kecuali diri sendiri
         $users = User::where('user_id', '!=', $myId)->get();
+
+        // Tambah properti last_chat ke setiap user (dipakai di Blade)
+        $users->each(function ($user) use ($myId) {
+            $user->last_chat = Chat::lastBetween($myId, $user->user_id);
+        });
 
         return view('marketplace.chat_list', compact('users'));
     }
@@ -40,7 +46,7 @@ class ChatController extends Controller
                         $q->where('sender_user_id', $receiverId)
                           ->where('receiver_user_id', $myId);
                     })
-                    ->orderBy('send_date', 'asc')   // pakai send_date karena database kamu pakai itu
+                    ->orderBy('send_date', 'asc')
                     ->get();
 
         return view('marketplace.chat_room', compact('receiver', 'chats'));
@@ -52,7 +58,7 @@ class ChatController extends Controller
     public function sendMessage(Request $request)
     {
         $request->validate([
-            'message' => 'required|string',
+            'message'          => 'required|string',
             'receiver_user_id' => 'required|exists:user,user_id',
         ]);
 
@@ -60,7 +66,7 @@ class ChatController extends Controller
             'sender_user_id'   => Auth::user()->user_id,
             'receiver_user_id' => $request->receiver_user_id,
             'chat_msg'         => $request->message,
-            'send_date'        => Carbon::now(), // supaya ada waktu kirim di DB
+            'send_date'        => Carbon::now(),
         ]);
 
         return redirect()->route('chat.show', $request->receiver_user_id);
