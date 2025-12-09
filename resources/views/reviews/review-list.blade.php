@@ -1,7 +1,7 @@
 <!-- 5026231002 | Aisya Candra Kirana Dewi (Velyven) -->
 <!-- 5026231057 | Siti Qalimatus Zahra (SitiQalimatusZahra) -->
 
-@extends('layouts.home-app')
+@extends('layouts.app')
 
 @section('title', 'Review')
 
