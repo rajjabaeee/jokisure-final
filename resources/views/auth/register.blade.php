@@ -34,16 +34,8 @@
       </header>
 
       <div class="content-wrap">
-        <div class="container">
-          <h1 class="h4 fw-bold mb-3">Sign Up</h1>
-
-          @if(session('status'))
-            <div class="alert alert-success small">{{ session('status') }}</div>
-          @endif
-
-          @if(session('signup.otp_verified'))
-            <div class="alert alert-success small">✓ Phone number verified — you can now complete sign up.</div>
-          @endif
+        <div class="container px-4">
+          <h1 class="h4 fw-bold mb-4">Sign Up</h1>
 
           @if($errors->any())
             <div class="alert alert-danger small">
@@ -53,46 +45,119 @@
             </div>
           @endif
 
-          @if(session('signup.otp_verified'))
-            {{-- Step 3: Final Sign Up (after OTP verified) --}}
-            <form method="POST" action="{{ route('signup.perform') }}">
-              @csrf
-              <div class="alert alert-info small mb-3">
-                Click Sign Up below to save your account and proceed to login.
+          <!-- Main Form -->
+          <form method="POST" action="{{ route('signup.verify.phone') }}" id="signupForm">
+            @csrf
+            
+            <!-- Username Field -->
+            <div class="mb-3">
+              <label class="form-label fw-medium text-dark" style="font-size: 14px;">Username</label>
+              <input 
+                type="text" 
+                name="username" 
+                value="{{ session('signup.data.username', old('username')) }}" 
+                class="form-control" 
+                placeholder="Enter Your Username" 
+                style="padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;"
+                required>
+            </div>
+            
+            <!-- Email Field -->
+            <div class="mb-3">
+              <label class="form-label fw-medium text-dark" style="font-size: 14px;">Email</label>
+              <input 
+                type="email" 
+                name="email" 
+                value="{{ session('signup.data.email', old('email')) }}" 
+                class="form-control" 
+                placeholder="Enter Your Email" 
+                style="padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;"
+                required>
+            </div>
+
+            <!-- Password Field -->
+            <div class="mb-3">
+              <label class="form-label fw-medium text-dark" style="font-size: 14px;">Password</label>
+              <input 
+                type="password" 
+                name="password" 
+                class="form-control" 
+                placeholder="Enter Your Password" 
+                style="padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;"
+                required>
+            </div>
+
+            <!-- Confirm Password Field -->
+            <div class="mb-3">
+              <label class="form-label fw-medium text-dark" style="font-size: 14px;">Confirm Password</label>
+              <input 
+                type="password" 
+                name="password_confirmation" 
+                class="form-control" 
+                placeholder="Confirm Your Password" 
+                style="padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;"
+                required>
+            </div>
+
+            <!-- Phone Number Field -->
+            <div class="mb-3">
+              <label class="form-label fw-medium text-dark" style="font-size: 14px;">Phone Number</label>
+              <div class="input-group">
+                <span class="input-group-text" style="border: 1px solid #ddd; background: white; font-size: 14px;">+62</span>
+                <input 
+                  type="tel" 
+                  name="phone" 
+                  value="{{ session('signup.data.phone', old('phone')) }}" 
+                  class="form-control" 
+                  placeholder="Enter Your Phone Number" 
+                  style="border: 1px solid #ddd; font-size: 14px; padding: 12px;"
+                  required>
               </div>
-              <button type="submit" class="btn btn-cta w-100 mb-3">Sign Up</button>
-            </form>
-          @else
-            {{-- Step 1: Fill form and Verify Phone Number --}}
-            <form method="POST" action="{{ route('signup.verify.phone') }}">
-              @csrf
+            </div>
 
-              <label class="form-label mb-1">Full name</label>
-              <input type="text" name="name" value="{{ session('signup.data.name', old('name')) }}" class="form-control mb-3" placeholder="Enter Your Full Name" required>
+            <!-- Verify Phone Number Link -->
+            <div class="text-end mb-4">
+              <a 
+                href="javascript:void(0)" 
+                onclick="document.getElementById('signupForm').submit()" 
+                style="color: #ff2d55; font-size: 14px; text-decoration: none; font-weight: 500;">
+                Verify Phone Number
+              </a>
+            </div>
 
-              <label class="form-label mb-1">Email</label>
-              <input type="email" name="email" value="{{ session('signup.data.email', old('email')) }}" class="form-control mb-3" placeholder="Enter Your Email" required>
+          </form>
 
-              <label class="form-label mb-1">Password</label>
-              <input type="password" name="password" value="{{ session('signup.data.password', '') }}" class="form-control mb-3" placeholder="Enter Your Password" required>
-
-              <label class="form-label mb-1">Confirm Password</label>
-              <input type="password" name="password_confirmation" value="{{ session('signup.data.password', '') }}" class="form-control mb-3" placeholder="Confirm Your Password" required>
-
-              <label class="form-label mb-1">Phone Number</label>
-              <div class="input-group mb-1">
-                <span class="input-group-text">+62</span>
-                <input type="tel" name="phone" value="{{ session('signup.data.phone', old('phone')) }}" class="form-control" placeholder="Enter Your Phone Number">
-              </div>
-              
-              <button type="submit" class="btn btn-outline-danger w-100 mt-2 mb-3">Verify Phone Number</button>
-            </form>
-          @endif
+          <!-- Sign Up Form -->
+          <form method="POST" action="{{ route('signup.perform') }}" id="finalSignupForm">
+            @csrf
+            
+            <!-- Sign Up Button -->
+            @if(session('signup.otp_verified'))
+              <button type="submit" class="btn w-100 mb-4" style="background-color: #ff2d55; color: white; padding: 14px; font-weight: 600; border-radius: 8px; border: none; font-size: 16px;">
+                Sign Up
+              </button>
+            @else
+              <button type="button" class="btn w-100 mb-4" disabled style="background-color: #e0e0e0; color: #9e9e9e; padding: 14px; font-weight: 600; border-radius: 8px; border: none; font-size: 16px; cursor: not-allowed;">
+                Sign Up
+              </button>
+            @endif
+          </form>
+          
+          <!-- Terms -->
+          <p class="small text-muted text-center" style="font-size: 12px;">
+            By joining, you agree to the 
+            <a href="#" class="text-decoration-none" style="color: #ff2d55;">Terms & Conditions</a> 
+            and 
+            <a href="#" class="text-decoration-none" style="color: #ff2d55;">Privacy Policy</a>
+          </p>
         </div>
       </div>
     </section>
 
     <div class="home-indicator" aria-hidden="true"></div>
   </main>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

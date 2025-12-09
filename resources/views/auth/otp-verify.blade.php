@@ -34,8 +34,17 @@
         <div class="col-12 px-4">
           <h1 class="h4 fw-bold mb-2">Verify Code</h1>
           <p class="text-muted mb-3 small">Check your SMS message. We've sent you the code at
-            <span class="text-dark fw-semibold">+62 ********0000</span>
+            <span class="text-dark fw-semibold">+62{{ session('signup.data.phone', '********0000') }}</span>
           </p>
+          
+          @if(session('signup.data'))
+            <div class="alert alert-light border small mb-3">
+              <div><strong>Username:</strong> {{ session('signup.data.username') }}</div>
+              <div><strong>Email:</strong> {{ session('signup.data.email') }}</div>
+              <div><strong>Phone:</strong> +62{{ session('signup.data.phone') }}</div>
+            </div>
+          @endif
+          
           @if($errors->has('otp'))
             <div class="alert alert-danger small">{{ $errors->first('otp') }}</div>
           @endif
