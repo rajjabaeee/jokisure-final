@@ -1,3 +1,5 @@
+  {{-- NRP 5026231118 - ZELDANO SHAN OEFFIE & 5026231057 - Siti Qalimatus Zahra--}}
+
 @extends('layouts.app')
 
 @push('styles')
