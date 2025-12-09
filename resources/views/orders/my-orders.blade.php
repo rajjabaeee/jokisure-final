@@ -203,7 +203,6 @@
                         $item = $order->orderItems->first();
                         $gameName = $item->service->game->game_name ?? 'Unknown Game';
                         $serviceName = $item->service->service_desc ?? 'Service';
-                        $fullTitle = $gameName . ' - ' . $serviceName;
                         $thumb = asset('assets/default-thumb.png');
                         $boosterName = $item->service->booster->user->user_name ?? 'Waiting for Booster';
                         $rawStatus = $order->orderStatus->order_status_name ?? 'Unknown';
@@ -221,13 +220,11 @@
                                     <div class="order-date">{{ $date }}</div>
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center">
+                            <div class="d-flex align-items-center" style="gap: 8px;">
                                 <span class="badge-status {{ $statusClass }}">
                                     {{ $rawStatus }}
                                 </span>
-                                <a href="{{ route('orders.show', $order->order_id) }}" class="btn-ori text-decoration-none">
-                                    <i class="bi bi-chevron-right" style="font-size: 0.9rem;"></i>
-                                </a>
+                                <i class="bi bi-chevron-right" style="font-size: 1.2rem; color: #000;"></i>
                             </div>
                         </div>
 
@@ -235,8 +232,9 @@
 
                         <div class="card-body-row">
                             <img src="{{ asset('assets/' . str()->slug($gameName) . '.jpg') }}" class="game-thumb" alt="{{ $gameName }}" onerror="this.src='{{ asset('assets/default-thumb.png') }}'">
-                            <div class="service-title">
-                                {{ $fullTitle }}
+                            <div>
+                                <div class="service-title">{{ $gameName }}</div>
+                                <div style="font-size: 0.8rem; color: #666;">{{ $serviceName }}</div>
                             </div>
                         </div>
 
