@@ -11,21 +11,46 @@ use Carbon\Carbon;
 class ChatController extends Controller
 {
     /**
-     * List all users except current logged-in user
+     * List all users that have been contacted (have messages)
      */
     public function index()
     {
         $myId = Auth::user()->user_id;
 
-        // Ambil semua user kecuali diri sendiri
-        $users = User::where('user_id', '!=', $myId)->get();
+        // Get users that have messages with the current user
+        $users = User::where('user_id', '!=', $myId)
+            ->whereIn('user_id', function($query) use ($myId) {
+                $query->select('sender_user_id')
+                    ->from('chat')
+                    ->where('receiver_user_id', $myId)
+                    ->union(
+                        \DB::table('chat')
+                            ->select('receiver_user_id')
+                            ->where('sender_user_id', $myId)
+                    );
+            })
+            ->get()
+            ->map(function($user) use ($myId) {
+                // Get latest message with this user
+                $latestChat = Chat::where(function($q) use ($myId, $user) {
+                        $q->where('sender_user_id', $myId)
+                          ->where('receiver_user_id', $user->user_id);
+                    })
+                    ->orWhere(function($q) use ($myId, $user) {
+                        $q->where('sender_user_id', $user->user_id)
+                          ->where('receiver_user_id', $myId);
+                    })
+                    ->orderBy('send_date', 'desc')
+                    ->first();
 
-        // Tambah properti last_chat ke setiap user (dipakai di Blade)
-        $users->each(function ($user) use ($myId) {
-            $user->last_chat = Chat::lastBetween($myId, $user->user_id);
-        });
+                // Add latest message to user object
+                $user->latest_message = $latestChat ? $latestChat->chat_msg : null;
+                $user->latest_message_date = $latestChat ? $latestChat->created_at : null;
 
-        return view('marketplace.chat_list', compact('users'));
+                return $user;
+            });
+
+        return view('marketplace.chat-list', compact('users'));
     }
 
     /**
@@ -49,7 +74,7 @@ class ChatController extends Controller
                     ->orderBy('send_date', 'asc')
                     ->get();
 
-        return view('marketplace.chat_room', compact('receiver', 'chats'));
+        return view('marketplace.chat-room', compact('receiver', 'chats'));
     }
 
     /**

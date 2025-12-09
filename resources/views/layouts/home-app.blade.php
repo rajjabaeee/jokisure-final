@@ -47,8 +47,11 @@
         </a>
 
         <!-- Search Bar -->
-        <div style="flex-grow: 1; max-width: 200px;">
-          <input type="text" class="form-control rounded-pill" placeholder="Search..." style="height: 30px; font-size: 12px;">
+        <div style="flex-grow: 1; max-width: 200px; position: relative;">
+          <input type="text" id="homeSearch" class="form-control rounded-pill" placeholder="Search..." style="height: 30px; font-size: 12px;" oninput="filterHomeContent()">
+          <div id="searchDropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #e9e9e9; border-top: none; border-radius: 0 0 12px 12px; max-height: 300px; overflow-y: auto; display: none; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <div id="searchResults" style="padding: 8px 0;"></div>
+          </div>
         </div>
 
         <!-- Cart Icon -->
@@ -269,7 +272,7 @@
       <span>Cart</span>
     </a>
     <a class="tab{{ Route::currentRouteName() === 'chat.index' ? ' active' : '' }}" href="{{ route('chat.index') }}">
-      <svg viewBox="0 0 24 24"><path d="M21 12a8.5 8.5 0 1 1-17 0 8.5 8.5 0 0 1 17 0Zm-8.5-5v5l3 2" fill="none"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="none"/></svg>
       <span>Message</span>
     </a>
     <a class="tab{{ Route::currentRouteName() === 'notifications' ? ' active' : '' }}" href="{{ route('notifications') }}">
