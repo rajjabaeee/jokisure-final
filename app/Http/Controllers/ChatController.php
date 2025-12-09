@@ -71,7 +71,7 @@ class ChatController extends Controller
                         $q->where('sender_user_id', $receiverId)
                           ->where('receiver_user_id', $myId);
                     })
-                    ->orderBy('send_date', 'asc')   // pakai send_date karena database kamu pakai itu
+                    ->orderBy('send_date', 'asc')
                     ->get();
 
         return view('marketplace.chat-room', compact('receiver', 'chats'));
@@ -83,7 +83,7 @@ class ChatController extends Controller
     public function sendMessage(Request $request)
     {
         $request->validate([
-            'message' => 'required|string',
+            'message'          => 'required|string',
             'receiver_user_id' => 'required|exists:user,user_id',
         ]);
 
