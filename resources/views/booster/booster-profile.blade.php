@@ -1,3 +1,5 @@
+<!-- 5026231002 | Aisya Candra Kirana Dewi (Velyven) -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +8,7 @@
   <title>JokiSure • Booster Profile</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  {{-- pastikan file ini ada di public/css/ --}}
+  {{-- Make sure this file exists in public/css/ --}}
   <link href="{{ asset('css/booster-profile.css') }}" rel="stylesheet">
 </head>
 <body class="preview-center">

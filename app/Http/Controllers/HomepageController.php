@@ -62,6 +62,7 @@ class HomepageController extends Controller
                     'game_id' => $service->game_id,
                     'game' => $service->game,
                     'game_name' => $service->game->game_name ?? 'Unknown Game',
+                    'service_name' => $service->service_name ?? null,
                     'service_desc' => $service->service_desc ?? 'Service',
                     'est_time' => $service->est_time ?? '1-2 jam',
                     'service_price' => $service->service_price ?? 0,

@@ -1,3 +1,5 @@
+<!-- 5026231002 | Aisya Candra Kirana Dewi (Velyven) -->
+
 @extends('layouts.home-app')
 
 @section('title', 'Home')
@@ -159,13 +161,16 @@
                 $serviceImage = str()->slug($service->game_name) . '.jpg';
               }
             @endphp
-            <a href="{{ route('service.detail.confirm', $service->service_id) }}" data-service-name="{{ $service->game_name }}" data-service-desc="{{ $service->service_desc ?? '' }}" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e9e9e9; border-radius: 12px; overflow: hidden; text-decoration: none; color: #0a0a0a; transition: all 0.3s ease;">
+            <a href="{{ route('service.detail.confirm', $service->service_id) }}" data-service-name="{{ $service->service_name ?? '' }}" data-game-name="{{ $service->game_name ?? '' }}" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e9e9e9; border-radius: 12px; overflow: hidden; text-decoration: none; color: #0a0a0a; transition: all 0.3s ease;">
               <div style="position: relative; width: 100%; height: 120px; overflow: hidden; background: #f5f5f5;">
                 <img src="{{ asset('assets/' . $serviceImage) }}" alt="{{ $service->service_desc }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='{{ asset('assets/' . str()->slug($service->game_name) . '.jpg') }}'">
                 <span style="position: absolute; top: 6px; right: 6px; font-size: 9px; padding: 2px 6px; background: #0066cc; color: #fff; border-radius: 4px; font-weight: 500;">Open</span>
               </div>
               <div style="padding: 10px; flex: 1; display: flex; flex-direction: column;">
-                <div style="font-weight: 600; font-size: 11px; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: normal; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;">{{ $service->game_name }}</div>
+                @if($service->service_name)
+                  <div style="font-weight: 600; font-size: 11px; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: normal; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; text-transform: capitalize;">{{ $service->service_name }}</div>
+                @endif
+                <div style="font-weight: 500; font-size: 10px; color: #0066cc; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $service->game_name }}</div>
                 <div style="font-size: 9px; color: #666; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $service->service_desc ?? 'Service' }}</div>
                 <div style="font-size: 9px; color: #999; margin-bottom: 4px;">Est. {{ $service->est_time }}</div>
                 <div style="display: flex; align-items: center; gap: 6px; font-size: 9px; color: #666; margin-bottom: 4px;">
@@ -313,12 +318,15 @@
       }
       
       let results = [];
+      const seenGames = new Set();
+      const seenBoosters = new Set();
       
-      // Search games
+      // Search games (deduplicated)
       const gameCards = document.querySelectorAll('[data-game-name]');
       gameCards.forEach(card => {
         const gameName = card.getAttribute('data-game-name').toLowerCase();
-        if (gameName.includes(filter)) {
+        if (gameName.includes(filter) && !seenGames.has(gameName)) {
+          seenGames.add(gameName);
           const href = card.getAttribute('href');
           results.push({
             type: 'game',
@@ -328,11 +336,12 @@
         }
       });
       
-      // Search boosters
+      // Search boosters (deduplicated)
       const boosterCards = document.querySelectorAll('[data-booster-name]');
       boosterCards.forEach(card => {
         const boosterName = card.getAttribute('data-booster-name').toLowerCase();
-        if (boosterName.includes(filter)) {
+        if (boosterName.includes(filter) && !seenBoosters.has(boosterName)) {
+          seenBoosters.add(boosterName);
           const href = card.getAttribute('href');
           results.push({
             type: 'booster',
@@ -346,13 +355,13 @@
       const serviceCards = document.querySelectorAll('[data-service-name]');
       serviceCards.forEach(card => {
         const serviceName = card.getAttribute('data-service-name').toLowerCase();
-        const serviceDesc = (card.getAttribute('data-service-desc') || '').toLowerCase();
-        if (serviceName.includes(filter) || serviceDesc.includes(filter)) {
+        if (serviceName.includes(filter)) {
           const href = card.getAttribute('href');
+          const gameName = card.getAttribute('data-game-name');
           results.push({
             type: 'service',
             name: serviceName,
-            desc: card.getAttribute('data-service-desc'),
+            gameName: gameName,
             href: href
           });
         }
@@ -368,7 +377,8 @@
           } else if (result.type === 'booster') {
             return `<a href="${result.href}" style="display: block; padding: 10px 16px; text-decoration: none; color: #0a0a0a; border-bottom: 1px solid #f0f0f0; font-size: 12px;">⭐ ${result.name}</a>`;
           } else {
-            return `<a href="${result.href}" style="display: block; padding: 10px 16px; text-decoration: none; color: #0a0a0a; border-bottom: 1px solid #f0f0f0; font-size: 12px;"><div style="font-weight: 500;">${result.name}</div><div style="color: #999; font-size: 11px;">${result.desc}</div></a>`;
+            const capitalizedName = result.name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            return `<a href="${result.href}" style="display: block; padding: 10px 16px; text-decoration: none; color: #0a0a0a; border-bottom: 1px solid #f0f0f0; font-size: 12px;"><div style="font-weight: 500;">${capitalizedName}</div><div style="color: #999; font-size: 11px;">${result.gameName}</div></a>`;
           }
         }).join('');
       }

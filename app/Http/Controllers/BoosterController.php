@@ -154,7 +154,7 @@ class BoosterController extends Controller
                 'price' => $service->service_price ?? 0,
                 'thumb' => asset('assets/' . $imageName),
                 'sold' => rand(10, 100) . ' sold', // You can add this to service table if needed
-                'rating' => '★ ' . number_format($service->service_rating / 10 ?? 4.5, 1),
+                'rating' => '★ ' . number_format($service->service_rating ?? 4.5, 1),
                 'status' => 'Open', // You can add this to service table if needed
             ];
         })->toArray();

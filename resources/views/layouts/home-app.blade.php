@@ -1,3 +1,5 @@
+<!-- 5026231002 | Aisya Candra Kirana Dewi (Velyven) -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -228,7 +230,7 @@
       }
 
       function handleLogout() {
-        if (confirm('Yakin ingin keluar?')) {
+        if (confirm('Are you sure you want to logout?')) {
           fetch('{{ route("logout") }}', {
             method: 'POST',
             headers: {
