@@ -227,24 +227,24 @@
 
                 <div class="d-flex justify-content-between mb-1">
                     <span class="text-small-grey">Payment Method</span>
-                    <span class="text-small-grey text-end">VISA/MasterCard</span>
+                    <span class="text-small-grey text-end">{{ $order->payments->first()->paymentMethod->method_name }}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-1">
                     <span class="text-small-grey">Subtotal</span>
-                    <span class="text-small-grey">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</span>
+                    <span class="text-small-grey">Rp{{ number_format($order->subtotal_amount, 0, ',', '.') }}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-1">
                     <span class="text-small-grey">Discount</span>
-                    <span class="text-small-grey text-danger">-Rp10.000</span>
+                    <span class="text-small-grey text-danger">-Rp{{ number_format($order->discount_amount, 0, ',', '.') }}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-1">
                     <span class="text-small-grey">Tax & Services</span>
-                    <span class="text-small-grey">Rp5.000</span>
+                    <span class="text-small-grey">Rp{{ number_format($order->payments->first()->paymentMethod->admin_fee, 0, ',', '.') }}</span>
                 </div>
 
                 <div class="d-flex justify-content-between mt-2">
                     <span class="fw-bold text-dark">Total</span>
-                    <span class="fw-bold text-dark">Rp{{ number_format($order->total_amount - 5000, 0, ',', '.') }}</span>
+                    <span class="fw-bold text-dark">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</span>
                 </div>
             </div>
         </div>
@@ -260,7 +260,10 @@
 
             @elseif(str_contains($rawStatus, 'progress'))
                 <a href="{{ route('orders.track', $order->order_id) }}" class="btn-custom btn-pink">Track Order</a>
-                <button class="btn-custom btn-blue">Complete Order</button>
+                <form action="{{ route('orders.complete', $order->order_id) }}" method="POST" style="flex: 1;">
+                    @csrf
+                    <button type="submit" class="btn-custom btn-blue w-100">Complete Order</button>
+                </form>
 
             @elseif(str_contains($rawStatus, 'completed'))
                 <a href="{{ route('orders.track', $order->order_id) }}" class="btn-custom btn-pink">Track Order</a>

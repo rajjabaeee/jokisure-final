@@ -66,9 +66,9 @@ class OrderController extends Controller
     }
 
     /**
-     * Halaman Tracking
+     * Complete order - User mark order as completed
      */
-    public function track($orderId)
+    public function completeOrder($orderId)
     {
         $user = Auth::user();
         if (! $user) {
@@ -76,23 +76,30 @@ class OrderController extends Controller
         }
 
         $buyer = $user->buyer()->first();
-        $order = WorkOrder::with(['orderItems.service.game', 'orderItems.service.booster.user', 'orderStatus', 'payments.paymentMethod'])
+        $order = WorkOrder::with(['orderItems'])
             ->where('order_id', $orderId)
             ->firstOrFail();
 
+        // Check authorization
         if (! $buyer || ! $order->orderItems->contains('buyer_id', $buyer->buyer_id)) {
             abort(403, 'Unauthorized access to order');
         }
 
-        // Data Log Dummy buat Timeline
-        $logs = collect([
-            (object)['status' => 'Account logged out', 'date' => now()->subHours(2)],
-            (object)['status' => 'Abyss level 12 cleared', 'date' => now()->subHours(5)],
-            (object)['status' => 'Account logged in by booster', 'date' => now()->subDay()],
-            (object)['status' => 'Order queued', 'date' => now()->subDays(2)]
-        ]);
+        // Get Completed status
+        $completedStatus = OrderStatus::where('order_status_name', 'Completed')->first();
+        if (!$completedStatus) {
+            return back()->with('error', 'Completed status not found in database.');
+        }
 
-        return view('orders.track', compact('order', 'logs'));
+        // Update order status
+        $order->order_status_id = $completedStatus->order_status_id;
+        $order->save();
+
+        // Update payment status if exists
+        Payment::where('order_id', $orderId)
+            ->update(['payment_status_id' => $completedStatus->order_status_id]);
+
+        return redirect()->back()->with('success', 'Order marked as completed!');
     }
 
     // --- FUNGSI DB ASLI (BIARKAN SAJA UNTUK NANTI) ---

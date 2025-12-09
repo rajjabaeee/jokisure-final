@@ -100,18 +100,39 @@ class PaymentController extends Controller
         $paymentMethod = PaymentMethod::find($validated['method_id']);
         $adminFee = $paymentMethod->admin_fee ?? 0;
 
-        // Get cart items for calculation
+        // Get cart items for calculation based on order source
         $user = auth()->user();
         $buyer = Buyer::where('user_id', $user->user_id)->first();
         
-        $subtotal = 60000; // Default
-        if ($buyer) {
-            $cartItems = CartItem::where('cart_id', $buyer->cart_id)
-                ->with('service')
-                ->get();
-            if ($cartItems->isNotEmpty()) {
+        $subtotal = 0;
+        $orderSource = session('order_source', 'cart');
+        
+        if ($orderSource === 'cart') {
+            // From cart - calculate from selected items
+            $selectedServices = session('selected_services', []);
+            
+            if ($buyer && !empty($selectedServices)) {
+                $cartItems = CartItem::where('cart_id', $buyer->cart_id)
+                    ->whereIn('service_id', $selectedServices)
+                    ->with('service')
+                    ->get();
                 $subtotal = $cartItems->sum(fn($item) => $item->service->service_price);
             }
+        } else {
+            // Direct purchase - get single service price
+            $serviceId = session('service_id');
+            
+            if ($serviceId) {
+                $service = \App\Models\Service::find($serviceId);
+                if ($service) {
+                    $subtotal = $service->service_price;
+                }
+            }
+        }
+        
+        // Fallback if no items found
+        if ($subtotal == 0) {
+            return back()->with('error', 'Unable to calculate order total. Please try again.');
         }
 
         // Calculate total
