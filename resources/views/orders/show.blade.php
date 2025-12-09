@@ -120,15 +120,59 @@
         .btn-yellow:hover { background-color: #e6b800; }
 
     </style>
+    <style>
+        .toast-notification {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 0.9rem;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .toast-notification.show {
+            opacity: 1;
+        }
+    </style>
     <script>
         function copyOrderId(orderId) {
             // Copy to clipboard
             navigator.clipboard.writeText(orderId).then(function() {
-                // Show success feedback
-                alert('Order ID copied: ' + orderId);
+                // Show toast notification
+                showToast('Order ID copied!');
             }).catch(function(err) {
                 console.error('Failed to copy: ', err);
+                showToast('Failed to copy');
             });
+        }
+        
+        function showToast(message) {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // Show toast with animation
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            // Hide and remove after 2 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 2000);
         }
     </script>
 @endpush
