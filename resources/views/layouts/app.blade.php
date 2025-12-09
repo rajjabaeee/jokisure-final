@@ -46,7 +46,7 @@
       <a href="{{ $backUrl }}" class="back-btn" style="color: #0a0a0a; text-decoration: none; font-size: 24px;">←</a>
 
       {{-- Title (pakai appbar-title biar konsisten dengan halaman lain) --}}
-      <div class="fw-semibold">@yield('appbar-title', 'JokiSure')</div>
+      <div class="fw-semibold">@yield('title', 'JokiSure')</div>
 
       {{-- Help button (buka overlay) --}}
       <button type="button" class="icon-btn" aria-label="Help" onclick="openHelpOverlay()" style="border: none; background: none; padding: 0; cursor: pointer;">

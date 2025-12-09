@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'JokiSure | Notifications')
+@section('title', 'Notifications')
 
 @section('appbar-left')
   <a href="{{ url()->previous() }}" class="icon-btn" aria-label="Back">
