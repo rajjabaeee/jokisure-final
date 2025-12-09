@@ -1,3 +1,5 @@
+<!-- 5026231057 | Siti Qalimatus Zahra (SitiQalimatusZahra) -->
+
 @extends('layouts.app')
 
 @push('styles')
@@ -12,19 +14,22 @@
 <div class="mobile-container p-4">
 
     <div class="d-flex align-items-center mb-4">
-        {{-- Kembali ke halaman Orders --}}
+        {{-- Back to Orders page --}}
         <a href="{{ route('orders') }}" class="text-dark me-3"><i class="bi bi-arrow-left fs-4"></i></a>
         <h5 class="fw-bold mb-0">Reviews</h5>
     </div>
 
     {{-- Header --}}
     <div class="mb-4">
-        <h2 class="fw-bold display-6 mb-0">{{ number_format($reviews->avg('rating'), 1) }}</h2>
+        @php
+            $avgRating = $reviews->isEmpty() ? 0 : $reviews->pluck('rating')->avg();
+        @endphp
+        <h2 class="fw-bold display-6 mb-0">{{ number_format($avgRating, 1) }}</h2>
         <div class="text-muted small">Based on {{ $reviews->count() }} reviews</div>
-        <div class="fw-bold mt-2 text-primary">{{ $service->game_name }} - {{ $service->service_desc }}</div>
+        <div class="fw-bold mt-2 text-primary">{{ $service->game->game_name }} - {{ $service->service_desc }}</div>
     </div>
 
-    {{-- Alert Sukses --}}
+    {{-- Success Alert --}}
     @if(session('success'))
         <div class="alert alert-success small mb-4">
             {{ session('success') }}
@@ -55,7 +60,7 @@
         </div>
     @empty
         <div class="text-center py-5 text-muted">
-            <p>Belum ada review.</p>
+            <p>Be the first to review this service!</p>
         </div>
     @endforelse
 </div>

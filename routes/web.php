@@ -117,6 +117,7 @@ Route::middleware('auth')->group(function () {
 	Route::get('/orders/{orderId}/review', [ReviewController::class, 'create'])->name('reviews.create');
 	Route::post('/orders/{orderId}/review', [ReviewController::class, 'store'])->name('reviews.store');
 	Route::get('/service/{serviceId}/reviews', [ReviewController::class, 'index'])->name('reviews.index');
+	Route::post('/orders/{orderId}/mark-complete', [ReviewController::class, 'markAsComplete'])->name('orders.mark-complete');
 
 	// NOTIFICATION ROUTES
 	Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');

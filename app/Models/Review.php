@@ -12,7 +12,7 @@ class Review extends Model
 
     protected $table = 'review';
     protected $primaryKey = 'review_id';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'service_id',
