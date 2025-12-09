@@ -50,7 +50,7 @@
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
         @if($games->count() > 0)
           @foreach ($games->take(6) as $game)
-            <a href="{{ route('games.show', $game->game_id) }}" style="display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; background: #fff; border: 1px solid #e9e9e9; text-decoration: none; color: #0a0a0a; transition: all 0.3s ease;">
+            <a href="{{ route('games.show', $game->game_id) }}" data-game-name="{{ $game->game_name }}" style="display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; background: #fff; border: 1px solid #e9e9e9; text-decoration: none; color: #0a0a0a; transition: all 0.3s ease;">
               <div style="width: 100%; height: 100px; overflow: hidden; background: #f5f5f5;">
                 <img src="{{ asset('assets/' . str()->slug($game->game_name) . '.jpg') }}" alt="{{ $game->game_name }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='{{ asset('assets/games-placeholder.jpg') }}'">
               </div>
@@ -82,7 +82,7 @@
               $hasProfilePic = in_array(str()->slug($b->user_name), ['bangboost', 'sealw', 'monkeyd']);
             @endphp
             @if($hasProfilePic)
-            <a href="{{ route('booster.profile', ['booster' => $b->booster_id, 'referrer' => 'home']) }}" style="display: flex; background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.3) 100%), url('{{ asset('assets/' . str()->slug($b->user_name) . '-bg.jpg') }}') center/cover; border: 1px solid #e9e9e9; border-radius: 16px; padding: 12px; gap: 12px; text-decoration: none; color: #0a0a0a; align-items: center; transition: all 0.3s ease;">
+            <a href="{{ route('booster.profile', ['booster' => $b->booster_id, 'referrer' => 'home']) }}" data-booster-name="{{ $b->user_name }}" style="display: flex; background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.3) 100%), url('{{ asset('assets/' . str()->slug($b->user_name) . '-bg.jpg') }}') center/cover; border: 1px solid #e9e9e9; border-radius: 16px; padding: 12px; gap: 12px; text-decoration: none; color: #0a0a0a; align-items: center; transition: all 0.3s ease;">
               <img src="{{ asset('assets/' . str()->slug($b->user_name) . '.jpg') }}" alt="{{ $b->user_name }}" style="width: 80px; height: 80px; border-radius: 12px; object-fit: cover; flex-shrink: 0;" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">>
               <div style="flex: 1; min-width: 0;">
                 <div style="margin-bottom: 4px;">
@@ -151,7 +151,7 @@
                 $serviceImage = str()->slug($service->game_name) . '.jpg';
               }
             @endphp
-            <a href="{{ route('service.detail.confirm', $service->service_id) }}" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e9e9e9; border-radius: 12px; overflow: hidden; text-decoration: none; color: #0a0a0a; transition: all 0.3s ease;">
+            <a href="{{ route('service.detail.confirm', $service->service_id) }}" data-service-name="{{ $service->game_name }}" data-service-desc="{{ $service->service_desc ?? '' }}" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e9e9e9; border-radius: 12px; overflow: hidden; text-decoration: none; color: #0a0a0a; transition: all 0.3s ease;">
               <div style="position: relative; width: 100%; height: 120px; overflow: hidden; background: #f5f5f5;">
                 <img src="{{ asset('assets/' . $serviceImage) }}" alt="{{ $service->service_desc }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='{{ asset('assets/' . str()->slug($service->game_name) . '.jpg') }}'">
                 <span style="position: absolute; top: 6px; right: 6px; font-size: 9px; padding: 2px 6px; background: #0066cc; color: #fff; border-radius: 4px; font-weight: 500;">Open</span>
@@ -291,6 +291,90 @@
       document.getElementById('bannerSlider').addEventListener('mouseleave', () => {
         resetBannerAutoplay();
       });
+    });
+
+    function filterHomeContent() {
+      const input = document.getElementById('homeSearch');
+      const filter = input.value.toLowerCase().trim();
+      const dropdown = document.getElementById('searchDropdown');
+      const resultsContainer = document.getElementById('searchResults');
+      
+      if (filter === '') {
+        dropdown.style.display = 'none';
+        return;
+      }
+      
+      let results = [];
+      
+      // Search games
+      const gameCards = document.querySelectorAll('[data-game-name]');
+      gameCards.forEach(card => {
+        const gameName = card.getAttribute('data-game-name').toLowerCase();
+        if (gameName.includes(filter)) {
+          const href = card.getAttribute('href');
+          results.push({
+            type: 'game',
+            name: card.getAttribute('data-game-name'),
+            href: href
+          });
+        }
+      });
+      
+      // Search boosters
+      const boosterCards = document.querySelectorAll('[data-booster-name]');
+      boosterCards.forEach(card => {
+        const boosterName = card.getAttribute('data-booster-name').toLowerCase();
+        if (boosterName.includes(filter)) {
+          const href = card.getAttribute('href');
+          results.push({
+            type: 'booster',
+            name: card.getAttribute('data-booster-name'),
+            href: href
+          });
+        }
+      });
+      
+      // Search services
+      const serviceCards = document.querySelectorAll('[data-service-name]');
+      serviceCards.forEach(card => {
+        const serviceName = card.getAttribute('data-service-name').toLowerCase();
+        const serviceDesc = (card.getAttribute('data-service-desc') || '').toLowerCase();
+        if (serviceName.includes(filter) || serviceDesc.includes(filter)) {
+          const href = card.getAttribute('href');
+          results.push({
+            type: 'service',
+            name: serviceName,
+            desc: card.getAttribute('data-service-desc'),
+            href: href
+          });
+        }
+      });
+      
+      // Display results
+      if (results.length === 0) {
+        resultsContainer.innerHTML = '<div style="padding: 12px 16px; text-align: center; color: #999; font-size: 12px;">No results found</div>';
+      } else {
+        resultsContainer.innerHTML = results.map(result => {
+          if (result.type === 'game') {
+            return `<a href="${result.href}" style="display: block; padding: 10px 16px; text-decoration: none; color: #0a0a0a; border-bottom: 1px solid #f0f0f0; font-size: 12px; hover: background: #f5f5f5;">🎮 ${result.name}</a>`;
+          } else if (result.type === 'booster') {
+            return `<a href="${result.href}" style="display: block; padding: 10px 16px; text-decoration: none; color: #0a0a0a; border-bottom: 1px solid #f0f0f0; font-size: 12px;">⭐ ${result.name}</a>`;
+          } else {
+            return `<a href="${result.href}" style="display: block; padding: 10px 16px; text-decoration: none; color: #0a0a0a; border-bottom: 1px solid #f0f0f0; font-size: 12px;"><div style="font-weight: 500;">${result.name}</div><div style="color: #999; font-size: 11px;">${result.desc}</div></a>`;
+          }
+        }).join('');
+      }
+      
+      dropdown.style.display = 'block';
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const searchInput = document.getElementById('homeSearch');
+      const dropdown = document.getElementById('searchDropdown');
+      if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.style.display = 'none';
+      }
     });
   </script>
 

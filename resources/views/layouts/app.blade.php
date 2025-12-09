@@ -38,26 +38,34 @@
   <section class="safe-area">
 
     <!-- APP BAR -->
-    <div class="appbar d-flex align-items-center justify-content-between px-3">
-      {{-- Back button --}}
-      @php
-        $backUrl = 'javascript:history.back()'; // Default behavior
-        if (Route::currentRouteName() === 'boosters') {
-          $backUrl = route('home'); // For boosters page, go to home
-        }
-      @endphp
-      <a href="{{ $backUrl }}" class="back-btn" style="color: #0a0a0a; text-decoration: none; font-size: 24px;">←</a>
+    @unless (View::hasSection('hide-appbar'))
+      <div class="appbar d-flex align-items-center justify-content-between px-3" style="padding: 12px 16px 10px;">
+        {{-- Back button --}}
+        @php
+          $backUrl = 'javascript:history.back()'; // Default behavior
+          if (Route::currentRouteName() === 'boosters') {
+            $backUrl = route('home'); // For boosters page, go to home
+          }
+        @endphp
+        <a href="{{ $backUrl }}" class="back-btn" style="text-decoration: none; color: #000000; display: flex; align-items: center;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </a>
 
-      {{-- Title (pakai appbar-title biar konsisten dengan halaman lain) --}}
-      <div class="fw-semibold">@yield('title', 'JokiSure')</div>
+        {{-- Title (pakai appbar-title biar konsisten dengan halaman lain) --}}
+        <div style="flex: 1; font-weight: 700; font-size: 1.25rem; margin-left: 12px;">@yield('title', 'JokiSure')</div>
 
-      {{-- Help button (buka overlay) --}}
-      <button type="button" class="icon-btn" aria-label="Help" onclick="openHelpOverlay()" style="border: none; background: none; padding: 0; cursor: pointer;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
-        </svg>
-      </button>
-    </div>
+        {{-- Help button (buka overlay) --}}
+        <button type="button" class="icon-btn" aria-label="Help" onclick="openHelpOverlay()" style="border: none; background: none; padding: 0; cursor: pointer; color: #999; flex-shrink: 0;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"></path>
+            <line x1="12" y1="17" x2="12" y2="17"></line>
+          </svg>
+        </button>
+      </div>
+    @endunless
 
     <!-- Help Overlay -->
     <div id="helpOverlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1000; display: none; padding: 16px;" onclick="closeHelpOverlay(event)">
@@ -100,7 +108,7 @@
       <span>Cart</span>
     </a>
     <a class="tab{{ Route::currentRouteName() === 'chat.index' ? ' active' : '' }}" href="{{ route('chat.index') }}">
-      <svg viewBox="0 0 24 24"><path d="M21 12a8.5 8.5 0 1 1-17 0 8.5 8.5 0 0 1 17 0Zm-8.5-5v5l3 2" fill="none"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="none"/></svg>
       <span>Message</span>
     </a>
     <a class="tab{{ Route::currentRouteName() === 'notifications' ? ' active' : '' }}" href="{{ route('notifications') }}">

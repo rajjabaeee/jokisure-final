@@ -7,6 +7,30 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ asset('css/my-profile.css') }}" rel="stylesheet">
     <style>
+        .device-frame {
+            position: relative;
+        }
+
+        .safe-area {
+            position: absolute;
+            top: var(--status);
+            bottom: 84px;
+            left: 0;
+            right: 0;
+            overflow: hidden;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .appbar {
+            height: 50px;
+            background: #ffffff;
+            border-bottom: 1px solid #f0f0f0;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
         .chat-container {
             display: flex;
             flex-direction: column;
@@ -44,6 +68,7 @@
             margin-bottom: 12px;
             align-items: flex-end;
             gap: 8px;
+            max-width: 100%;
         }
 
         .message-row.sent {
@@ -61,8 +86,9 @@
         .message-wrapper {
             display: flex;
             flex-direction: column;
-            max-width: 65%;
+            max-width: 60%;
             gap: 4px;
+            word-break: break-word;
         }
 
         .message-row.sent .message-wrapper {
@@ -77,9 +103,11 @@
             padding: 10px 14px;
             border-radius: 18px;
             word-wrap: break-word;
+            word-break: break-word;
             font-size: 0.95rem;
             line-height: 1.4;
             display: inline-block;
+            max-width: 100%;
         }
 
         .message-bubble.received {
@@ -193,12 +221,8 @@
             padding: 12px 16px;
             background: #ffffff;
             border-top: 1px solid #e0e0e0;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            width: 100%;
-            box-sizing: border-box;
+            flex-shrink: 0;
+            z-index: 10;
         }
     </style>
 </head>
@@ -220,7 +244,11 @@
 
     <!-- APP BAR -->
     <div class="appbar d-flex align-items-center justify-content-between px-3">
-      <a href="{{ route('chat.index') }}" class="back-btn" style="color: #0a0a0a; text-decoration: none; font-size: 24px;">←</a>
+      <a href="{{ route('chat.index') }}" class="back-btn" style="text-decoration: none; color: #000000;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </a>
       <div class="fw-semibold">{{ $receiver->user_name }}</div>
       <button type="button" class="icon-btn" aria-label="Help" style="border: none; background: none; padding: 0; cursor: pointer;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -251,19 +279,20 @@
 
             {{-- Chat Messages Area --}}
             <div class="chat-messages" id="chat-box">
-                @if($chats->isEmpty())
-                    {{-- Auto message from booster --}}
-                    <div class="date-divider">{{ \Carbon\Carbon::now()->format('d M Y') }}</div>
-                    <div class="message-row">
-                        <img src="{{ asset('assets/' . str()->slug($receiver->user_name) . '.jpg') }}" alt="{{ $receiver->user_name }}" class="message-avatar" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">
-                        <div class="message-wrapper">
-                            <div class="message-bubble received">
-                                Hello, {{ Auth::user()->user_name }}!<br>How can I help you?
-                            </div>
-                            <div class="message-time">{{ \Carbon\Carbon::now()->format('H:i a') }}</div>
+                {{-- Auto message from booster (always shown first) --}}
+                <div class="date-divider">{{ \Carbon\Carbon::now()->format('d M Y') }}</div>
+                <div class="message-row">
+                    <img src="{{ asset('assets/' . str()->slug($receiver->user_name) . '.jpg') }}" alt="{{ $receiver->user_name }}" class="message-avatar" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">
+                    <div class="message-wrapper">
+                        <div class="message-bubble received">
+                            Hello, {{ Auth::user()->user_name }}!<br>How can I help you?
                         </div>
+                        <div class="message-time">{{ \Carbon\Carbon::now()->format('H:i a') }}</div>
                     </div>
-                @else
+                </div>
+
+                {{-- Chat messages from database --}}
+                @if($chats->count() > 0)
                     @php
                         $lastDate = null;
                     @endphp

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'JokiSure | My Profile')
+@section('title', 'My Profile')
 
 @section('appbar-left')
   <a href="#" class="icon-btn" aria-label="Back">

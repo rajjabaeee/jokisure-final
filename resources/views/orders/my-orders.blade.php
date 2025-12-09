@@ -153,7 +153,7 @@
     </style>
 @endpush
 
-@section('appbar-title', 'My Orders')
+@section('title', 'My Orders')
 
 @section('content')
     <div class="px-3 mt-2">

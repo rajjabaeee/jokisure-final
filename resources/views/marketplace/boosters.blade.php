@@ -13,10 +13,7 @@
 
         <!-- Search Bar -->
         <div style="margin-bottom: 8px;">
-          <form method="GET" action="{{ route('boosters') }}" style="display: flex; gap: 6px;">
-            <input type="text" name="search" placeholder="Search..." value="{{ request('search') }}" style="flex: 1; padding: 4px 12px; border: 2px solid #d4e4f7; border-radius: 20px; font-size: 12px; outline: none; transition: all 0.3s;">
-            <button type="submit" style="display: none;">Search</button>
-          </form>
+          <input type="text" id="boosterSearch" placeholder="Search boosters..." style="flex: 1; width: 100%; padding: 4px 12px; border: 2px solid #d4e4f7; border-radius: 20px; font-size: 12px; outline: none; transition: all 0.3s;" oninput="filterBoosters()">
         </div>
 
         <!-- Filter and Sort -->
@@ -48,7 +45,7 @@
         <div style="display: flex; flex-direction: column; gap: 12px;">
         @if($boosters && $boosters->count() > 0)
           @foreach ($boosters as $b)
-            <a href="{{ route('booster.profile', ['booster' => $b->booster_id, 'referrer' => 'boosters']) }}" style="display: flex; background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.3) 100%), url('{{ asset('assets/' . str()->slug($b->user->user_name) . '-bg.jpg') }}') center/cover; border: 1px solid #e9e9e9; border-radius: 16px; padding: 12px; gap: 12px; text-decoration: none; color: #0a0a0a; align-items: center; transition: all 0.3s ease;">
+            <a href="{{ route('booster.profile', ['booster' => $b->booster_id, 'referrer' => 'boosters']) }}" data-booster-name="{{ $b->user->user_name }}" data-booster-tags="{{ $b->user->user_email ?? '' }}" style="display: flex; background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.3) 100%), url('{{ asset('assets/' . str()->slug($b->user->user_name) . '-bg.jpg') }}') center/cover; border: 1px solid #e9e9e9; border-radius: 16px; padding: 12px; gap: 12px; text-decoration: none; color: #0a0a0a; align-items: center; transition: all 0.3s ease;">
               <img src="{{ asset('assets/' . str()->slug($b->user->user_name) . '.jpg') }}" alt="{{ $b->user->user_name }}" style="width: 80px; height: 80px; border-radius: 12px; object-fit: cover; flex-shrink: 0;" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">
               <div style="flex: 1; min-width: 0;">
                 <div style="margin-bottom: 4px;">
@@ -133,5 +130,24 @@
       <span>Profile</span>
     </a>
   </nav>
+
+<script>
+function filterBoosters() {
+    const searchInput = document.getElementById('boosterSearch');
+    const filter = searchInput.value.toLowerCase().trim();
+    const boosters = document.querySelectorAll('[data-booster-name]');
+    
+    boosters.forEach(booster => {
+        const boosterName = booster.getAttribute('data-booster-name').toLowerCase();
+        const boosterTags = booster.getAttribute('data-booster-tags').toLowerCase();
+        
+        if (boosterName.includes(filter) || boosterTags.includes(filter) || filter === '') {
+            booster.style.display = '';
+        } else {
+            booster.style.display = 'none';
+        }
+    });
+}
+</script>
 
 @endsection
