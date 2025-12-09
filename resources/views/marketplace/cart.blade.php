@@ -272,9 +272,21 @@
 
             {{-- Cart Items --}}
             @foreach($items as $cartItem)
+              @php
+                // Extract first word from service description to match with image
+                $serviceDesc = $cartItem->service->service_desc ?? '';
+                $descWords = explode(' ', trim($serviceDesc));
+                $firstWord = strtolower($descWords[0] ?? '');
+                
+                // List of known image files (without extension)
+                $knownImages = ['dragonspine', 'chasm', 'inazuma', 'liyue', 'monstandt', 'sumeru', 'natlan', 'enkanomiya', 'fontaine', 'abyss', 'childe', 'akevent'];
+                
+                // Check if first word matches any known image
+                $imageName = in_array($firstWord, $knownImages) ? $firstWord . '.png' : strtolower(str_replace(' ', '-', $cartItem->service->game->game_name)) . '.jpg';
+              @endphp
               <div class="cart-item">
                 <input type="checkbox" class="cart-item-checkbox" checked data-item-id="{{ $cartItem->service_id }}">
-                <img src="{{ asset('assets/' . (strtolower(str_replace(' ', '-', $cartItem->service->game->game_name)) . '.jpg')) }}" class="cart-item-image" alt="{{ $cartItem->service->game->game_name ?? 'Service' }}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2270%22 height=%2270%22%3E%3Crect fill=%22%23f0f0f0%22 width=%2270%22 height=%2270%22/%3E%3C/svg%3E'">
+                <img src="{{ asset('assets/' . $imageName) }}" class="cart-item-image" alt="{{ $cartItem->service->game->game_name ?? 'Service' }}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2270%22 height=%2270%22%3E%3Crect fill=%22%23f0f0f0%22 width=%2270%22 height=%2270%22/%3E%3C/svg%3E'">
                 <div class="cart-item-details">
                   <div class="cart-item-title">{{ $cartItem->service->game->game_name ?? 'Service' }}</div>
                   <div class="cart-item-variant">Variant: {{ $cartItem->service->service_desc ?? 'Standard' }}</div>
