@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Booster;
 use App\Models\Review;
+use App\Models\WorkOrder;
 
 class BoosterController extends Controller
 {
@@ -186,6 +187,14 @@ class BoosterController extends Controller
             ]
         ];
 
+        // Get work queue orders for this booster
+        $workQueueOrders = WorkOrder::whereHas('orderItems.service', function($q) use ($booster) {
+            $q->where('booster_id', $booster->booster_id);
+        })
+        ->with(['orderItems.service.game', 'orderItems.buyer.user', 'orderStatus'])
+        ->orderBy('order_date', 'desc')
+        ->get();
+
         return view('booster.booster-profile', [
             'booster' => $boosterData,
             'booster_id' => $booster->booster_id,
@@ -194,6 +203,7 @@ class BoosterController extends Controller
             'reviews' => $reviews,
             'rating_stats' => $ratingStats,
             'referrer' => $request->get('referrer', 'home'), // Default to home if no referrer
+            'workQueueOrders' => $workQueueOrders,
         ]);
     }
     
