@@ -169,6 +169,13 @@
           </svg>
         </div>
 
+        <div onclick="window.location.href='{{ route('reviews') }}'; closeNavbarMenu();" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s;">
+          <span style="font-size: 14px; font-weight: 500; color: #000;">Review</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 17L17 7M17 7H7M17 7V17"/>
+          </svg>
+        </div>
+
         <div onclick="window.location.href='{{ route('profile.edit') }}'; closeNavbarMenu();" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s;">
           <span style="font-size: 14px; font-weight: 500; color: #000;">Settings</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
