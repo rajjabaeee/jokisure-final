@@ -2,6 +2,10 @@
 
 @push('styles')
 <style>
+    .app-header {
+        display: none !important;
+    }
+
     html, body {
         height: 100%;
         margin: 0;
@@ -11,7 +15,7 @@
     .messages-container {
         display: flex;
         flex-direction: column;
-        height: 100vh;
+        height: calc(100vh - 84px);
         background: #ffffff;
     }
 
@@ -160,15 +164,7 @@
 <div class="messages-container">
     {{-- Header --}}
     <div class="messages-header">
-        <div class="messages-header-top">
-            <h5>Messages</h5>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="messages-header-icon">
-                <circle cx="12" cy="12" r="1"></circle>
-                <circle cx="19" cy="12" r="1"></circle>
-                <circle cx="5" cy="12" r="1"></circle>
-            </svg>
-        </div>
-
+    
         {{-- Search Bar --}}
         <div class="search-box">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

@@ -89,7 +89,7 @@
               <path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 10-7.8 7.8l1 1L12 22l7.8-8.6 1-1a5.5 5.5 0 000-7.8z" stroke="#ff4961" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
-          <a href="{{ route('chat.index') }}" class="icon-btn" title="Chat">
+          <a href="{{ route('chat.show', $booster['user_id']) }}" class="icon-btn" title="Chat">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="#1572A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>

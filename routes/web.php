@@ -112,6 +112,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
 
 	//Review and Rating
+	Route::get('/reviews', [ReviewController::class, 'listCompletedOrders'])->name('reviews');
 	Route::get('/orders/{orderId}/review', [ReviewController::class, 'create'])->name('reviews.create');
 	Route::post('/orders/{orderId}/review', [ReviewController::class, 'store'])->name('reviews.store');
 	Route::get('/service/{serviceId}/reviews', [ReviewController::class, 'index'])->name('reviews.index');

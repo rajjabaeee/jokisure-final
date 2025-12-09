@@ -74,7 +74,7 @@
       <!-- Review -->
       <div class="d-flex align-items-center justify-content-between mt-3 mb-2">
         <div class="fw-semibold">Review</div>
-        <a href="#" class="small text-decoration-none text-muted">See all
+        <a href="{{ route('reviews') }}" class="small text-decoration-none text-muted">See all
           <svg width="14" height="14" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="#777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
       </div>

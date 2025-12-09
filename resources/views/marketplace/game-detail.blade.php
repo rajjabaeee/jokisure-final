@@ -77,9 +77,38 @@
             @if($game->services->count() > 0)
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
                     @foreach($filteredServices as $service)
+                        @php
+                            // Determine service image based on service description - same logic as homepage
+                            $serviceImage = 'genshin boss.png'; // default for Genshin services
+                            $serviceName = strtolower($service->service_desc ?? $service->service_name ?? '');
+                            
+                            if (str_contains($serviceName, 'natlan')) {
+                                $serviceImage = 'Natlan.png';
+                            } elseif (str_contains($serviceName, 'inazuma')) {
+                                $serviceImage = 'Inazuma.png';
+                            } elseif (str_contains($serviceName, 'sumeru')) {
+                                $serviceImage = 'Sumeru.png';
+                            } elseif (str_contains($serviceName, 'fontaine')) {
+                                $serviceImage = 'fontaine.png';
+                            } elseif (str_contains($serviceName, 'liyue')) {
+                                $serviceImage = 'liyue.png';
+                            } elseif (str_contains($serviceName, 'mondstadt')) {
+                                $serviceImage = 'Monstandt.png';
+                            } elseif (str_contains($serviceName, 'dragonspine')) {
+                                $serviceImage = 'Dragonspine.png';
+                            } elseif (str_contains($serviceName, 'enkanomiya')) {
+                                $serviceImage = 'enkanomiya.png';
+                            } elseif (str_contains($serviceName, 'chasm')) {
+                                $serviceImage = 'Chasm.png';
+                            } elseif (str_contains($serviceName, 'weekly') || str_contains($serviceName, 'boss')) {
+                                $serviceImage = 'genshin boss.png';
+                            } elseif (str_contains($serviceName, 'abyss')) {
+                                $serviceImage = 'abyss.jpg';
+                            }
+                        @endphp
                         <a href="{{ route('service.detail.confirm', $service->service_id) }}" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e9e9e9; border-radius: 12px; overflow: hidden; text-decoration: none; color: #0a0a0a; transition: all 0.3s ease;">
                             <div style="position: relative; width: 100%; height: 120px; overflow: hidden; background: #f5f5f5;">
-                                <img src="{{ asset('assets/' . str()->slug($service->game->game_name) . '.jpg') }}" alt="{{ $service->game->game_name }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='{{ asset('assets/games-placeholder.jpg') }}'">
+                                <img src="{{ asset('assets/' . $serviceImage) }}" alt="{{ $service->service_desc ?? $service->service_name }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='{{ asset('assets/genshin-impact.jpg') }}'">
                                 <span style="position: absolute; top: 6px; right: 6px; font-size: 9px; padding: 2px 6px; background: #0066cc; color: #fff; border-radius: 4px; font-weight: 500;">Open</span>
                             </div>
                             <div style="padding: 10px; flex: 1; display: flex; flex-direction: column;">
