@@ -35,10 +35,7 @@
         
         <!-- Search Bar -->
         <div style="margin-bottom: 8px;">
-          <form method="GET" action="{{ route('games.index') }}" style="display: flex; gap: 6px;">
-            <input type="text" name="search" placeholder="Search..." value="{{ request('search') }}" style="flex: 1; padding: 4px 12px; border: 2px solid #d4e4f7; border-radius: 20px; font-size: 12px; outline: none; transition: all 0.3s;">
-            <button type="submit" style="display: none;">Search</button>
-          </form>
+          <input type="text" id="gameSearch" placeholder="Search games..." style="flex: 1; width: 100%; padding: 4px 12px; border: 2px solid #d4e4f7; border-radius: 20px; font-size: 12px; outline: none; transition: all 0.3s;" oninput="filterGames()">
         </div>
 
         <!-- Filter and Sort -->
@@ -66,7 +63,7 @@
         @if($games->count() > 0)
           <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
             @foreach ($games as $game)
-              <a href="{{ route('games.show', $game->game_id) }}" style="display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; background: #fff; border: 1px solid #e9e9e9; text-decoration: none; color: #0a0a0a; transition: all 0.3s ease;">
+              <a href="{{ route('games.show', $game->game_id) }}" data-game-name="{{ $game->game_name }}" style="display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; background: #fff; border: 1px solid #e9e9e9; text-decoration: none; color: #0a0a0a; transition: all 0.3s ease;">
                 <div style="width: 100%; height: 100px; overflow: hidden; background: #f5f5f5;">
                   <img src="{{ asset('assets/' . str()->slug($game->game_name) . '.jpg') }}" alt="{{ $game->game_name }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='{{ asset('assets/games-placeholder.jpg') }}'">
                 </div>
@@ -138,5 +135,23 @@
       <span>Profile</span>
     </a>
   </nav>
+
+<script>
+function filterGames() {
+    const searchInput = document.getElementById('gameSearch');
+    const filter = searchInput.value.toLowerCase().trim();
+    const games = document.querySelectorAll('[data-game-name]');
+    
+    games.forEach(game => {
+        const gameName = game.getAttribute('data-game-name').toLowerCase();
+        
+        if (gameName.includes(filter) || filter === '') {
+            game.style.display = '';
+        } else {
+            game.style.display = 'none';
+        }
+    });
+}
+</script>
 
 @endsection

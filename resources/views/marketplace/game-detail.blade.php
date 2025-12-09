@@ -45,10 +45,7 @@
         <div id="all-services" style="display: none;">
             {{-- Search Bar --}}
             <div style="margin-bottom: 12px;">
-                <form method="GET" action="{{ route('games.show', $game->game_id) }}" style="display: flex; gap: 6px;">
-                    <input type="text" name="search" placeholder="Search..." value="{{ request('search') }}" style="flex: 1; padding: 4px 12px; border: 2px solid #d4e4f7; border-radius: 20px; font-size: 12px; outline: none; transition: all 0.3s;">
-                    <button type="submit" style="display: none;">Search</button>
-                </form>
+                <input type="text" id="serviceSearch" placeholder="Search services..." style="flex: 1; width: 100%; padding: 4px 12px; border: 2px solid #d4e4f7; border-radius: 20px; font-size: 12px; outline: none; transition: all 0.3s;" oninput="filterServices()">
             </div>
 
             {{-- Filter and Sort --}}
@@ -106,7 +103,7 @@
                                 $serviceImage = 'abyss.jpg';
                             }
                         @endphp
-                        <a href="{{ route('service.detail.confirm', $service->service_id) }}" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e9e9e9; border-radius: 12px; overflow: hidden; text-decoration: none; color: #0a0a0a; transition: all 0.3s ease;">
+                        <a href="{{ route('service.detail.confirm', $service->service_id) }}" data-service-name="{{ $service->service_name }}" data-game-type="{{ $service->service_desc ?? '' }}" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e9e9e9; border-radius: 12px; overflow: hidden; text-decoration: none; color: #0a0a0a; transition: all 0.3s ease;">
                             <div style="position: relative; width: 100%; height: 120px; overflow: hidden; background: #f5f5f5;">
                                 <img src="{{ asset('assets/' . $serviceImage) }}" alt="{{ $service->service_desc ?? $service->service_name }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='{{ asset('assets/genshin-impact.jpg') }}'">
                                 <span style="position: absolute; top: 6px; right: 6px; font-size: 9px; padding: 2px 6px; background: #0066cc; color: #fff; border-radius: 4px; font-weight: 500;">Open</span>
@@ -228,6 +225,24 @@ function showTab(tabName) {
         document.getElementById('by-booster-indicator').style.background = '#0066cc';
         document.getElementById('by-booster-tab').style.color = '#0a0a0a';
     }
+}
+
+// Filter services in real-time
+function filterServices() {
+    const searchInput = document.getElementById('serviceSearch');
+    const filter = searchInput.value.toLowerCase().trim();
+    const services = document.querySelectorAll('[data-service-name]');
+    
+    services.forEach(service => {
+        const serviceName = service.getAttribute('data-service-name').toLowerCase();
+        const gameType = service.getAttribute('data-game-type').toLowerCase();
+        
+        if (serviceName.includes(filter) || gameType.includes(filter) || filter === '') {
+            service.style.display = '';
+        } else {
+            service.style.display = 'none';
+        }
+    });
 }
 </script>
 @endsection

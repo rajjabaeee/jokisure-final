@@ -97,7 +97,7 @@
       <span>Cart</span>
     </a>
     <a class="tab{{ Route::currentRouteName() === 'chat.index' ? ' active' : '' }}" href="{{ route('chat.index') }}">
-      <svg viewBox="0 0 24 24"><path d="M21 12a8.5 8.5 0 1 1-17 0 8.5 8.5 0 0 1 17 0Zm-8.5-5v5l3 2" fill="none"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="none"/></svg>
       <span>Message</span>
     </a>
     <a class="tab{{ Route::currentRouteName() === 'notifications' ? ' active' : '' }}" href="{{ route('notifications') }}">

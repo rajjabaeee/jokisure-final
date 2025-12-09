@@ -171,36 +171,34 @@
                 <circle cx="11" cy="11" r="8"></circle>
                 <path d="m21 21-4.35-4.35"></path>
             </svg>
-            <input type="text" class="search-input" placeholder="Search" id="searchInput" onkeyup="filterMessages()">
+            <input type="text" class="search-input" placeholder="Search" id="searchInput" oninput="filterMessages()">
         </div>
     </div>
 
     {{-- Messages List --}}
     <div class="messages-list" id="messagesList">
-        @if($users->count() > 0)
-            @forelse($users as $user)
-                @php
-                  $hasProfilePic = in_array(str()->slug($user->user_name), ['bangboost', 'sealw', 'monkeyd', 'emo', 'nagaaaa']);
-                @endphp
-                @if($hasProfilePic)
-                <a href="{{ route('chat.show', $user->user_id) }}" class="message-item" data-username="{{ strtolower($user->user_name) }}">
-                    <img src="{{ asset('assets/' . str()->slug($user->user_name) . '.jpg') }}" alt="{{ $user->user_name }}" class="message-avatar" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">
-                    
-                    <div class="message-content">
-                        <div class="message-header">
-                            <h6 class="message-name">{{ $user->user_name }}</h6>
-                            <span class="message-time">{{ now()->format('H:i a') }}</span>
-                        </div>
-                        <p class="message-preview">{{ $user->user_email ?? 'Klik untuk mulai chat' }}</p>
+        @forelse($users as $user)
+            @php
+              $hasProfilePic = in_array(str()->slug($user->user_name), ['bangboost', 'sealw', 'monkeyd', 'emo', 'nagaaaa']);
+            @endphp
+            @if($hasProfilePic)
+            <a href="{{ route('chat.show', $user->user_id) }}" class="message-item" data-username="{{ strtolower($user->user_name) }}">
+                <img src="{{ asset('assets/' . str()->slug($user->user_name) . '.jpg') }}" alt="{{ $user->user_name }}" class="message-avatar" onerror="this.src='{{ asset('assets/avatar-placeholder.jpg') }}'">
+                
+                <div class="message-content">
+                    <div class="message-header">
+                        <h6 class="message-name">{{ $user->user_name }}</h6>
+                        <span class="message-time">{{ $user->latest_message_date ? $user->latest_message_date->format('H:i a') : now()->format('H:i a') }}</span>
                     </div>
-                </a>
-                @endif
-            @endforeach
-        @else
+                    <p class="message-preview">{{ $user->latest_message ?? 'Mulai percakapan' }}</p>
+                </div>
+            </a>
+            @endif
+        @empty
             <div class="empty-messages">
                 <p style="font-size: 0.95rem;">Belum ada pengguna lain.</p>
             </div>
-        @endif
+        @endforelse
     </div>
 
 </div>
@@ -208,12 +206,16 @@
 <script>
     function filterMessages() {
         const input = document.getElementById('searchInput');
-        const filter = input.value.toLowerCase();
+        const filter = input.value.toLowerCase().trim();
         const items = document.querySelectorAll('.message-item');
         
         items.forEach(item => {
-            const username = item.getAttribute('data-username');
-            if (username.includes(filter)) {
+            const username = item.getAttribute('data-username').toLowerCase();
+            const messageName = item.querySelector('.message-name').textContent.toLowerCase();
+            const messagePreview = item.querySelector('.message-preview').textContent.toLowerCase();
+            
+            // Check if filter matches username, message name, or message preview
+            if (username.includes(filter) || messageName.includes(filter) || messagePreview.includes(filter)) {
                 item.style.display = 'flex';
             } else {
                 item.style.display = 'none';
